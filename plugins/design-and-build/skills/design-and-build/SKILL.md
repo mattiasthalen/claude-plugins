@@ -7,6 +7,10 @@ disable-model-invocation: true
 
 The interview builds the tree; the plan carries the _brief_, the technical spec everything is built and reviewed against. ExitPlanMode is called once, in step 3, with the brief in the plan: that approval is the gate between thinking and writing.
 
+## Progress
+
+The task list (TaskCreate, TaskUpdate) is my view of the run. Before step 1, create one task per step, named by its heading. Mark each in progress as it starts and completed once its done-when holds; add a task for each review round as it starts. If approving the plan cleared the list, recreate it with steps 1 to 3 completed.
+
 ## 1. Interview
 
 Enter plan mode with EnterPlanMode. Invoke the `design:design-interview` skill and run it through Phase 8. Pitch: $ARGUMENTS
