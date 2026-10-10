@@ -1,6 +1,6 @@
 ---
-# The progress list has one task per step: eight.
+# The progress list has one task per step: nine.
 type: tool_used
 tool: TaskCreate
-min: 8
+min: 9
 ---
