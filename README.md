@@ -35,7 +35,7 @@ A plugin carries only the component directories it uses.
 3. Validate: `claude plugin validate --strict .` and `claude plugin validate --strict plugins/<name>`.
 4. Try it locally without installing: `claude --plugin-dir plugins/<name>`.
 
-A plugin that lives in another repo is listed with a `git-subdir` or `github` source pinned to a `sha` instead of a local path.
+A plugin that lives in another repo is listed with a `git-subdir` or `github` source instead of a local path. Leave out `sha` and `version` to follow its default branch and its own `plugin.json` version; add a `sha` to freeze it.
 
 ## Versioning
 

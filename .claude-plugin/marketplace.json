@@ -30,11 +30,9 @@
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/the-exodus/claude-design-skills.git",
-        "path": "plugins/design",
-        "sha": "fe825a0823e4edc0f410a61d02c2fbbf5d870634"
+        "path": "plugins/design"
       },
       "description": "Tobias Karlsson's design plugin: interview-driven software design taking a rough pitch to a complete, gap-free design tree, captured as specs, contracts and ADRs, with a lexicon and assumptions record across a project's lifetime.",
-      "version": "0.6.0",
       "author": {
         "name": "Tobias Karlsson"
       },
