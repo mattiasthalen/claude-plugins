@@ -52,7 +52,12 @@ Done when: every planned commit exists and every verification command is green.
 
 ## 6. Review
 
-Run the built-in `/code-review medium` on the diff since the capture commits. Then walk the diff yourself against the brief, section by section; each unmet section is a finding citing its number. A _blocker_ is a correctness finding or an unmet brief section; every other finding is a _nit_. Send the round's blockers to the builder (continue it, so it keeps its context) and review again, three rounds at most.
+Review in rounds, three at most:
+
+- **Round 1** runs the built-in `/code-review medium` on the diff since the capture commits, then walks that diff against the brief, section by section; each unmet section is a finding citing its number.
+- **Rounds 2 and 3** review only the builder's commits since the previous round: `/code-review medium` on them, plus a check that each earlier blocker is resolved.
+
+A _blocker_ is a correctness finding the review is confident in, or an unmet brief section; every other finding, an uncertain one included, is a _nit_. Send the round's blockers to the builder (continue it, so it keeps its context) and start the next round.
 
 Done when: a round finds no blockers, or the third round ends. Blockers left after the third come to me before step 7; nits go to step 8 as tracker candidates.
 
