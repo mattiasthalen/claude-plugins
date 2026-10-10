@@ -1,0 +1,10 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "mattiasthalen",
+  "description": "Mattias Thalén's personal Claude Code plugins.",
+  "owner": {
+    "name": "Mattias Thalén",
+    "url": "https://github.com/mattiasthalen"
+  },
+  "plugins": []
+}

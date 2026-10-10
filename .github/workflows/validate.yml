@@ -1,0 +1,30 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: Validate marketplace
+        # --strict fails an empty catalog, so it applies once a plugin is listed
+        run: |
+          if jq -e '.plugins | length > 0' .claude-plugin/marketplace.json >/dev/null; then
+            claude plugin validate --strict .
+          else
+            claude plugin validate .
+          fi
+      - name: Validate each plugin
+        run: |
+          for p in plugins/*/; do
+            [ -f "$p.claude-plugin/plugin.json" ] || continue
+            claude plugin validate --strict "$p"
+          done
