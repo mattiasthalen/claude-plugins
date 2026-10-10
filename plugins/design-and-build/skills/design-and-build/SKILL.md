@@ -52,14 +52,14 @@ Done when: every planned commit exists and every verification command is green.
 
 ## 6. Review
 
-Review in rounds, three at most:
+Review in rounds, three at most. Each round notes `HEAD` when it starts, and every round walks the whole diff since the capture commits against the brief, section by section; each unmet section is a finding citing its number.
 
-- **Round 1** runs the built-in `/code-review medium` on the diff since the capture commits, then walks that diff against the brief, section by section; each unmet section is a finding citing its number.
-- **Rounds 2 and 3** review only the builder's commits since the previous round: `/code-review medium` on them, plus a check that each earlier blocker is resolved.
+- **Round 1** runs the built-in `/code-review medium` on the diff since the capture commits.
+- **Rounds 2 and 3** run `/code-review medium <previous round's HEAD>..HEAD`, so the review covers the builder's fix commits and the callers they reach, and check that each earlier blocker is resolved.
 
-A _blocker_ is a correctness finding the review is confident in, or an unmet brief section; every other finding, an uncertain one included, is a _nit_. Send the round's blockers to the builder (continue it, so it keeps its context) and start the next round.
+A _blocker_ is an unmet brief section, or a correctness finding whose failure scenario you can trace through the code yourself; every other finding is a _nit_. After rounds 1 and 2, send the blockers to the builder (continue it, so it keeps its context) and start the next round. A blocker the builder disputes instead of fixing comes to me with both sides, and leaves the rounds.
 
-Done when: a round finds no blockers, or the third round ends. Blockers left after the third come to me before step 7; nits go to step 8 as tracker candidates.
+Done when: a round finds no blockers, or round 3 ends. Round 3's blockers come to me before step 7, unfixed; nits go to step 8 as tracker candidates.
 
 ## 7. Pull request
 
