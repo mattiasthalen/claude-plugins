@@ -9,7 +9,7 @@ The interview builds the tree; the plan carries the _brief_, the technical spec 
 
 ## Progress
 
-The task list (TaskCreate, TaskUpdate) is my view of the run. Before step 1, create one task per step, named by its heading. Mark each in progress as it starts and completed once its done-when holds; add a task for each review round as it starts. If approving the plan cleared the list, recreate it with steps 1 to 3 completed.
+The task list (TaskCreate, TaskUpdate) is my view of the run. When those tools are deferred, load them first with ToolSearch `select:TaskCreate,TaskUpdate`. Before step 1, create one task per step, named by its heading. Mark each in progress as it starts and completed once its done-when holds; add a task for each review round as it starts. If approving the plan cleared the list, recreate it with steps 1 to 3 completed.
 
 ## 1. Interview
 

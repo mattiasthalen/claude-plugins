@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "design-and-build",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Design interview in plan mode, then an approved plan carrying the brief, then capture, build, review and PR. Depends on the design plugin.",
   "author": {
     "name": "Mattias Thalén",
