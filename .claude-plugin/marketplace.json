@@ -1,0 +1,42 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "mattiasthalen",
+  "description": "Mattias Thalén's personal Claude Code plugins.",
+  "owner": {
+    "name": "Mattias Thalén",
+    "url": "https://github.com/mattiasthalen"
+  },
+  "plugins": [
+    {
+      "name": "design-and-build",
+      "source": "./plugins/design-and-build",
+      "description": "Design interview in plan mode, then an approved plan carrying the brief, then capture, build, review and PR. Depends on the design plugin.",
+      "author": {
+        "name": "Mattias Thalén",
+        "url": "https://github.com/mattiasthalen"
+      },
+      "category": "workflow",
+      "keywords": [
+        "design",
+        "plan",
+        "build",
+        "review",
+        "pr"
+      ]
+    },
+    {
+      "name": "design",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/the-exodus/claude-design-skills.git",
+        "path": "plugins/design"
+      },
+      "description": "Tobias Karlsson's design plugin: interview-driven software design taking a rough pitch to a complete, gap-free design tree, captured as specs, contracts and ADRs, with a lexicon and assumptions record across a project's lifetime.",
+      "author": {
+        "name": "Tobias Karlsson"
+      },
+      "repository": "https://github.com/the-exodus/claude-design-skills",
+      "category": "development"
+    }
+  ]
+}
