@@ -52,9 +52,9 @@ Done when: every planned commit exists and every verification command is green.
 
 ## 6. Review
 
-Run the built-in `/code-review medium` on the diff since the capture commits. Then walk the diff yourself against the brief, section by section; each unmet section is a finding citing its number. Send findings to the builder (continue it, so it keeps its context) and review again.
+Run the built-in `/code-review medium` on the diff since the capture commits. Then walk the diff yourself against the brief, section by section; each unmet section is a finding citing its number. A _blocker_ is a correctness finding or an unmet brief section; every other finding is a _nit_. Send the round's blockers to the builder (continue it, so it keeps its context) and review again, three rounds at most.
 
-Done when: `/code-review` reports no findings and every brief section is met.
+Done when: a round finds no blockers, or the third round ends. Blockers left after the third come to me before step 7; nits go to step 8 as tracker candidates.
 
 ## 7. Pull request
 
@@ -64,4 +64,4 @@ Done when: the PR is ready, with every Copilot thread resolved or Copilot unavai
 
 ## 8. Report
 
-Update the assumptions record with any assumption invalidated during build. Then report: PR link, acceptance criteria met and unmet, invalidated assumptions, tracker candidates for me to file. Outcomes only.
+Update the assumptions record with any assumption invalidated during build. Then report: PR link, acceptance criteria met and unmet, invalidated assumptions, tracker candidates for me to file, review nits among them. Outcomes only.
