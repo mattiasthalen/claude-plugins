@@ -23,21 +23,22 @@ Done when: every section of every needed artifact is grounded or carries accepte
 
 ## 3. Plan
 
-Explore the affected code until the build names its files and the commands that turn it green. Write the plan in the shape below and present it with ExitPlanMode.
+Explore the affected code until the build names its files and the commands that turn it green. Extend the plan file into the shape below, the design first, and present it with ExitPlanMode. The plan is the design's durable copy: approval can clear the conversation, and steps 4 to 8 work from the plan.
 
-Done when: I approve.
+Done when: I approve a plan that carries the design whole.
 
 ### Plan shape
 
-1. **Brief**: the full technical spec, written out in the plan. Shape per `references/artifacts.md`: functional spec, interface contract, domain model, edge cases, acceptance criteria, with every inference marked. Sections numbered, so commits and findings can cite them
-2. **Capture**: at the documentation location found in Phase 2: lexicon delta, assumptions record delta, ADRs (flagging any they supersede)
-3. **Build**: branch, files, commit order with the brief sections each commit implements, verification commands. Every brief section is covered by a commit
-4. **PR**: the ticket, if any; the PR body; manual steps for me after merge
-5. **Risks**: assumptions most likely to break, and the observation that would reveal each
+1. **Design**: the tree, assumptions and lexicon exactly as step 2 left them, every branch with its rationale. The brief and the capture are written from this section
+2. **Brief**: the full technical spec, written out in the plan. Shape per `references/artifacts.md`: functional spec, interface contract, domain model, edge cases, acceptance criteria, with every inference marked. Sections numbered, so commits and findings can cite them
+3. **Capture**: at the documentation location found in Phase 2: lexicon delta, assumptions record delta, ADRs (flagging any they supersede)
+4. **Build**: branch, files, commit order with the brief sections each commit implements, verification commands. Every brief section is covered by a commit
+5. **PR**: the ticket, if any; the PR body; manual steps for me after merge
+6. **Risks**: assumptions most likely to break, and the observation that would reveal each
 
 ## 4. Capture
 
-Write the capture section yourself, in the main session, where the tree lives, and commit it first on the branch.
+Write the capture section yourself, in the main session, from the plan's design section, and commit it first on the branch.
 
 Copy the approved brief verbatim to `brief.md` in your scratchpad: the builder's hand-off, since it shares no context with the plan. The repo's durable record is the ADRs and assumptions. If the work has a ticket, post the brief there as a comment (Jira through the `twg` CLI).
 
