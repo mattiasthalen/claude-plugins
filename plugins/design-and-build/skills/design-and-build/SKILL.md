@@ -1,6 +1,7 @@
 ---
 name: "design-and-build"
 description: Design interview in plan mode, then an approved plan carrying the brief, then capture, build, review and PR.
+argument-hint: "<pitch>"
 disable-model-invocation: true
 ---
 
@@ -10,7 +11,7 @@ The interview builds the tree; the plan carries the _brief_, the technical spec 
 
 Enter plan mode with EnterPlanMode. Invoke the `design:design-interview` skill and run it through Phase 8. Pitch: $ARGUMENTS
 
-Step 4 covers its Phase 8 offers; carry on to step 2.
+Leave its Phase 8 capture offers to step 4 and carry on to step 2.
 
 Done when: every branch is terminal through the four locks, and the tree, assumptions and lexicon are laid out in the conversation.
 
