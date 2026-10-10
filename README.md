@@ -30,7 +30,7 @@ A plugin carries only the component directories it uses.
 1. `claude plugin init plugins/<name>` (or create the layout above by hand).
 2. Add an entry to `.claude-plugin/marketplace.json`:
    ```json
-   { "name": "<name>", "source": "./plugins/<name>", "description": "…", "version": "0.1.0", "category": "workflow" }
+   { "name": "<name>", "source": "./plugins/<name>", "description": "…", "category": "workflow" }
    ```
 3. Validate: `claude plugin validate --strict .` and `claude plugin validate --strict plugins/<name>`.
 4. Try it locally without installing: `claude --plugin-dir plugins/<name>`.
@@ -39,4 +39,4 @@ A plugin that lives in another repo is listed with a `git-subdir` or `github` so
 
 ## Versioning
 
-Bump `version` in both `plugin.json` and the marketplace entry on every change that should reach installed copies; `claude plugin update` only pulls a new version.
+A local plugin's version lives only in its `plugin.json`; the marketplace entry leaves it out so the two cannot drift. Bump it on every change that should reach installed copies: `claude plugin update` only pulls a new version.

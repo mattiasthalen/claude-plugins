@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install -g @anthropic-ai/claude-code
+      - run: npm install -g @anthropic-ai/claude-code@2.1.287
       - name: Validate marketplace
         # --strict fails an empty catalog, so it applies once a plugin is listed
         run: |
