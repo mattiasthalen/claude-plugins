@@ -21,4 +21,4 @@ Plan mode is not testable here: runs are `claude -p` children, and the runner wi
 
 | Case | Checks |
 |---|---|
-| `design-and-build/starts-with-interview` | invoked with a pitch, the skill loads `design:design-interview` by its qualified name |
+| `design-and-build/starts-with-interview` | invoked with a pitch, the skill creates one task per step, marks step 1 in progress, then loads `design:design-interview` by its qualified name |
