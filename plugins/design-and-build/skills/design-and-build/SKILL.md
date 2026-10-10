@@ -17,7 +17,7 @@ Done when: every branch is terminal through the four locks, and the tree, assump
 
 ## 2. Gap check
 
-Read `design-interview`'s `references/artifacts.md`. For every artifact this design needs, walk each section against the tree. A section is either _grounded_ (the tree answers it) or a _gap_. Put every gap to me in prose, and close it by reopening its branch under the four locks or by recording my acceptance of marked inference.
+Read `references/artifacts.md` in `design-interview`'s skill directory. For every artifact this design needs, walk each section against the tree. A section is either _grounded_ (the tree answers it) or a _gap_. Put every gap to me in prose, and close it by reopening its branch under the four locks or by recording my acceptance of marked inference.
 
 Done when: every section of every needed artifact is grounded or carries accepted inference.
 
@@ -38,7 +38,7 @@ Done when: I approve a plan that carries the design whole.
 
 ## 4. Capture
 
-Write the capture section yourself, in the main session, from the plan's design section, and commit it first on the branch.
+Create the plan's branch. Write the capture section yourself, in the main session, from the plan's design section, and commit it first on that branch.
 
 Copy the approved brief verbatim to `brief.md` in your scratchpad: the builder's hand-off, since it shares no context with the plan. The repo's durable record is the ADRs and assumptions. If the work has a ticket, post the brief there as a comment (Jira through the `twg` CLI).
 
