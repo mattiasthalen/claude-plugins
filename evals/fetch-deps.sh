@@ -10,5 +10,6 @@ if [ ! -d "$dest/.git" ]; then
   git clone -q --depth 1 --filter=blob:none --sparse https://github.com/the-exodus/claude-design-skills.git "$dest"
   git -C "$dest" sparse-checkout set plugins/design
 else
-  git -C "$dest" pull -q --ff-only
+  git -C "$dest" fetch -q --depth 1 origin HEAD
+  git -C "$dest" reset -q --hard FETCH_HEAD
 fi

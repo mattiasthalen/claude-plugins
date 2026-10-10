@@ -1,5 +1,5 @@
 ---
-description: "Invoked with a pitch, design-and-build loads design:design-interview and presents no plan on the first turn."
+description: "Invoked with a pitch, design-and-build loads design:design-interview by its qualified name."
 tags: [design-and-build, smoke]
 plugins: ["../../../plugins/design-and-build", "../../../.eval-deps/claude-design-skills/plugins/design"]
 max_turns: 20
