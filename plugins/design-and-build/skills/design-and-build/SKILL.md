@@ -52,9 +52,14 @@ Done when: every planned commit exists and every verification command is green.
 
 ## 6. Review
 
-Run the built-in `/code-review medium` on the diff since the capture commits. Then walk the diff yourself against the brief, section by section; each unmet section is a finding citing its number. Send findings to the builder (continue it, so it keeps its context) and review again.
+Review in rounds, three at most. Each round notes `HEAD` when it starts, and every round walks the whole diff since the capture commits against the brief, section by section; each unmet section is a finding citing its number.
 
-Done when: `/code-review` reports no findings and every brief section is met.
+- **Round 1** runs the built-in `/code-review medium` on the diff since the capture commits.
+- **Rounds 2 and 3** run `/code-review medium <previous round's HEAD>..HEAD`, so the review covers the builder's fix commits and the callers they reach, and check that each earlier blocker is resolved.
+
+A _blocker_ is an unmet brief section, or a correctness finding whose failure scenario you can trace through the code yourself; every other finding is a _nit_. After rounds 1 and 2, send the blockers to the builder (continue it, so it keeps its context) and start the next round. A blocker the builder disputes instead of fixing comes to me with both sides, and leaves the rounds.
+
+Done when: a round finds no blockers, or round 3 ends. Round 3's blockers come to me before step 7, unfixed; nits go to step 8 as tracker candidates.
 
 ## 7. Pull request
 
@@ -64,4 +69,4 @@ Done when: the PR is ready, with every Copilot thread resolved or Copilot unavai
 
 ## 8. Report
 
-Update the assumptions record with any assumption invalidated during build. Then report: PR link, acceptance criteria met and unmet, invalidated assumptions, tracker candidates for me to file. Outcomes only.
+Update the assumptions record with any assumption invalidated during build. Then report: PR link, acceptance criteria met and unmet, invalidated assumptions, tracker candidates for me to file, review nits among them. Outcomes only.
