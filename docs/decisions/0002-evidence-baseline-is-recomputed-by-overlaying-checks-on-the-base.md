@@ -8,7 +8,7 @@ The gate shows, per acceptance criterion, a check that fails before the change a
 
 ## Decision
 
-The proving stage recomputes the baseline itself. It checks out each slice's base in a worktree under `.git/delivering-pitches/`, overlays HEAD's check files, and runs them: criteria must fail there, with the real output shown, and pass at HEAD; guardrails must pass at both. Nothing the build reported is trusted.
+The proving stage recomputes the baseline itself. It checks out each slice's base in a worktree under `$TMPDIR/delivering-pitches/`, overlays HEAD's check files, and runs them: criteria must fail there, with the real output shown, and pass at HEAD; guardrails must pass at both. Nothing the build reported is trusted.
 
 Rejected:
 - A checks-only first commit per slice, giving an auditable red commit: it breaks atomic commits.
@@ -18,4 +18,4 @@ Rejected:
 
 - A check that imports code the slice adds fails at base for the wrong reason; the evidence shows the actual error so the reader can judge it.
 - Only executable checks get a computed baseline; judged checks are flagged as judged.
-- Worktrees live inside `.git`, so they are never tracked and stay writable in the eval sandbox.
+- Worktrees live under `$TMPDIR`, outside the repository, so they are never tracked; it is the one place outside the workspace an eval run may write, while Claude Code's permission layer refuses writes into `.git/`.

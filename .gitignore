@@ -2,4 +2,4 @@
 .claude/settings.local.json
 .claude/worktrees/
 .eval-deps/
-evals/results/
+evals/**/results/
