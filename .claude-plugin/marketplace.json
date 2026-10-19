@@ -20,6 +20,26 @@
       },
       "repository": "https://github.com/the-exodus/claude-design-skills",
       "category": "development"
+    },
+    {
+      "name": "implementation",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/the-exodus/claude-design-skills.git",
+        "path": "plugins/implementation"
+      },
+      "description": "Tobias Karlsson's implementation plugin: how names and comments read, and the pre-PR review cycle with fresh-context reviewers by lens.",
+      "author": {
+        "name": "Tobias Karlsson"
+      },
+      "repository": "https://github.com/the-exodus/claude-design-skills",
+      "category": "development"
+    },
+    {
+      "name": "delivery",
+      "source": "./plugins/delivery",
+      "description": "Anything in, a pull request out: one feature from pitch through design interview, plan, build, review and an evidence gate to ready PRs.",
+      "category": "workflow"
     }
   ]
 }

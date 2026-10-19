@@ -3,3 +3,4 @@
 .claude/worktrees/
 .eval-deps/
 evals/**/results/
+.delivering-pitches/
