@@ -6,4 +6,4 @@ The interview's tree contradicts itself: branch 2 says the consumer is Swedish E
 
 | Stage | Starts from | Graded |
 |---|---|---|
-| `plan` | the contradictory tree | a fresh subagent runs; the contradiction is surfaced and put to the requester, not silently resolved |
+| `plan` | the contradictory tree | the contradiction is surfaced and put to the requester, not silently resolved |

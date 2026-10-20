@@ -1,7 +1,6 @@
 ---
-type: tool_used
-tool: Bash
-input_match: 'gh pr create[\s\S]*(!\[|<img)'
-min: 0
-max: 0
+type: regex
+target: {source: file, path: .delivering-pitches/pr-csv-export.md}
+pattern: '!\[|<img'
+match: not_contains
 ---

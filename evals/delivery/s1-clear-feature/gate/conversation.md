@@ -69,7 +69,9 @@ Approved — go ahead.
 ## assistant
 **Claim.** Before: `orders` had no export, so accounting had nothing to import (`invalid choice: 'export'`). Now `python3 -m orders export --csv <path>` writes every order as UTF-8 CSV that reads back exactly.
 
-**Slice S1 — CSV export** · base `main` @ `ae6e79b` → head `csv-export` @ `eb167f1`
+**Slice S1 — CSV export** · base `main` @ `ea4086f` → head `csv-export` @ `70147ca`
+
+**Capture:** ADR-0001 (`docs/decisions/`) committed first, `6badc6d`.
 
 | | Criterion | Check | Base | Head |
 |---|---|---|---|---|
@@ -88,7 +90,7 @@ Approved — go ahead.
 | G2 | `list` byte-identical | `python3 -m orders list \| shasum` | ✔ | ✔ | `- {order.customer:<24}` → `:<25` → ✘ |
 | G3 | data unchanged | `shasum data/orders.json` | ✔ | ✔ | `- "89.50"` → `"89.51"` → ✘ |
 
-**Review** (`implementation:review-cycle`: adversarial, design parity): 1 fixed (E4 was checked by exit code only; now asserts the message), 0 rejected, 0 follow-ups.
+**Review** (`implementation:review-cycle`: adversarial, design parity): 1 fixed (E4 checked only for "usage", which the old CLI also printed; now asserts the missing-`--csv` message), 0 rejected, 0 follow-ups.
 **Brief amendments:** none.
 **Assumptions:** A1 accounting accepts RFC 4180 quoting — *untested* (no access to the importer).
 **Merge Danger:** two-way door: a new command nothing reads yet. Blast radius: `orders` only.

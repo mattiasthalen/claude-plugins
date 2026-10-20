@@ -12,8 +12,10 @@
 # files for build.sh to lay over the first commit; it is never committed as is. Graders and specs never
 # leave the eval directory: only fixtures/ is copied.
 set -euo pipefail
-# Fixed dates make every fixture commit, and so every SHA a history quotes, reproducible.
+# Fixed dates and no user or system git config (signing, hooks) make every fixture commit,
+# and so every SHA a history quotes, the same on any machine and inside an eval run.
 export GIT_AUTHOR_DATE=2026-10-13T09:00:00Z GIT_COMMITTER_DATE=2026-10-13T09:00:00Z
+export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
 lib="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 fixtures="$lib/../fixtures"
 for spec in "$@"; do
@@ -24,11 +26,13 @@ for spec in "$@"; do
   (
     cd "$dir"
     cp -R "$fixtures/$name/." .
-    rm -rf build.sh branch
+    rm -rf build.sh branch page
     git init -q -b main .
     git add -A
     git -c user.name=ops -c user.email=ops@example.com commit -q -m "Initial import"
-    # review-cycle takes its base from origin/HEAD; a fixture has no remote.
+    # A remote nobody can reach: pushes are attempted and fail, as gh does unauthenticated.
+    # review-cycle takes its base from origin/HEAD.
+    git remote add origin "https://github.com/example/$name.git"
     git update-ref refs/remotes/origin/main main
     git symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/main
     if [ -f "$fixtures/$name/build.sh" ]; then

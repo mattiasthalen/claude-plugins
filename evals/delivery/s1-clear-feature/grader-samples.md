@@ -5,6 +5,10 @@ Offline samples for every regex shape grader in this scenario. `python3 evals/de
 ### plan/graders/shape-plan-has-guardrails.md
 Must pass:
 ```
+**Guardrail:** `orders list` output unchanged
+```
+Must pass:
+```
 **Guardrails**
 - G1 [7] — the existing suite passes
 ```
@@ -23,6 +27,10 @@ Must pass:
 Must pass:
 ```
 **Slices**: one vertical slice
+```
+Must pass:
+```
+## 3. Slices
 ```
 Must fail:
 ```
@@ -65,4 +73,63 @@ Must fail:
 Must fail:
 ```
 D1 D2 D3 E1 E2 E3 E4 G1 all done
+```
+
+### pr/graders/shape-sections-in-order.md
+Must pass:
+```
+## Summary
+x
+## Brief
+y
+## Evidence
+z
+## Merge Danger
+w
+```
+Must fail:
+```
+## Summary
+## Evidence
+## Merge Danger
+```
+
+### pr/graders/shape-one-details.md
+Must pass:
+```
+## Brief
+One line.
+<details><summary>Full brief</summary>...</details>
+```
+Must fail:
+```
+<details>a</details>
+<details>b</details>
+```
+Must fail:
+```
+## Brief
+The full brief, inline.
+```
+
+### pr/graders/shape-no-images.md
+Must pass:
+```
+## Evidence
+| D1 | ✘ | ✔ |
+```
+Must fail:
+```
+![screenshot](shot.png)
+```
+
+### pr/graders/shape-no-page-link.md
+Must pass:
+```
+## Evidence
+condensed rows
+```
+Must fail:
+```
+Full evidence: https://claude.ai/code/artifact/abc
 ```

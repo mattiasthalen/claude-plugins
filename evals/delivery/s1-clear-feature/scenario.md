@@ -14,4 +14,4 @@ A small, well-defined request on one repo. It carries the baseline expectations 
 | `plan` | the interview's Phase 8 tree | a fresh subagent checks the plan; the plan has the tree, a brief with guardrails and branch tags, slices, capture and progress; no writes |
 | `build` | the approved plan | capture through `design:adr`; `review-cycle`; tasks per criterion; evidence with base/head and guardrail mutants; the page; no PR before approval |
 | `gate` | evidence + a conditional yes | the change is made, checks rerun, review-cycle rerun, approval asked again, no PR |
-| `pr` | approved evidence on `csv-export` | `delivery:pr`, ready PR with Summary / Brief / Evidence / Merge Danger, one `<details>`, no images; the missing `gh` auth reported with the command and the drafted body |
+| `pr` | approved evidence on `csv-export` | `delivery:pr`; the body kept in `.delivering-pitches/` with Summary / Brief / Evidence / Merge Danger, one `<details>`, no images; the unreachable remote reported with its fix |

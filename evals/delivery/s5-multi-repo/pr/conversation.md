@@ -38,8 +38,8 @@ Approved — go ahead.
 ## assistant
 **Claim.** Before: the API only sent `customerId`, so renaming it would break every installed app. Now `api` sends both for one release and `mobile` reads `accountId`, falling back to `customerId`.
 
-**Slice S1 — api** · base `main` @ `c528721` → head `rename-customer-id-to-account-id` @ `ef62c95`
-**Slice S2 — mobile** · base `main` @ `8f08c6a` → head `rename-customer-id-to-account-id` @ `8bbd47a`
+**Slice S1 — api** · base `main` @ `e380caa` → head `rename-customer-id-to-account-id` @ `8ce7072`
+**Slice S2 — mobile** · base `main` @ `2b60831` → head `rename-customer-id-to-account-id` @ `b4b288b`
 
 | | Repo | Criterion | Check | Base | Head |
 |---|---|---|---|---|---|

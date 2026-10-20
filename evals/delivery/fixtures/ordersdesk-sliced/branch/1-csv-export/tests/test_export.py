@@ -45,7 +45,7 @@ class ExportTest(unittest.TestCase):
     def test_missing_csv_is_a_usage_error(self):
         result = export()
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("usage", result.stderr)
+        self.assertIn("the following arguments are required: --csv", result.stderr)
 
 
 if __name__ == "__main__":

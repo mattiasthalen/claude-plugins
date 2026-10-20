@@ -1,5 +1,5 @@
 ---
-description: "S1 PR stage after approval: delivery:pr, ready PR body shape, gh auth failure reported with the command and body."
+description: "S1 PR stage after approval: delivery:pr, the kept body has the agreed shape, the failed push reported with its fix."
 tags: [s1, stage-pr]
 plugins: ["../../../../plugins/delivery", "../../../../.eval-deps/claude-design-skills/plugins/design", "../../../../.eval-deps/claude-design-skills/plugins/implementation"]
 max_turns: 60

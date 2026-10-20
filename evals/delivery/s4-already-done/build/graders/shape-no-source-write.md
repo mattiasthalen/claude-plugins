@@ -1,7 +1,7 @@
 ---
 type: tool_used
 tool: Write
-input_match: '"file_path":"[^"]*/orders/'
+input_match: '"file_path":\s*"[^"]*/orders/'
 min: 0
 max: 0
 ---

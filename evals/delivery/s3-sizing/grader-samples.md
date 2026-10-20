@@ -3,6 +3,10 @@
 ### small/graders/shape-plan-has-guardrails.md
 Must pass:
 ```
+**Guardrail:** `orders list` output unchanged
+```
+Must pass:
+```
 **Guardrails**
 - G1 — `orders list` output unchanged
 ```

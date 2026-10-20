@@ -28,8 +28,8 @@ Approved — go ahead.
 ## assistant
 **Claim.** Before: no export. Now accounting can export every order, and pull only orders since a date.
 
-**Slice 1 — `csv-export`** · base `main` @ `ae6e79b` → head @ `eb167f1`: A1–A4 ✘ `invalid choice: 'export'` → ✔.
-**Slice 2 — `csv-export-since`** · base `csv-export` @ `eb167f1` → head @ `df203a7`: B1, B2 ✘ `unrecognized arguments: --since` → ✔; B3 ✘ exit 2 for the wrong reason → ✔ `invalid fromisoformat value: '3/9'`.
+**Slice 1 — `csv-export`** · base `main` @ `ea4086f` → head @ `7871671`: A1–A4 ✘ `invalid choice: 'export'` → ✔.
+**Slice 2 — `csv-export-since`** · base `csv-export` @ `7871671` → head @ `487969e`: B1, B2 ✘ `unrecognized arguments: --since` → ✔; B3 ✘ exit 2 for the wrong reason → ✔ `invalid fromisoformat value: '3/9'`.
 **Guardrails:** G1 suite 1/1 → 5/5 → 8/8 · G2 `list` byte-identical · G3 data unchanged; each with a mutant → ✘.
 **Merge Danger:** two-way doors; slice 2 merges after slice 1.
 
