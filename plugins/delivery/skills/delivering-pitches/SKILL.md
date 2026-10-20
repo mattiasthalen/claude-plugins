@@ -19,7 +19,7 @@ When EnterPlanMode exists, enter plan mode first. Invoke `design:design-intervie
 
 ## Planning
 
-Nothing is written to the repo until the plan is approved. The plan has these five sections, in order, whether or not the interview ran:
+Nothing is written to the repo until the plan is approved. The plan has these five sections, in order and each under its name as a heading, whether or not the interview ran:
 
 1. **Design**: the tree, assumptions and lexicon delta, as the interview laid them out.
 2. **Brief**: the functional spec, edge cases and acceptance criteria in the shape of design-interview's `references/artifacts.md`, plus **Guardrails**: what must not change. Every criterion, edge case and guardrail carries the branch it came from, as `[n]`, and its check: a command, or "judged". A choice no branch made gets a branch.
