@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "delivery",
+  "version": "0.1.0",
+  "description": "Anything in, a pull request out: one feature from pitch through design interview, plan, build, review and an evidence gate to ready PRs. Orchestrates the exodus design and implementation skills.",
+  "author": {
+    "name": "Mattias Thalén",
+    "url": "https://github.com/mattiasthalen"
+  },
+  "repository": "https://github.com/mattiasthalen/claude-plugins",
+  "license": "MIT",
+  "dependencies": [
+    "design",
+    "implementation"
+  ]
+}
