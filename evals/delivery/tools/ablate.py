@@ -127,7 +127,7 @@ def main():
         for n, unit in enumerate(spans, 1):
             print(f"{n:3}  [{unit[1] or 'intro'}] {text_of(lines, unit)[:110]}")
         return
-    chosen = [int(n) for n in args.only.split(",")] if args.only else range(1, len(spans) + 1)
+    chosen = [int(n) for n in args.only.split(",") if n.strip()] if args.only else range(1, len(spans) + 1)
 
     def ablate(n):
         unit, section = spans[n - 1], spans[n - 1][1]
