@@ -134,7 +134,8 @@ def main():
         copy = Path(tempfile.mkdtemp(prefix=f"ablate-{n}-"))
         shutil.copytree(ROOT, copy, dirs_exist_ok=True, symlinks=True,
                         ignore=shutil.ignore_patterns(".git", ".eval-deps", "results", "00000000-*"))
-        (copy / ".eval-deps").symlink_to(ROOT / ".eval-deps")
+        # A copy, not a symlink: the runner only loads plugins from inside the directory it runs in.
+        shutil.copytree(ROOT / ".eval-deps", copy / ".eval-deps", ignore=shutil.ignore_patterns(".git"))
         (copy / SKILL.relative_to(ROOT)).write_text(head + without(lines, unit), encoding="utf-8")
         subprocess.run([sys.executable, str(copy / "evals/delivery/tools/rebuild_histories.py")], cwd=copy,
                        check=True, stdout=subprocess.DEVNULL)
