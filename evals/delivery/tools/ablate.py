@@ -84,6 +84,8 @@ def below_bar(result_paths, runs):
     cases = [c for p in result_paths if p.exists() for c in json.load(open(p))["cases"]]
     if len(cases) < len(result_paths):
         failed.append("(a case produced no result)")
+    if any(run["error"] for case in cases for run in case["arms"]["with"]):
+        return ["(errored runs: rerun this unit)"]
     for case in cases:
         counts = {}
         for run in case["arms"]["with"]:
@@ -141,7 +143,8 @@ def main():
                        check=True, stdout=subprocess.DEVNULL)
         dropped = below_bar(run_cases(CASES[section], args.runs, copy, copy), args.runs)
         shutil.rmtree(copy, ignore_errors=True)
-        print(f"{n:3} {'earned' if dropped else 'DELETE'}  {text_of(lines, unit)[:90]}", flush=True)
+        verdict = "RERUN" if dropped[:1] == ["(errored runs: rerun this unit)"] else "earned" if dropped else "DELETE"
+        print(f"{n:3} {verdict}  {text_of(lines, unit)[:90]}", flush=True)
         return {"unit": n, "section": section, "text": text_of(lines, unit), "earned": bool(dropped), "dropped": dropped}
 
     with ThreadPoolExecutor(args.parallel) as pool:
