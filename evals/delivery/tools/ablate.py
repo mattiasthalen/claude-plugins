@@ -8,7 +8,7 @@ paragraph or list item. For each unit the skill is rewritten without it, histori
 the cases its section touches (CASES) run, and every grader is held to its bar (shape-* 5/5, content-* 4/5 at 5 runs, scaled
 for other run counts). A unit is earned when deleting it drops some grader below its bar; the
 rest are candidates to delete (ADR-0004). A unit naming a feature in EXCEPTIONS is a bounded
-exception (ADR-0005): no eval can observe the feature, so it is never cut.
+exception (ADR-0006): no eval can observe the feature, so it is never cut.
 
 Each unit runs in its own copy of the repo under $TMPDIR, so units run in parallel and the
 working tree is never touched.

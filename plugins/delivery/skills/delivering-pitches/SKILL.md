@@ -47,7 +47,7 @@ The reply and the page carry the same evidence:
 
 A criterion still red after a fair try leads the evidence: its last output, what was tried and why it fails. Ask the requester to choose: continue, re-plan (change the brief) or abandon, which keeps the branches and removes the copies. Never call it done.
 
-The page is Anthropic-styled HTML, light and dark. With the Artifact tool, write it in the scratchpad and publish it; otherwise write `.delivering-pitches/evidence.html`. Beyond the evidence it carries exactly one view of the change, the smallest that makes the point; a leaf change gets none.
+The page is Anthropic-styled HTML, light and dark. With the Artifact tool, write it in the scratchpad and publish it. Otherwise write `.delivering-pitches/evidence.html`. Beyond the evidence it carries exactly one view of the change, the smallest that makes the point; a leaf change gets none.
 
 End by asking for approval. A yes with a condition is a change request: amend the brief, make the change, rerun the checks and mutants and `implementation:review-cycle`, and ask again.
 

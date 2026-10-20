@@ -8,7 +8,7 @@ The words someone needs defined to talk about using or developing this marketpla
 
 **delivery** — One feature taken from a pitch through design, plan, build, *evidence* and pull requests. Distinct from a *slice*, an increment within it, and from an epic, which is several deliveries.
 
-**evidence** — Each *check*'s result at a *slice*'s base and head, with guardrail mutants, review dispositions, assumptions and merge danger: the one source the *gate* reply, the evidence page and the pull request bodies render. Spent once approved. "Proof" is not used. See [ADR-0002](decisions/0002-evidence-baseline-is-recomputed-by-overlaying-checks-on-the-base.md).
+**evidence** — Each *check*'s result at a *slice*'s base and head (a judged check at the head only), with guardrail mutants, review dispositions, assumptions and merge danger: the one source the *gate* reply, the evidence page and the pull request bodies render. Spent once approved. "Proof" is not used. See [ADR-0002](decisions/0002-evidence-baseline-is-recomputed-by-overlaying-checks-on-the-base.md).
 
 **gate** — The point where the requester approves the *evidence*; pull requests open only after it. Distinct from plan approval, which gates the build.
 

@@ -14,8 +14,12 @@ Installing it also installs its two dependencies from this marketplace, Tobias K
 2. **Plan**: the design tree, then a brief whose every criterion, edge case and guardrail has a check and the branch it came from, then slices, the records to write, and progress. A fresh subagent checks it before you see it.
 3. **Build**, after you approve: the records first, then each slice.
 4. **Review** with `implementation:review-cycle`.
-5. **Evidence**: every check run at the base and at the head, each guardrail against a mutant, as a page (published where the Artifact tool exists). Approve it, or ask for a change.
+5. **Evidence**: every executable check run at the base and at the head (judged checks flagged), each guardrail against a mutant, as a page (published where the Artifact tool exists). Approve it, or ask for a change.
 6. **Pull requests**, ready for review, one per slice and repo.
+
+## Files it leaves in your repo
+
+The drafted PR bodies, and the evidence page when there is no Artifact tool, go in `.delivering-pitches/` at the repo's root. The run never commits them; add the folder to your `.gitignore` if you'd rather not see it.
 
 ## Progress
 

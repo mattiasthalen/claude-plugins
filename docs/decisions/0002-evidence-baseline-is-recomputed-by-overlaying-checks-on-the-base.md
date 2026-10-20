@@ -22,4 +22,4 @@ Rejected:
 
 ## Addendum 2026-10-20
 
-The probes and the eval traces showed two things after the decision was taken. `git worktree add` fails inside eval runs: `/opt/homebrew/bin/git` commits there, but adding a worktree still calls the xcrun shim. So eval runs take the base copy with `git archive` instead, and the skill names both. The location is now `${TMPDIR:-/tmp}/delivering-pitches/<repo>-<sha>/`, because an unsandboxed shell on Linux may have no `TMPDIR`. Each copy is removed once its checks have run.
+The decision stands: the base is recomputed from a copy, never trusted from the build. Two details of how it is copied changed once probes and traces were in. In eval runs, `git worktree add` runs its checkout through whatever `git` is first on PATH, which is the broken xcrun shim there. Runs therefore make the copy with `git worktree add --no-checkout` followed by `reset --hard`, or with `git archive`, and the skill names both. The location is now `${TMPDIR:-/tmp}/delivering-pitches/<repo>-<sha>/`, because an unsandboxed shell on Linux may have no `TMPDIR`. Each copy is removed once its checks have run.

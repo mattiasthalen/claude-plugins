@@ -12,7 +12,7 @@ claude plugin eval . --eval-dir evals/delivery --model claude-opus-5-5 --judge-m
 python3 evals/delivery/tools/report.py evals/results/delivery.json
 ```
 
-One case: `--case 's1-build' --runs 1`. Rerun the [runner probes](../probes/README.md) after a Claude Code upgrade: what they find (no plan mode, no Artifact tool, only Homebrew's `git` and no worktrees, unauthenticated `gh`) shapes what these cases can grade.
+One case: `--case 's1-build' --runs 1`. Rerun the [runner probes](../probes/README.md) after a Claude Code upgrade: what they find (no plan mode, no Artifact tool, only Homebrew's `git`, worktrees only with `--no-checkout`, unauthenticated `gh`) shapes what these cases can grade.
 
 ## Bars
 
