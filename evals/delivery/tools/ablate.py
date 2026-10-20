@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Delete each sentence of delivering-pitches in turn and report which ones no grader needs.
 
-    python3 evals/delivery/tools/ablate.py [--paragraphs] [--runs N] [--only <n,n,...>] [--list] [--json out.json]
+    python3 evals/delivery/tools/ablate.py [--paragraphs] [--runs N] [--parallel N] [--only <n,n,...>] [--list] [--json out.json]
 
 The skill is cut into units: one sentence of a paragraph or list item, or with --paragraphs one
 paragraph or list item. For each unit the skill is rewritten without it, histories are rebuilt,
@@ -10,19 +10,21 @@ for other run counts). A unit is earned when deleting it drops some grader below
 rest are candidates to delete (ADR-0004). A unit naming a feature in EXCEPTIONS is a bounded
 exception (ADR-0005): no eval can observe the feature, so it is never cut.
 
-The skill file is restored and histories rebuilt when the run ends, however it ends.
+Each unit runs in its own copy of the repo under $TMPDIR, so units run in parallel and the
+working tree is never touched.
 """
 import argparse
 import json
 import re
+import shutil
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 import sys
 import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 SKILL = ROOT / "plugins" / "delivery" / "skills" / "delivering-pitches" / "SKILL.md"
-REBUILD = [sys.executable, str(Path(__file__).with_name("rebuild_histories.py"))]
 # The cases each section of the skill can fail; a unit runs only its section's cases.
 CASES = {
     "": ["s1-intake", "s1-build"],
@@ -91,8 +93,8 @@ def below_bar(result_paths, runs):
     return failed
 
 
-def run_cases(cases, runs, outdir):
-    """Runs each case as its own eval, all at once (--case takes one glob). Returns the result paths."""
+def run_cases(cases, runs, outdir, root):
+    """Runs each case as its own eval in `root`, all at once (--case takes one glob). Returns the result paths."""
     procs, outs = [], []
     for case in cases:
         out = outdir / f"{case}.json"
@@ -100,7 +102,7 @@ def run_cases(cases, runs, outdir):
         cmd = ["claude", "plugin", "eval", ".", "--eval-dir", "evals/delivery", "--case", case, "--model", "claude-opus-5-5",
                "--judge-model", "claude-opus-5-5", "--ablation", "none", "--scaffold", "--allow-tools", "Write", "Edit",
                "Bash", "--runs", str(runs), "-j", "5", "--trust-plugin", "--no-publish", "--json", str(out)]
-        procs.append(subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
+        procs.append(subprocess.Popen(cmd, cwd=root, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
         outs.append(out)
     for p in procs:
         p.wait()
@@ -110,6 +112,7 @@ def run_cases(cases, runs, outdir):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--paragraphs", action="store_true")
+    ap.add_argument("--parallel", type=int, default=4)
     ap.add_argument("--runs", type=int, default=5)
     ap.add_argument("--only", help="comma-separated unit numbers, as listed by --list")
     ap.add_argument("--list", action="store_true", help="print the units and exit")
@@ -126,20 +129,22 @@ def main():
         return
     chosen = [int(n) for n in args.only.split(",")] if args.only else range(1, len(spans) + 1)
 
-    report = []
-    try:
-        with tempfile.TemporaryDirectory() as tmp:
-            for n in chosen:
-                section = spans[n - 1][1]
-                SKILL.write_text(head + without(lines, spans[n - 1]), encoding="utf-8")
-                subprocess.run(REBUILD, cwd=ROOT, check=True, stdout=subprocess.DEVNULL)
-                outs = run_cases(CASES[section], args.runs, Path(tmp))
-                dropped = below_bar(outs, args.runs)
-                report.append({"unit": n, "section": section, "text": text_of(lines, spans[n - 1]), "earned": bool(dropped), "dropped": dropped})
-                print(f"{n:3} {'earned' if dropped else 'DELETE'}  {text_of(lines, spans[n - 1])[:90]}", flush=True)
-    finally:
-        SKILL.write_text(original, encoding="utf-8")
-        subprocess.run(REBUILD, cwd=ROOT, check=True, stdout=subprocess.DEVNULL)
+    def ablate(n):
+        unit, section = spans[n - 1], spans[n - 1][1]
+        copy = Path(tempfile.mkdtemp(prefix=f"ablate-{n}-"))
+        shutil.copytree(ROOT, copy, dirs_exist_ok=True, symlinks=True,
+                        ignore=shutil.ignore_patterns(".git", ".eval-deps", "results", "00000000-*"))
+        (copy / ".eval-deps").symlink_to(ROOT / ".eval-deps")
+        (copy / SKILL.relative_to(ROOT)).write_text(head + without(lines, unit), encoding="utf-8")
+        subprocess.run([sys.executable, str(copy / "evals/delivery/tools/rebuild_histories.py")], cwd=copy,
+                       check=True, stdout=subprocess.DEVNULL)
+        dropped = below_bar(run_cases(CASES[section], args.runs, copy, copy), args.runs)
+        shutil.rmtree(copy, ignore_errors=True)
+        print(f"{n:3} {'earned' if dropped else 'DELETE'}  {text_of(lines, unit)[:90]}", flush=True)
+        return {"unit": n, "section": section, "text": text_of(lines, unit), "earned": bool(dropped), "dropped": dropped}
+
+    with ThreadPoolExecutor(args.parallel) as pool:
+        report = sorted(pool.map(ablate, chosen), key=lambda r: r["unit"])
     if args.json:
         Path(args.json).write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     sys.exit(0)
