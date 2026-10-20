@@ -19,3 +19,7 @@ Rejected:
 - A check that imports code the slice adds fails at base for the wrong reason; the evidence shows the actual error so the reader can judge it.
 - Only executable checks get a computed baseline; judged checks are flagged as judged.
 - Worktrees live under `$TMPDIR`, outside the repository, so they are never tracked; it is the one place outside the workspace an eval run may write, while Claude Code's permission layer refuses writes into `.git/`.
+
+## Addendum 2026-10-20
+
+The probes and the eval traces showed two things after the decision was taken. `git worktree add` fails inside eval runs: `/opt/homebrew/bin/git` commits there, but adding a worktree still calls the xcrun shim. So eval runs take the base copy with `git archive` instead, and the skill names both. The location is now `${TMPDIR:-/tmp}/delivering-pitches/<repo>-<sha>/`, because an unsandboxed shell on Linux may have no `TMPDIR`. Each copy is removed once its checks have run.

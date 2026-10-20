@@ -12,7 +12,7 @@ claude plugin eval . --eval-dir evals/delivery --model claude-opus-5-5 --judge-m
 python3 evals/delivery/tools/report.py evals/results/delivery.json
 ```
 
-One case: `--case 's1-build' --runs 1`. Rerun the [runner probes](../probes/README.md) after a Claude Code upgrade: what they find (no plan mode, no Artifact tool, no `git`, unauthenticated `gh`) shapes what these cases can grade.
+One case: `--case 's1-build' --runs 1`. Rerun the [runner probes](../probes/README.md) after a Claude Code upgrade: what they find (no plan mode, no Artifact tool, only Homebrew's `git` and no worktrees, unauthenticated `gh`) shapes what these cases can grade.
 
 ## Bars
 
@@ -33,7 +33,7 @@ One case: `--case 's1-build' --runs 1`. Rerun the [runner probes](../probes/READ
     graders/
 fixtures/              the repos cases run in; scaffolding fixes commit dates so SHAs quoted in histories hold
 lib/scaffold.sh
-tools/                 compose_history.py, rebuild_histories.py, test_shape_graders.py, report.py, ablate.py
+tools/                 compose_history.py, rebuild_histories.py, test_shape_graders.py, report.py, ablate.py, test_ablate.py
 ```
 
 **After every edit to the skill, run `python3 evals/delivery/tools/rebuild_histories.py`**: a history embeds the skill's body where its conversation invokes `/delivery:delivering-pitches`. `python3 evals/delivery/tools/test_shape_graders.py` checks every regex grader against its samples, offline.

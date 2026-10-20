@@ -64,7 +64,7 @@ Capture, build, review, evidence, PR.
 ### build/graders/shape-page-lists-every-criterion.md
 Must pass:
 ```
-<td>D1</td><td>✘</td><td>✔</td> D2 D3 E1 E2 E3 E4 G1
+<td>D1</td><td>✘</td><td>✔</td> D2 D3 E1 E2 E3 E4 G1 G2 G3
 ```
 Must fail:
 ```
@@ -72,7 +72,11 @@ Must fail:
 ```
 Must fail:
 ```
-D1 D2 D3 E1 E2 E3 E4 G1 all done
+D1 ✘ ✔ D2 D3 E1 E2 E3 E4 G1 only
+```
+Must fail:
+```
+D1 D2 D3 E1 E2 E3 E4 G1 G2 G3 all done
 ```
 
 ### pr/graders/shape-sections-in-order.md

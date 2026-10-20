@@ -15,8 +15,9 @@ claude plugin eval . --eval-dir evals/probes --model claude-opus-5-5 --judge-mod
 | `artifact` | **fails**: the Artifact tool is off | The publish line (ADR-0005) needs an eval that fails without it. |
 | `task-tools` | passes | Progress graders break. |
 | `gh-pr` | passes; `gh` exits 4 (no auth), the `--body` is visible | If `gh` succeeds, a shipping stage could reach GitHub: isolate before running it. |
-| `git-in-sandbox` | `python-works` passes; `git-works` **fails**: `/usr/bin/git` is the xcrun shim. `/opt/homebrew/bin/git` works | If `/usr/bin/git` works too, nothing changes. |
+| `git-in-sandbox` | `python-works` passes; `git-works` **fails**: `/usr/bin/git` is the xcrun shim. `/opt/homebrew/bin/git` commits, but `worktree add` fails (see `worktree`) | If worktrees work, the evidence's base copy can drop its `git archive` path (ADR-0002). |
 | `write-scope` | `tmpdir` passes; `inside-git` **fails**: the permission layer refuses `.git/` writes | Revisit where overlay worktrees live (ADR-0002). |
+| `worktree` | **fails** (seen in every s1-build trace; the probe itself has not run yet): `worktree add` reaches the xcrun shim even through Homebrew's `git` | Overlay base copies can use worktrees in evals too (ADR-0002). |
 | `read-plugin-folder` | passes | — |
 
 Measured results are recorded in `docs/assumptions.md` under *Measured*.

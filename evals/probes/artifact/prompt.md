@@ -1,5 +1,5 @@
 ---
-description: Probe whether the Artifact tool exists in an eval child. Expected to fail on 2.1.287 (the tool is off in eval runs); if it passes, the publish line in SKILL.md (ADR-0009, A19) needs an eval that fails without it.
+description: Probe whether the Artifact tool exists in an eval child. Expected to fail (the tool is off in eval runs); if it passes, the publish line in delivering-pitches (ADR-0005) needs an eval that fails without it.
 max_turns: 10
 allowed_tools: [Artifact, Write, Read]
 ---

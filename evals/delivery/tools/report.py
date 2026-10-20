@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Read a `claude plugin eval --json` result and report it by tier, part and case.
+"""Read a `claude plugin eval --json` result and report it by tier, stage and case.
 
     python3 evals/delivery/tools/report.py <result.json> [--runs]
 
 Graders are tiered by file name: `shape-*` graders are deterministic, and a miss reads as
-"add a line"; `content-*` graders are judged. This prints pass counts per tier for each part
+"add a line"; `content-*` graders are judged. This prints pass counts per tier for each stage
 (from the case tags) and for each case, the graders that missed, each case's cost, and every run
 that errored before it could be graded — an errored run is a failure, never a silent zero. With
 --runs it also prints each run's error and trace path, which is where a failure is read before
@@ -49,7 +49,7 @@ for case in result["cases"]:
     prompt = Path(suite.get("root", ".")) / case.get("dir", "") / "prompt.md"
     head = prompt.read_text(encoding="utf-8").split("---")[1] if prompt.exists() else ""
     tags = re.search(r"^tags:\s*\[(.*?)\]", head, re.M)
-    parts = [t.strip() for t in tags.group(1).split(",") if t.strip().startswith("part-")] if tags else []
+    parts = [t.strip() for t in tags.group(1).split(",") if t.strip().startswith("stage-")] if tags else []
     parts = parts or ["untagged"]
     for arm, runs in case.get("arms", {}).items():
         c, misses, errs = counts(), defaultdict(int), []

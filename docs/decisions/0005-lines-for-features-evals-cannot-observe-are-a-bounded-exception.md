@@ -18,3 +18,7 @@ Rejected:
 
 - Probes are rerun after Claude Code upgrades.
 - What the suite grades for these stages is the fallback, not the real feature.
+
+## Addendum 2026-10-20
+
+The host task-list line has no committed probe of its own. The host tool, such as the desktop app's, is not a Claude Code tool, so nothing an eval run could call would show it present or absent. Its exception rests on that, not on a probe. The skill keeps only the stages on the host tool, which caps a plan at twelve steps, and puts per-criterion tasks on TaskCreate (or TodoWrite) where those exist. With no task tool at all, it ticks the plan's Progress checklist.

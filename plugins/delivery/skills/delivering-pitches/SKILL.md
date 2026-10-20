@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 One feature, from pitch to ready pull requests. Tobias Karlsson's skills do the design, the records, the style and the review; this skill sequences them and owns the plan, the evidence gate and the pull requests. Invoke each by its qualified name and follow it as written.
 
-Keep a task list from the first turn with TaskCreate and TaskUpdate: one task per stage. Once the plan is approved, add one task for each criterion, edge case and guardrail by its id, never grouped, and complete each when its check passes at HEAD. Use the host's task-list tool instead when the session has one.
+Keep a task list from the first turn with TaskCreate and TaskUpdate (or TodoWrite): one task per stage. Once the plan is approved, add one task for each criterion, edge case and guardrail by its id, never grouped, and complete each when its check passes at HEAD. When the session has the host's task-list tool, keep the stages there instead. With no task tool at all, tick the plan's Progress checklist.
 
 ## Intake
 
@@ -31,29 +31,30 @@ Before presenting it, give the plan to one fresh `general-purpose` subagent with
 
 ## Building slices
 
-After approval, write each criterion's check and run it at the base. If every one already passes, the work is done: say so, discard the checks, change nothing and open nothing. Otherwise write the capture through `design:adr` and `design:lexicon` as the first commit, then build each slice with atomic commits. Then invoke `implementation:review-cycle` once per repo, at the top of its stack.
+After approval, write each criterion's check and run it at the base. If every one already passes, the work is done: say so, discard the checks, change nothing and open nothing. A criterion already passing is reported as already satisfied; dropping it or turning it into a guardrail changes the brief and needs the requester's yes. Otherwise write the capture through `design:adr` and `design:lexicon` as the first commit, then build each slice with atomic commits, staging files by path so `.delivering-pitches/` never reaches a commit. Then invoke `implementation:review-cycle` once per repo, at the top of its stack, and move each fix to the slice whose brief section its finding cites (`git commit --fixup`, then `GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash --update-refs`).
 
 ## Proving changes
 
-Recompute the evidence; trust nothing the build reported. For each slice, check out its base in a worktree under `$TMPDIR/delivering-pitches/`, copy HEAD's check files in, and run them: each criterion must fail there, with its real output quoted, and pass at HEAD. Guardrails must pass at both. Break each guardrail once with a one-line mutant; a check its mutant survives is vacuous, so strengthen it and prove it again before going on.
+Recompute the evidence; trust nothing the build reported. For each slice, check out its base in a throwaway copy under `${TMPDIR:-/tmp}/delivering-pitches/<repo>-<sha>/` (a worktree, or `git archive` where worktrees fail), copy HEAD's check files in, and run them: each criterion must fail there, with its real output quoted, and pass at HEAD. A judged check gets no base run; flag it as judged. Guardrails must pass at both. Break each guardrail once with a one-line mutant, in a throwaway copy, never the working tree; a check its mutant survives is vacuous, so strengthen it and prove it again before going on. Remove each copy when its checks have run.
 
 The reply and the page carry the same evidence:
 
 - a claim: the problem before, and what is true now;
 - per slice, its base and head SHAs and a table with one row per criterion and edge case: check, base and head;
 - the guardrails, each with its mutant;
+- the repo's own mutation tool's score, when one is already configured;
 - the review's dispositions, any brief amendments, assumptions with the untested ones marked, Merge Danger (a one- or two-way door, and the blast radius), and follow-ups.
 
-A criterion still red after a fair try leads the evidence: its last output, what was tried and why it fails. Ask the requester to choose: continue, re-plan (change the brief) or abandon. Never call it done.
+A criterion still red after a fair try leads the evidence: its last output, what was tried and why it fails. Ask the requester to choose: continue, re-plan (change the brief) or abandon, which keeps the branches and removes the copies. Never call it done.
 
-The page is Anthropic-styled HTML, light and dark. With the Artifact tool, write it in the scratchpad and publish it; otherwise write `.delivering-pitches/evidence.html`. Beyond the evidence it carries at most one view of the change, the smallest that makes the point; a leaf change gets none.
+The page is Anthropic-styled HTML, light and dark. With the Artifact tool, write it in the scratchpad and publish it; otherwise write `.delivering-pitches/evidence.html`. Beyond the evidence it carries exactly one view of the change, the smallest that makes the point; a leaf change gets none.
 
 End by asking for approval. A yes with a condition is a change request: amend the brief, make the change, rerun the checks and mutants and `implementation:review-cycle`, and ask again.
 
 ## Shipping PRs
 
-Only after approval. Prove again if a base or head moved. For each slice, invoke `delivery:pr` and write its body to `.delivering-pitches/pr-<branch>.md` at the repo's root, adding a `## Brief` section after the Summary: one line, then the full brief and tree in the body's only `<details>`. Where `pr` asks for screenshots or a glossary, this skill wins: no images, the project's own lexicon.
+Only after approval. Prove again if a base or head moved. For each slice, invoke `delivery:pr` and write its body to `.delivering-pitches/pr-<branch>.md` at the repo's root (`/` in a branch name becomes `-`), adding a `## Brief` section after the Summary: one line, then the full brief and tree in the body's only `<details>`. Where `pr` asks for screenshots or a glossary, this skill wins: no images, the project's own lexicon.
 
-Then push each branch and open one ready pull request per slice and repo with `gh pr create --body-file`. Stack same-repo slices with `gh stack` when it is installed; otherwise base each on the previous slice's branch with `--base`, and say in Merge Danger to merge the lower PR first, that this one retargets when that branch is deleted, and to rebase if its commits show. Across repos, each body names the other PRs and the merge order, and a cross-repo criterion appears in every PR it touches. If a push or `gh` fails, say what failed, the exact command that fixes it, and where the bodies are kept.
+Check `gh auth status` before pushing. Then push each branch and open one ready pull request per slice and repo with `gh pr create --body-file`, in merge order, so a later body can cite the earlier PR's number. Stack same-repo slices with `gh stack` only when it is installed and the repo has stacked PRs enabled, then set each body with `gh pr edit <n> --body-file` and mark it ready with `gh pr ready`; otherwise base each on the previous slice's branch with `--base`, and say in Merge Danger to merge the lower PR first, that this one retargets when that branch is deleted, and to rebase if its commits show. Across repos, each body names the other PRs and the merge order (add the numbers with `gh pr edit` once all are open), and a cross-repo criterion appears in every PR it touches. If `gh` or a push fails, say what failed, the exact command that fixes it, and where the bodies are kept.
 
 End with the PR links, tracker candidates and follow-ups.

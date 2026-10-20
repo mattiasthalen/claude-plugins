@@ -20,3 +20,7 @@ Rejected:
 - Every change to the skill needs histories rebuilt and the affected cases rerun.
 - Eval spend is uncapped by choice and runs at pitch-and-deliver's scale.
 - Behaviour no case covers cannot enter the skill except under ADR-0005.
+
+## Addendum 2026-10-20
+
+The first `delivering-pitches` shipped without a completed ablation pass. Every line entered against a failing case, but the deletion pass was stopped part way: `delivery` is about to be split into a per-stage `sdlc` plugin, and that split reruns ablation per stage. The partial run kept the intro, the task list, the interview call, the five plan sections and the gap check, and found two paragraphs that no grader needed: the epic refusal under Intake and the Planning lead-in. Both are still in the skill. Changes made after the last suite run, from the pre-PR review, have not been run against the suite either.

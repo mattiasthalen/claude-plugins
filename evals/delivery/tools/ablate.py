@@ -80,26 +80,30 @@ def bar(name, runs):
 
 
 def below_bar(result_paths, runs):
+    """The graders a unit's deletion dropped below their bar, or None when the results cannot judge
+    it (a case with no result, a partial result, fewer runs than asked, or an errored run): rerun it."""
+    results = [json.load(open(p)) for p in result_paths if p.exists()]
+    if len(results) < len(result_paths) or any(r.get("partial") for r in results):
+        return None
+    cases = [c for r in results for c in r["cases"]]
+    if any(len(c["arms"]["with"]) < runs or any(run["error"] for run in c["arms"]["with"]) for c in cases):
+        return None
     failed = []
-    cases = [c for p in result_paths if p.exists() for c in json.load(open(p))["cases"]]
-    if len(cases) < len(result_paths):
-        failed.append("(a case produced no result)")
-    if any(run["error"] for case in cases for run in case["arms"]["with"]):
-        return ["(errored runs: rerun this unit)"]
     for case in cases:
         counts = {}
         for run in case["arms"]["with"]:
             for g in run["graders"]:
-                counts[g["name"]] = counts.get(g["name"], 0) + bool(g["passed"])
+                if g.get("scored", True):
+                    counts[g["name"]] = counts.get(g["name"], 0) + bool(g["passed"])
         failed += [f'{case["name"]}/{n}' for n, c in counts.items() if c < bar(n, runs)]
     return failed
 
 
-def run_cases(cases, runs, outdir, root):
+def run_cases(cases, runs, root):
     """Runs each case as its own eval in `root`, all at once (--case takes one glob). Returns the result paths."""
     procs, outs = [], []
     for case in cases:
-        out = outdir / f"{case}.json"
+        out = root / f"{case}.json"
         out.unlink(missing_ok=True)
         cmd = ["claude", "plugin", "eval", ".", "--eval-dir", "evals/delivery", "--case", case, "--model", "claude-opus-5-5",
                "--judge-model", "claude-opus-5-5", "--ablation", "none", "--scaffold", "--allow-tools", "Write", "Edit",
@@ -141,9 +145,9 @@ def main():
         (copy / SKILL.relative_to(ROOT)).write_text(head + without(lines, unit), encoding="utf-8")
         subprocess.run([sys.executable, str(copy / "evals/delivery/tools/rebuild_histories.py")], cwd=copy,
                        check=True, stdout=subprocess.DEVNULL)
-        dropped = below_bar(run_cases(CASES[section], args.runs, copy, copy), args.runs)
+        dropped = below_bar(run_cases(CASES[section], args.runs, copy), args.runs)
         shutil.rmtree(copy, ignore_errors=True)
-        verdict = "RERUN" if dropped[:1] == ["(errored runs: rerun this unit)"] else "earned" if dropped else "DELETE"
+        verdict = "RERUN" if dropped is None else "earned" if dropped else "DELETE"
         print(f"{n:3} {verdict}  {text_of(lines, unit)[:90]}", flush=True)
         return {"unit": n, "section": section, "text": text_of(lines, unit), "earned": bool(dropped), "dropped": dropped}
 

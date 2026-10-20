@@ -18,10 +18,12 @@ check = "--check" in sys.argv
 
 
 def project_cwd(scaffold):
-    """/work/<project>, from the first fixture the stage's scaffold copies (ledger-* → ledger)."""
-    words = scaffold.read_text(encoding="utf-8").split("scaffold.sh\"", 1)[1].split()
-    name = words[0].split(":")[0] if words else "project"
-    return "/work/" + ("ledger" if ":" in (words[0] if words else "") and name.startswith("ledger") else name.split(":")[0])
+    """/work/<project>: the first fixture the stage's scaffold copies, or for a multi-repo spec
+    (fixture:dir) the fixture's family (ledger-api-renamed:api → ledger)."""
+    first = scaffold.read_text(encoding="utf-8").split('scaffold.sh"', 1)[1].split()[0]
+    return "/work/" + (first.split("-")[0] if ":" in first else first)
+
+
 stale = []
 for conversation in sorted(ROOT.glob("evals/delivery/*/*/conversation.md")):
     history = conversation.with_name("history.jsonl")
