@@ -1,0 +1,9 @@
+# Ship
+
+Check that every head is the one the evidence was approved at; if one moved, go back to prove.
+
+For each slice, invoke `sdlc:pr` and write the body into the run's folder as `pr-<branch>.md`. Use the repository's `.github/pull_request_template.md` sections when it has one; otherwise `## Summary`, `## Testing` (this slice's criteria and their results at the head, the existing suite, eval pass rates), `## Risk` (tier, merge danger, merge order) and `## How to revert`. Where `pr` asks for screenshots, a glossary or other sections, this wins: no images, no spec, no design tree.
+
+Check `gh auth status`, then push each branch and open one ready pull request per slice and repo with `gh pr create --title … --body-file …`, in merge order. Base a later slice on the earlier slice's branch with `--base` and say in its Risk to merge the lower one first. Across repos, each body names the others and the merge order. A repo with no change gets no pull request.
+
+If `gh` or a push fails, say what failed, the exact command that fixes it, and where the bodies are. End with the links and follow-ups, and write `done` to `phase`.
