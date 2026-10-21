@@ -19,3 +19,25 @@ Must fail:
 ```
 {"type":"text","text":"Skipping the security pass."}
 ```
+
+### build/graders/shape-pr-body-file.md
+Must pass:
+```
+{"file_path": "/T/sdlc-3f2a/pr-csv-export.md", "content": "## Summary"}
+```
+Must pass:
+```
+gh pr create --title "Export every order as CSV" --body-file "$D/pr-csv-export.md"
+```
+Must fail:
+```
+{"file_path": "/w/sdlc-handoff/pr-csv-export.md", "content": "## Summary"}
+```
+Must fail:
+```
+Write the body into the run's folder as `pr-<branch>.md`.
+```
+Must fail:
+```
+gh pr create --title "Export every order as CSV" --body "## Summary"
+```

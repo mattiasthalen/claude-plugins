@@ -7,6 +7,22 @@ Offline samples for every regex shape grader in this scenario. `python3 evals/sd
 ### spec/graders/shape-phase-written.md
 Must pass:
 ```
+D="$TMPDIR/sdlc-3f2a"; mkdir -p "$D" && printf spec > "$D/phase"
+```
+Must pass:
+```
+D=\"$TMPDIR/sdlc-93b6\"; mkdir -p \"$D\" && printf spec > \"$D/phase\"
+```
+Must fail:
+```
+D="/work/ordersdesk/sdlc-handoff"; echo spec > "$D/phase"
+```
+Must fail:
+```
+D="$TMPDIR/sdlc-3f2a"; cat "$D/phase"
+```
+Must pass:
+```
 {"file_path": "/var/folders/xy/T/sdlc-3f2a9c1e/phase", "content": "spec\n"}
 ```
 Must pass:
@@ -109,6 +125,18 @@ Must fail:
 ### plan/graders/shape-phase-plan.md
 Must pass:
 ```
+R="$TMPDIR/sdlc-3f2a"; mkdir -p "$R" && printf 'plan\n' > "$R/phase"
+```
+Must fail:
+```
+R="/work/ordersdesk/sdlc-handoff"; printf plan > "$R/phase"
+```
+Must fail:
+```
+R="$TMPDIR/sdlc-3f2a"; printf spec > "$R/phase"
+```
+Must pass:
+```
 {"file_path": "/var/folders/xy/T/sdlc-3f2a9c1e/phase", "content": "plan\n"}
 ```
 Must pass:
@@ -142,6 +170,28 @@ echo plan > phase
 
 
 ## ship
+
+### ship/graders/shape-pr-body-file.md
+Must pass:
+```
+{"file_path": "/T/sdlc-3f2a/pr-csv-export.md", "content": "## Summary"}
+```
+Must pass:
+```
+gh pr create --title "Export every order as CSV" --body-file "$D/pr-csv-export.md"
+```
+Must fail:
+```
+{"file_path": "/w/sdlc-handoff/pr-csv-export.md", "content": "## Summary"}
+```
+Must fail:
+```
+Write the body into the run's folder as `pr-<branch>.md`.
+```
+Must fail:
+```
+gh pr create --title "Export every order as CSV" --body "## Summary"
+```
 
 ### ship/graders/shape-reply-names-fix.md
 Must pass:

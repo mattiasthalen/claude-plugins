@@ -18,6 +18,8 @@ Prove is done; this is the evidence gate. The evidence is written next to the ot
 | P2 | data unchanged (preservation) | `git diff --exit-code main -- data/orders.json` | ✔ |
 | P3 | existing suite passes (preservation) | `python3 -m unittest discover -s tests` | ✔ 5/5 |
 
+(`git` here is `/opt/homebrew/bin/git`; the `/usr/bin` shim fails in this sandbox.)
+
 **CI:** none configured. **Existing suite:** ✔ 5/5 at the head. No test file changed after the test gate outside the test-writer's commits.
 **Review:** 2 rounds. 1 fixed (E1 asserted only "usage", which the old CLI also printed; the test-writer tightened it to the missing-`--csv` message, added mid-run), 0 closed with a reason, 0 pre-existing. Security pass: 0 findings.
 **Assumptions:** A1 accounting accepts RFC 4180 quoting — *untested* (no access to the importer).

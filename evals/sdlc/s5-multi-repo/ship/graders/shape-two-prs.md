@@ -1,6 +1,6 @@
 ---
 type: tool_used
-tool: Bash
-input_match: 'gh pr create(?=[^\n]*--body-file)'
+tool: Write
+input_match: '"file_path":\s*"[^"]*/sdlc(?:-[^"/]*)?/pr-[^"/]+\.md"'
 min: 2
 ---
