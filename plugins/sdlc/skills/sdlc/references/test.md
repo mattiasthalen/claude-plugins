@@ -1,6 +1,6 @@
 # Test
 
-Dispatch the `sdlc:test-writer` agent with `spec.md` and the plan's check descriptions, and only those. It writes every test and judged rubric and commits them on the slice's branch. Dispatch it even when the repository already seems to hold the change or its tests: the base run shows it.
+Dispatch the `sdlc:test-writer` agent with `spec.md` and the plan's check descriptions, and only those. It writes every test and judged rubric and commits them on the slice's branch. Dispatch it before asking anything, even when the repository already seems to hold the change or its tests: the base run shows it, and the question comes after.
 
 Then run every check at the base and show each result by id: a change criterion should be red, a preservation criterion green. Flag every other result; a change criterion already green means the work may be done already, so ask the requester before going on.
 

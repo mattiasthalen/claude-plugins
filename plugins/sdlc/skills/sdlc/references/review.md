@@ -10,4 +10,4 @@
 
 **Ledger.** Keep the findings in `review.md` in the run's folder: one line each with its disposition. A finding whose lines `git blame` dates before the base is `Pre-existing`: a follow-up, never a fix here. Never report a finding twice. Search for each kept finding's class across the change and fix every instance.
 
-**Fixes.** Fix what holds. A defect that needs a regression test goes to `sdlc:test-writer` with the spec and the finding, never the fix; that test is a new criterion, added mid-run. After the first round, re-review only the diff since the last round. Stop after three rounds and go to prove with what is open.
+**Fixes.** Fix what holds. A defect that needs a regression test goes to `sdlc:test-writer` with the spec and the finding, never the fix, and commits that test itself; that test is a new criterion, added mid-run. After the first round, re-review only the diff since the last round. Stop after three rounds and go to prove with what is open.
