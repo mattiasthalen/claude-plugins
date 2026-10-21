@@ -6,6 +6,7 @@ What `sdlc` must do, stage by stage. Its lines are earned against this suite ([A
 
 ```sh
 evals/fetch-deps.sh
+python3 evals/sdlc/tools/rebuild_histories.py
 claude plugin eval . --eval-dir evals/sdlc --model claude-opus-5-5 --judge-model claude-opus-5-5 \
   --ablation none --scaffold --allow-tools Write Edit Bash --runs 5 -j 4 --trust-plugin \
   --json evals/results/sdlc.json
@@ -36,6 +37,6 @@ lib/scaffold.sh
 tools/                 compose_history.py, rebuild_histories.py, test_shape_graders.py, report.py, ablate.py, test_ablate.py
 ```
 
-**After every edit to the skill, run `python3 evals/sdlc/tools/rebuild_histories.py`**: a history embeds the skill's body where its conversation invokes `/sdlc`. `python3 evals/sdlc/tools/test_shape_graders.py` checks every regex grader against its samples, offline.
+**Before a run, and after every edit to the skill, run `python3 evals/sdlc/tools/rebuild_histories.py`**: a history embeds the skill's body and its real base directory where its conversation invokes `/sdlc`, so it is built on each machine and never committed. `python3 evals/sdlc/tools/test_shape_graders.py` checks every regex grader against its samples, offline.
 
 Fixtures and tooling are adapted from [pitch-and-deliver](https://github.com/mattiasthalen/pitch-and-deliver)'s suite.

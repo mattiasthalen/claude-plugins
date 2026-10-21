@@ -20,8 +20,10 @@ turn's position, which keeps the output byte-identical across rebuilds.
 A user turn that invokes `/sdlc` (or `/sdlc:sdlc`) is written the way Claude Code records a real
 invocation: the command, then a meta record carrying the skill's current body. Without it a
 resumed stage would never see the skill, and lines earned for it would have no effect there.
-The body is read from plugins/sdlc/skills/sdlc/SKILL.md at build time, so a history goes stale
-whenever the skill changes: rebuild them all with evals/sdlc/tools/rebuild_histories.py.
+The body is read from plugins/sdlc/skills/sdlc/SKILL.md at build time, and the base directory is that skill's
+real path, so the run can read the skill's reference files. A history is therefore machine-specific and not
+committed: build them before a run, and again
+whenever the skill changes, with evals/sdlc/tools/rebuild_histories.py.
 """
 from pathlib import Path
 import json
@@ -72,7 +74,7 @@ for role, text in turns:
     records.append(("user", "<command-message>sdlc:sdlc</command-message>\n"
                     "<command-name>/sdlc:sdlc</command-name>\n"
                     f"<command-args>{args}</command-args>", {}))
-    meta = f"Base directory for this skill: /work/plugin/skills/sdlc\n\n{skill_body()}\n\nARGUMENTS: {args}"
+    meta = f"Base directory for this skill: {SKILL.parent}\n\n{skill_body()}\n\nARGUMENTS: {args}"
     records.append(("user", [{"type": "text", "text": meta}], {"isMeta": True}))
 parent = None
 with open(out, "w", encoding="utf-8") as f:

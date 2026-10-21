@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Rebuild every staged case's history.jsonl from its conversation.md and the current skill.
 
-    python3 evals/sdlc/tools/rebuild_histories.py           # after every edit to the skill
-    python3 evals/sdlc/tools/rebuild_histories.py --check   # exit 1 if any history is stale (CI)
+    python3 evals/sdlc/tools/rebuild_histories.py           # before a run, and after every edit to the skill
+    python3 evals/sdlc/tools/rebuild_histories.py --check   # exit 1 if any history is stale
 
-A history embeds the skill's body where the conversation invokes /sdlc, so
-it goes stale whenever plugins/sdlc/skills/sdlc/SKILL.md changes.
+A history embeds the skill's body and its real base directory where the conversation invokes /sdlc,
+so it is machine-specific (gitignored) and goes stale whenever plugins/sdlc/skills/sdlc/SKILL.md changes.
 """
 import subprocess
 import sys
