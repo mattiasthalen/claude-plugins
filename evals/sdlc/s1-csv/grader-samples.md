@@ -294,6 +294,9 @@ Must fail:
 ### build/graders/shape-test-paths-diffed.md
 Must pass:
 ```
+{"command":"G=/opt/homebrew/bin/git; $G log --format='%h %s' 15418d3..HEAD -- tests/"}
+```
+```
 {"name":"Bash","input":{"command":"git diff --name-only 15418d3..HEAD -- tests/ 'test_*'","description":"x"}}
 ```
 Must pass:
