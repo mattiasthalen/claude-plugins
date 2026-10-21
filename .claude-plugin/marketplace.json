@@ -36,9 +36,9 @@
       "category": "development"
     },
     {
-      "name": "delivery",
-      "source": "./plugins/delivery",
-      "description": "Anything in, a pull request out: one feature from pitch through design interview, plan, build, review and an evidence gate to ready PRs.",
+      "name": "sdlc",
+      "source": "./plugins/sdlc",
+      "description": "An AI-native SDLC: one change from intent through spec, plan, tests, build, review and evidence to ready PRs, with gates where you approve.",
       "category": "workflow"
     }
   ]
