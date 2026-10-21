@@ -16,7 +16,7 @@ One change, from intent to ready pull requests, in seven stages. Each stage read
 | prove | `evidence.md` | the evidence gate |
 | ship | pull requests | done |
 
-**Documents** live in the run's folder: `sdlc/` in the session scratchpad, or `$TMPDIR/sdlc-${CLAUDE_SESSION_ID}/` in a session without one. Nothing else is written before the plan is approved, and the documents are never committed.
+**Documents** live in the run's folder: `sdlc/` in the session scratchpad, or `$TMPDIR/sdlc-${CLAUDE_SESSION_ID}/` in a session without one — never inside a repository. Documents handed in from elsewhere are read where they are; what the run writes goes to its folder. Nothing else is written before the plan is approved, and the documents are never committed.
 
 **Phase.** As each stage starts, write its name to `phase` in the run's folder (`spec`, `plan`, `test`, `build`, `review`, `prove`, `ship`), and `done` when the run ends or stops. The plugin's hook reads it to refuse writes the stage must not make; a refusal is information, never an obstacle to route around.
 

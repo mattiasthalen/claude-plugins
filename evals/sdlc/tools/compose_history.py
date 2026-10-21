@@ -61,7 +61,9 @@ INVOKE = re.compile(r"/(?:sdlc:)?sdlc(?:\s+(.*))?\Z", re.S)
 def skill_body():
     text = SKILL.read_text(encoding="utf-8")
     m = re.match(r"---\n.*?\n---\n?(.*)", text, re.S)
-    return (m.group(1) if m else text).strip("\n")
+    body = (m.group(1) if m else text).strip("\n")
+    # Claude Code substitutes these when it loads a skill; a history has to as well.
+    return body.replace("${CLAUDE_SESSION_ID}", SESSION).replace("${CLAUDE_SKILL_DIR}", str(SKILL.parent))
 
 
 records = []
