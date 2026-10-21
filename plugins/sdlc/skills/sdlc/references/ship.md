@@ -1,6 +1,6 @@
 # Ship
 
-Check that every head is the one the evidence was approved at; if one moved, go back to prove.
+Check that every head is the one the evidence was approved at. If one moved, prove again at the new head — every check and the existing suite, run there — and bring the fresh evidence back to the gate.
 
 For each slice, invoke `sdlc:pr` and write the body into the run's folder as `pr-<branch>.md`. Use the repository's `.github/pull_request_template.md` sections when it has one; otherwise `## Summary`, `## Testing` (this slice's criteria and their results at the head, the existing suite, eval pass rates), `## Risk` (tier, merge danger, merge order) and `## How to revert`. Wherever the evidence goes, its rows keep their ids (C1, E1, P1). Where `pr` asks for screenshots, a glossary or other sections, this wins: no images, no spec, no design tree.
 

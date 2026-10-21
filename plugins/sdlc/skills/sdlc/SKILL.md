@@ -18,7 +18,7 @@ One change, from intent to ready pull requests, in seven stages. Each stage read
 
 **Documents** live in the run's folder: `sdlc/` in the session scratchpad, or `$TMPDIR/sdlc-${CLAUDE_SESSION_ID}/` in a session without one — never inside a repository. Documents handed in from elsewhere are read where they are; what the run writes goes to its folder. Nothing else is written before the plan is approved, and the documents are never committed.
 
-**Phase.** As each stage starts, write its name to `phase` in the run's folder (`spec`, `plan`, `test`, `build`, `review`, `prove`, `ship`), and `done` when the run ends or stops. The plugin's hook reads it to refuse writes the stage must not make; a refusal is information, never an obstacle to route around.
+**Phase.** As each stage starts, write its name to `phase` in the run's folder (`spec`, `plan`, `test`, `build`, `review`, `prove`, `ship`), and `done` when the run ends or stops. The plugin's hook reads it to refuse writes the stage must not make, so write files with Write or Edit, not the shell, where it can see them; a refusal is information, never an obstacle to route around.
 
 **Gates.** A gate presents its document and its path, and asks for approval in prose. A yes moves on; "yes, but…" is a change request: amend the document and ask again. Every gate is also a seam: ask whether to continue in this session, continue in a new one (and which folder to keep the documents in, naming each document's absolute path there), or stop. Between the test gate and the evidence gate the run goes on unattended.
 
