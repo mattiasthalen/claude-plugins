@@ -84,6 +84,15 @@ class StageGate(unittest.TestCase):
         self.assertEqual(r.docs, Path(r.env["TMPDIR"]) / "sdlc-s1")
         self.assertIsNotNone(r.decide("src/app.py"))
 
+    def test_finds_phase_under_sandboxed_bash_tmpdir(self):
+        r = self.run_in(None, scratchpad=False)
+        nested = Path(r.env["TMPDIR"]) / f"claude-{os.getuid()}" / "sdlc-s1"
+        nested.mkdir(parents=True)
+        (nested / "phase").write_text("plan\n")
+        self.assertEqual(stage_gate.docs_dir(r.event, r.env), nested)
+        self.assertIsNotNone(r.decide("src/app.py"))
+        self.assertIsNone(r.decide(str(nested / "plan.md")))
+
     def test_sessions_do_not_share_phase(self):
         r = self.run_in("plan", scratchpad=False)
         other = dict(r.event, session_id="s2", tool_input={"file_path": "src/app.py"})

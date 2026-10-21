@@ -2,7 +2,7 @@
 """PreToolUse gate on file writes during an sdlc run (ADR-0009).
 
 The run's phase lives in `<docs>/phase`, where <docs> is `<scratchpad>/sdlc`, or
-`$TMPDIR/sdlc-<session_id>` in a session without a scratchpad. The skill writes the
+`$TMPDIR/sdlc-<session_id>` (the Bash tool's $TMPDIR) in a session without a scratchpad. The skill writes the
 phase as each stage starts; with no phase file, or phase `done`, the gate is inert.
 
     spec, plan   writes only into <docs>
@@ -27,10 +27,20 @@ PRE_APPROVAL = {"spec", "plan"}
 POST_TEST = {"build", "review", "prove", "ship"}
 
 
-def docs_dir(event, env=os.environ):
+def docs_dirs(event, env=os.environ):
+    """Where the run's folder can be. Without a scratchpad it is under the Bash tool's $TMPDIR, which a
+    sandboxed session nests as <TMPDIR>/claude-<uid> below the TMPDIR this hook sees."""
     if event.get("scratchpad_dir"):
-        return Path(event["scratchpad_dir"]) / "sdlc"
-    return Path(env.get("TMPDIR", "/tmp")) / f"sdlc-{event.get('session_id', '')}"
+        return [Path(event["scratchpad_dir"]) / "sdlc"]
+    tmp = Path(env.get("TMPDIR", "/tmp"))
+    name = f"sdlc-{event.get('session_id', '')}"
+    return [tmp / name, tmp / f"claude-{os.getuid()}" / name]
+
+
+def docs_dir(event, env=os.environ):
+    """The run's folder: the first candidate holding a phase file, else the first candidate."""
+    dirs = docs_dirs(event, env)
+    return next((d for d in dirs if (d / "phase").is_file()), dirs[0])
 
 
 def is_test_file(path, cwd):
