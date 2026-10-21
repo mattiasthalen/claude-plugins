@@ -10,7 +10,7 @@ What this marketplace's designs rest on without having verified, each with how y
 | A3 | The Artifact tool is off in `claude plugin eval` runs. | evals | A probe finds the Artifact tool present. |
 | A7 | TaskCreate/TaskUpdate run in eval cases that list them in `allowed_tools`. | evals | A case listing them shows no Task calls in any run. |
 | A8 | `gh` is unauthenticated in eval runs, and a `gh pr create --body` stays visible to graders. | evals | A probe's `gh auth status` succeeds. |
-| A12 | A chip's brief can carry absolute paths, and the session scratchpad survives for the life of its session. | sdlc / seams | A resumed stage finds a named document gone. |
+| A12 | The session scratchpad survives for the life of its session, so a chip given its documents' absolute paths can still read them when it starts. Reading them was probed (Measured); their lifetime was not. | sdlc / seams | A resumed stage finds a named document gone. |
 | A13 | A model-invocable skill fires from a session-sent first message in a chipped session. | sdlc / seams | A chip asked to continue from a stage sits idle until the requester types. |
 
 ## Documented
@@ -36,5 +36,6 @@ Probes in `evals/probes/`, Claude Code 2.1.302, `claude-opus-5-5`, 2026-10-20. R
 - TaskCreate and TaskUpdate work when listed in `allowed_tools` (`task-tools`).
 - Writes to `/tmp` are refused by the sandbox; `$TMPDIR` is writable. Writes into the workspace's `.git/` are refused by the permission layer (`write-scope`).
 - Fixture SHAs match across machines only with user git config off: a signing config changes every commit (`GIT_CONFIG_GLOBAL=/dev/null` in the scaffold).
-- In a sandboxed eval run the Bash tool's `$TMPDIR` is `<the hook's TMPDIR>/claude-<uid>` (seen in every resumed trace, 2026-10-21); the stage hook looks in both. Rerun with the probes.
+- In a sandboxed eval run the Bash tool's `$TMPDIR` is `<the hook's TMPDIR>/claude-<uid>`; the stage hook looks in both, and in a fresh `/sdlc` run it finds `phase` and refuses a repo write before plan approval (`stage-hook`, 3 of 3). In a resumed case it stays inert: the history's session id is not the run's.
+- A session started from another reads a document by its absolute path in the starting session's scratchpad (one probe session, 2026-10-22).
 - A run can read a loaded plugin's own files, such as `design:adr`'s `references/format.md` (`read-plugin-folder`).
