@@ -2,16 +2,24 @@
 
 The words someone needs defined to talk about using or developing this marketplace's plugins. A term earns an entry only if it is language rather than code, needs defining beyond its ordinary meaning, and is the one word for its concept.
 
-**brief** — What a *delivery* is held to: the design's spec, edge cases, acceptance criteria and *guardrails*, each with a *check* and the design branch it came from. Distinct from the plan, which also carries the design tree, and from the exodus design-interview's brief, which has no guardrails.
+**check** — A pass/fail verdict on one criterion or edge case of a *spec*: executable (a command and its exit code) or judged (a fresh-context reviewer's verdict against a rubric fixed before the build, always flagged as judged).
 
-**check** — A pass/fail verdict on one criterion, edge case or *guardrail*: executable (a command and its exit code) or judged (a fresh-context reviewer's verdict, always flagged as judged).
+**delivery** — One change taken from an *intent* through *spec*, *plan*, tests, build, review and *evidence* to pull requests. Distinct from a *slice*, an increment within it, and from an epic, which is several deliveries.
 
-**delivery** — One feature taken from a pitch through design, plan, build, *evidence* and pull requests. Distinct from a *slice*, an increment within it, and from an epic, which is several deliveries.
+**evidence** — Each criterion's *check* result at a *slice*'s head, with CI and the existing suite, review dispositions, assumptions and risk: what the evidence *gate* shows and each pull request's Testing section carries. It shows that what was asked for is done and nothing known broke, never that nothing broke. "Proof" is not used. See [ADR-0009](decisions/0009-tests-are-written-and-approved-before-the-build-and-only-by-the-test-writer.md).
 
-**evidence** — Each *check*'s result at a *slice*'s base and head (a judged check at the head only), with guardrail mutants, review dispositions, assumptions and merge danger: the one source the *gate* reply, the evidence page and the pull request bodies render. Spent once approved. "Proof" is not used. See [ADR-0002](decisions/0002-evidence-baseline-is-recomputed-by-overlaying-checks-on-the-base.md).
+**gate** — A *seam* where the requester approves a document before the *delivery* goes on: the *spec*, the *plan*, the tests, the *evidence*. Every gate is a *seam*.
 
-**gate** — The point where the requester approves the *evidence*; pull requests open only after it. Distinct from plan approval, which gates the build.
+**intent** — The why of a *delivery*: the request as it arrives, whether a ticket, free text or a file. Distinct from the *spec*, which says what must be true. "Pitch" is not used.
 
-**guardrail** — Something the *brief* says must not change, decided by a *check* that passes both before and after the change. Distinct from an acceptance criterion, whose check must fail before and pass after.
+**plan** — The how of a *delivery*: its *slices*, their order, and what each *check* will verify. Distinct from the *spec*, the what, and from plan mode, which `sdlc` does not use.
 
-**slice** — An increment of a *delivery*, with its own part of the *brief*, *checks*, branch and pull request, that ships on its own and leaves the system consistent. Distinct from a step, which ships nothing by itself.
+**preservation criterion** — An acceptance criterion that something must not change: its *check* passes at the base and must still pass at the head. Distinct from a change criterion, whose check fails at the base. "Guardrail" is not used.
+
+**seam** — A point where a *delivery* hands control back to the requester, at a *gate* or an early stop, and asks whether to continue in this session, continue in a new one, or stop.
+
+**slice** — An increment of a *delivery*, with its own part of the *spec*, *checks*, branch and pull request, that ships on its own and leaves the system consistent. Distinct from a step, which ships nothing by itself.
+
+**spec** — What a *delivery* is held to: its acceptance criteria, *preservation criteria* among them, and edge cases, each with a *check* and the design branch it came from. Distinct from the *plan*, and from the design interview's capture, which has no checks. "Brief" is not used.
+
+**tier** — Risk, Low, Medium or High, by what going wrong would cost. A change's tier is set by the paths it touches and decides how deep review goes and whether the evidence *gate* stops; an eval case's tier is set by the behaviour it guards and decides how many runs it gets. See [ADR-0011](decisions/0011-risk-tiers-are-set-by-changed-paths-in-review-md-frontmatter.md).

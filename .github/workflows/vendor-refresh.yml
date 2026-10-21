@@ -1,0 +1,55 @@
+name: vendor-refresh
+
+# Weekly: when an upstream copy or pin has moved, open (or update) one draft PR
+# that refreshes it. A draft, because a refresh changes skill text and the evals
+# that would prove it run in-session, not here (ADR-0012). A PR opened with
+# GITHUB_TOKEN triggers no workflows, so this job dispatches validate on the PR
+# branch itself, which GITHUB_TOKEN may do.
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: vendor/refresh
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find drift
+        id: drift
+        run: |
+          if scripts/vendor.sh --drift > drift.txt; then
+            echo "moved=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "moved=true" >> "$GITHUB_OUTPUT"
+          fi
+          cat drift.txt
+      - name: Refresh, push and open a draft PR
+        if: steps.drift.outputs.moved == 'true'
+        run: |
+          git switch -C "$BRANCH"
+          scripts/vendor.sh --refresh
+          git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com \
+            commit -am "Refresh vendored copies and pins from upstream"
+          git push -f origin "$BRANCH"
+          {
+            echo "## Summary"; echo; echo "Upstream moved:"; echo; sed 's/^/- /' drift.txt; echo
+            echo "## Testing"; echo
+            echo "Not yet tested: a refresh changes skill text, and evals run in-session, not here. Check out \`$BRANCH\`, run the suites of every plugin it touches (\`evals/fetch-deps.sh\`, \`python3 evals/sdlc/tools/rebuild_histories.py\`, then the run command in \`evals/sdlc/README.md\`), and mark this ready with \`gh pr ready\` once each case holds its tier's bar."; echo
+            echo "## Risk"; echo; echo "High: \`.claude-plugin/marketplace.json\` and vendored skills (REVIEW.md)."; echo
+            echo "## How to revert"; echo; echo "Close this PR, or revert its merge commit."
+          } > body.md
+          if gh pr view "$BRANCH" --json state --jq .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit "$BRANCH" --body-file body.md
+          else
+            gh pr create --draft --head "$BRANCH" --title "Refresh vendored copies and pins" --body-file body.md
+          fi
+          gh workflow run validate.yml --ref "$BRANCH"

@@ -1,6 +1,6 @@
 # ADR-0001 — delivery delegates design, style and review to the exodus skills by dependency
 
-**Status:** Accepted (2026-10-20)
+**Status:** Superseded by [ADR-0007](0007-one-model-invocable-sdlc-skill-loads-a-reference-file-per-stage.md) (2026-10-21)
 
 ## Context
 

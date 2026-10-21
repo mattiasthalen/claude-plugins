@@ -1,0 +1,5 @@
+---
+type: regex
+target: trace
+pattern: '"name":"(?:Edit|Write)","input":\{(?:"replace_all":(?:true|false),)?"file_path":"[^"]*/README\.md"[\s\S]*?gh (?:auth status|pr create)'
+---
