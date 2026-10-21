@@ -22,4 +22,4 @@ The words someone needs defined to talk about using or developing this marketpla
 
 **spec** — What a *delivery* is held to: its acceptance criteria, *preservation criteria* among them, and edge cases, each with a *check* and the design branch it came from. Distinct from the *plan*, and from the design interview's capture, which has no checks. "Brief" is not used.
 
-**tier** — A change's risk, Low, Medium or High, set by the paths it touches; it decides how deep review goes and whether the evidence *gate* stops for the requester. See [ADR-0011](decisions/0011-risk-tiers-are-set-by-changed-paths-in-review-md-frontmatter.md).
+**tier** — Risk, Low, Medium or High, by what going wrong would cost. A change's tier is set by the paths it touches and decides how deep review goes and whether the evidence *gate* stops; an eval case's tier is set by the behaviour it guards and decides how many runs it gets. See [ADR-0011](decisions/0011-risk-tiers-are-set-by-changed-paths-in-review-md-frontmatter.md).

@@ -8,11 +8,12 @@ ADR-0004 had `delivering-pitches` start empty, admit a line only when a case fai
 
 ## Decision
 
-Each `sdlc` stage file starts empty, and a line enters only when a case in `evals/sdlc/` fails without it. Every case grades sequence — which stage ran, what it read, where it stopped — not only output. Five runs per case; deterministic graders 5/5, judged 4/5; an intermittent result is rerun at eight; agent and judge pinned to `claude-opus-5-5`; spend uncapped. CI stays tokenless and deterministic: `claude plugin validate --strict`, the offline grader tests and the hook's unit tests. The eval pass-rate gate runs in-session, in the prove stage, whenever a skill, agent, `CLAUDE.md` or hook changes; below bar, no pull request opens. The deletion pass is deferred until context cost or a suspected dead line calls for it.
+Each `sdlc` stage file starts empty, and a line enters only when a case in `evals/sdlc/` fails without it. Every case grades sequence — which stage ran, what it read, where it stopped — not only output. Each case carries a tier, set by what a failure of the behaviour it guards would cost, and the tier sets its runs in `prompt.md`: High — something outward or irreversible, such as a pull request before approval, repo writes before the plan is approved, the builder editing tests, `sdlc` firing on an unrelated conversation — runs eight times and must pass all; Medium — a broken sequence, such as a gate that does not stop or a resume at the wrong stage — runs three times, deterministic graders 3/3 and judged 2/3; Low — wording and presentation — runs once. While lines are being earned every case runs once. Agent and judge pinned to `claude-opus-5-5`; spend uncapped. CI stays tokenless and deterministic: `claude plugin validate --strict`, the offline grader tests and the hook's unit tests. The eval pass-rate gate runs in-session, in the prove stage, whenever a skill, agent, `CLAUDE.md` or hook changes; below bar, no pull request opens. The deletion pass is deferred until context cost or a suspected dead line calls for it.
 
 Rejected:
 - An eval gate in CI: needs a Claude API token.
 - Writing the skill first and ablating: lines nobody needs stay in forever.
+- The same runs for every case (ADR-0004's five): spends as much on a wording check as on the gate before a pull request.
 
 ## Consequences
 
