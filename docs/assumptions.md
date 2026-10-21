@@ -6,18 +6,24 @@ What this marketplace's designs rest on without having verified, each with how y
 
 | Id | Assumption | Area | Stops holding when |
 |----|------------|------|--------------------|
-| A2 | The exodus skills stay callable by qualified name with stable hand-offs (design-interview's Phase 8 wrap-up, review-cycle's hand-back to the PR step). | delivery / upstream | A hand-off fails in an eval run after an upstream release. |
-| A3 | Plan-mode tools are absent in `claude plugin eval` runs; the Artifact tool is off. | evals | A probe finds plan-mode tools present. |
+| A2 | The exodus skills stay callable by qualified name with a stable hand-off from design-interview's Phase 8 wrap-up, at the `sha` the marketplace pins. | sdlc / upstream | A spec-stage eval fails after a pin bump. |
+| A3 | The Artifact tool is off in `claude plugin eval` runs. | evals | A probe finds the Artifact tool present. |
 | A7 | TaskCreate/TaskUpdate run in eval cases that list them in `allowed_tools`. | evals | A case listing them shows no Task calls in any run. |
 | A8 | `gh` is unauthenticated in eval runs, and a `gh pr create --body` stays visible to graders. | evals | A probe's `gh auth status` succeeds. |
-| A11 | `gh stack submit --auto` opens drafts with generated titles and takes no body (documented); we assume it also needs the repository's stacked-PR preview enabled (recalled, unverified). The skill sets bodies with `gh pr edit` and marks PRs ready. | delivery / shipping | `gh stack` works on a repo without the preview, or `submit` gains a body option. |
+| A12 | A chip's brief can carry absolute paths, and the session scratchpad survives for the life of its session. | sdlc / seams | A resumed stage finds a named document gone. |
+| A13 | A model-invocable skill fires from a session-sent first message in a chipped session. | sdlc / seams | A chip asked to continue from a stage sits idle until the requester types. |
 
 ## Documented
 
-- Plugin `dependencies` given as bare names resolve against the plugin's own marketplace (plugin manifest reference). `implementation` needs `design >=0.7.0`. Tripwire after merge: `claude plugin install delivery@mattiasthalen` must also install both.
+- Plugin `dependencies` given as bare names resolve against the plugin's own marketplace (plugin manifest reference). `implementation` needs `design >=0.7.0`. Tripwire after merge: `claude plugin install sdlc@mattiasthalen` must also install both.
 - TaskCreate and TaskUpdate are on by default only on Opus 4.7, Sonnet 4.6, Haiku 4.5 and earlier models. Elsewhere they are off unless opted in (`CLAUDE_CODE_ENABLE_TODO_TOOLS=1`, `--allowedTools TaskCreate`), and `CLAUDE_CODE_ENABLE_TASKS=0` swaps them for TodoWrite (tools reference). Listing them in an eval case's `allowed_tools` opts in, so the suite never sees a session without them.
 
 - The desktop app's task-list tool takes a plan of one to twelve steps (its own schema) and does not exist in eval runs, where only Claude Code's tools are offered.
+
+- PreToolUse hook input carries `session_id`, `cwd`, `scratchpad_dir` (absent without a scratchpad; Claude Code ≥ 2.1.257), `tool_name` and `tool_input`, and `agent_id` and `agent_type` when a subagent calls the tool (hooks reference). A plugin's agent `agents/test-writer.md` is dispatched as `sdlc:test-writer`; `claude plugin eval` loads a plugin's agents and a case reaches them through `Agent` in `allowed_tools` (sub-agents, plugin-evals references).
+- A `git-subdir` marketplace source takes `ref` and a full 40-character `sha`; with both, `sha` wins (marketplace reference).
+- Skill frontmatter `user-invocable: false` hides a skill from the `/` menu (skills reference).
+- `GITHUB_TOKEN` events create no workflow runs, except `workflow_dispatch` and `repository_dispatch` (GitHub Actions docs; from a search snippet, to confirm on the page).
 
 ## Measured
 

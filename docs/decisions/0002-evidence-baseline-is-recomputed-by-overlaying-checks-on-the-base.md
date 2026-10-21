@@ -1,6 +1,6 @@
 # ADR-0002 — The evidence baseline is recomputed by overlaying HEAD's checks on the base
 
-**Status:** Accepted (2026-10-20)
+**Status:** Superseded by [ADR-0009](0009-tests-are-written-and-approved-before-the-build-and-only-by-the-test-writer.md) (2026-10-21)
 
 ## Context
 

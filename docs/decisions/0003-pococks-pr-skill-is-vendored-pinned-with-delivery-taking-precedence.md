@@ -1,6 +1,6 @@
 # ADR-0003 — Pocock's pr skill is vendored, pinned, with delivery taking precedence
 
-**Status:** Accepted (2026-10-20)
+**Status:** Superseded by [ADR-0013](0013-pococks-pr-skill-is-vendored-under-sdlc-with-the-ship-stage-taking-precedence.md) (2026-10-21)
 
 ## Context
 

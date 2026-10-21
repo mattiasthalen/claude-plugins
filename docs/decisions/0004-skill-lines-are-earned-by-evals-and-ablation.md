@@ -1,6 +1,6 @@
 # ADR-0004 — Skill lines are earned by evals and ablation
 
-**Status:** Accepted (2026-10-20)
+**Status:** Superseded by [ADR-0012](0012-the-eval-gate-runs-in-session-and-stage-lines-start-empty.md) (2026-10-21)
 
 ## Context
 

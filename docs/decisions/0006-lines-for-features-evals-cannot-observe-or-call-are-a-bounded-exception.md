@@ -1,6 +1,6 @@
 # ADR-0006 — Lines for features evals cannot observe or call are a bounded exception
 
-**Status:** Accepted (2026-10-20) · **Supersedes:** [ADR-0005](0005-lines-for-features-evals-cannot-observe-are-a-bounded-exception.md)
+**Status:** Superseded by [ADR-0014](0014-sdlc-lines-for-features-evals-cannot-call-are-a-bounded-exception.md) (2026-10-21)
 
 ## Context
 
