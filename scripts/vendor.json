@@ -1,0 +1,12 @@
+{
+  "copies": [
+    {
+      "repo": "mattpocock/skills",
+      "path": "skills/engineering/pr",
+      "sha": "e484a8095543718ced436b9b49a8160ed4554000",
+      "files": ["SKILL.md", "CREDITS.md"],
+      "dest": "plugins/sdlc/skills/pr"
+    }
+  ],
+  "pins": ["design", "implementation"]
+}

@@ -12,6 +12,8 @@ What this marketplace's designs rest on without having verified, each with how y
 | A8 | `gh` is unauthenticated in eval runs, and a `gh pr create --body` stays visible to graders. | evals | A probe's `gh auth status` succeeds. |
 | A12 | The session scratchpad survives for the life of its session, so a chip given its documents' absolute paths can still read them when it starts. Reading them was probed (Measured); their lifetime was not. | sdlc / seams | A resumed stage finds a named document gone. |
 | A13 | A model-invocable skill fires from a session-sent first message in a chipped session. | sdlc / seams | A chip asked to continue from a stage sits idle until the requester types. |
+| A14 | The repository lets GitHub Actions create pull requests ("Allow GitHub Actions to create and approve pull requests"), which the weekly vendor refresh needs. Applied with branch protection at ship. | repo / CI | `gh api repos/mattiasthalen/claude-plugins/actions/permissions/workflow --jq .can_approve_pull_request_reviews` is false, or a refresh run fails at `gh pr create`. |
+| A15 | A `validate` run dispatched on a bot PR's branch satisfies `main`'s required `validate` check, even though the PR's own `pull_request` run waits for approval. | repo / CI | The first bot refresh PR shows `validate` pending or required after the dispatched run is green. |
 
 ## Documented
 
@@ -23,7 +25,7 @@ What this marketplace's designs rest on without having verified, each with how y
 - PreToolUse hook input carries `session_id`, `cwd`, `scratchpad_dir` (absent without a scratchpad; Claude Code ≥ 2.1.257), `tool_name` and `tool_input`, and `agent_id` and `agent_type` when a subagent calls the tool (hooks reference). A plugin's agent `agents/test-writer.md` is dispatched as `sdlc:test-writer`; `claude plugin eval` loads a plugin's agents and a case reaches them through `Agent` in `allowed_tools` (sub-agents, plugin-evals references).
 - A `git-subdir` marketplace source takes `ref` and a full 40-character `sha`; with both, `sha` wins (marketplace reference).
 - Skill frontmatter `user-invocable: false` hides a skill from the `/` menu (skills reference).
-- `GITHUB_TOKEN` events create no workflow runs, except `workflow_dispatch` and `repository_dispatch` (GitHub Actions docs; from a search snippet, to confirm on the page).
+- Events from `GITHUB_TOKEN` create no workflow runs, except `workflow_dispatch` and `repository_dispatch`, which always do; `pull_request` runs on a PR it opened wait in an approval-required state (GitHub docs, `GITHUB_TOKEN`).
 
 ## Measured
 
