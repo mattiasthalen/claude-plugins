@@ -36,4 +36,5 @@ Probes in `evals/probes/`, Claude Code 2.1.302, `claude-opus-5-5`, 2026-10-20. R
 - TaskCreate and TaskUpdate work when listed in `allowed_tools` (`task-tools`).
 - Writes to `/tmp` are refused by the sandbox; `$TMPDIR` is writable. Writes into the workspace's `.git/` are refused by the permission layer (`write-scope`).
 - Fixture SHAs match across machines only with user git config off: a signing config changes every commit (`GIT_CONFIG_GLOBAL=/dev/null` in the scaffold).
+- In a sandboxed eval run the Bash tool's `$TMPDIR` is `<the hook's TMPDIR>/claude-<uid>` (seen in every resumed trace, 2026-10-21); the stage hook looks in both. Rerun with the probes.
 - A run can read a loaded plugin's own files, such as `design:adr`'s `references/format.md` (`read-plugin-folder`).

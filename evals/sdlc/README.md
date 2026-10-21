@@ -8,7 +8,7 @@ What `sdlc` must do, stage by stage. Its lines are earned against this suite ([A
 evals/fetch-deps.sh
 python3 evals/sdlc/tools/rebuild_histories.py
 claude plugin eval . --eval-dir evals/sdlc --model claude-opus-5-5 --judge-model claude-opus-5-5 \
-  --ablation none --scaffold --allow-tools Write Edit Bash --runs 5 -j 4 --trust-plugin \
+  --ablation none --scaffold --allow-tools Write Edit Bash -j 4 --trust-plugin \
   --json evals/results/sdlc.json
 python3 evals/sdlc/tools/report.py evals/results/sdlc.json
 ```
@@ -17,7 +17,7 @@ One case: `--case 's1-build' --runs 1`. Rerun the [runner probes](../probes/READ
 
 ## Bars
 
-`shape-*` graders are deterministic and must pass 5 of 5 runs; `content-*` graders are judged and must pass 4 of 5. An intermittent result is rerun at 8 runs before it is trusted. A grader that cannot hold its bar on an unchanged skill is fixed or deleted.
+Each case's `prompt.md` sets its `runs:` by its tier ([ADR-0012](../../docs/decisions/0012-the-eval-gate-runs-in-session-and-stage-lines-start-empty.md)): High (8) must pass every run; Medium (3) passes its `shape-*` graders 3 of 3 and its `content-*` (judged) graders 2 of 3; Low (1) passes once. A global `--runs` overrides them, so pass it only while iterating. A grader that cannot hold its bar on an unchanged skill is fixed or deleted.
 
 ## Layout
 
@@ -34,7 +34,7 @@ One case: `--case 's1-build' --runs 1`. Rerun the [runner probes](../probes/READ
     graders/
 fixtures/              the repos cases run in; scaffolding fixes commit dates so SHAs quoted in histories hold
 lib/scaffold.sh
-tools/                 compose_history.py, rebuild_histories.py, test_shape_graders.py, report.py, ablate.py, test_ablate.py
+tools/                 compose_history.py, rebuild_histories.py, test_shape_graders.py, report.py
 ```
 
 **Before a run, and after every edit to the skill, run `python3 evals/sdlc/tools/rebuild_histories.py`**: a history embeds the skill's body and its real base directory where its conversation invokes `/sdlc`, so it is built on each machine and never committed. `python3 evals/sdlc/tools/test_shape_graders.py` checks every regex grader against its samples, offline.

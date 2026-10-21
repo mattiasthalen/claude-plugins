@@ -79,6 +79,21 @@ class StageGate(unittest.TestCase):
         for p in ("/r/src/app.py", "/r/docs/testing.md", "/r/latest.py"):
             self.assertFalse(stage_gate.is_test_file(p, cwd), p)
 
+    def test_other_stacks_test_shapes(self):
+        cwd = "/r"
+        for p in ("/r/MyApp.Tests/FooTests.cs", "/r/Tests/AppTests/FooTests.swift", "/r/pkg/testdata/golden.txt",
+                  "/r/lib/foo_spec.rb", "/r/src/FooTest.java"):
+            self.assertTrue(stage_gate.is_test_file(p, cwd), p)
+        for p in ("/r/src/Contest.py", "/r/src/attestation.go"):
+            self.assertFalse(stage_gate.is_test_file(p, cwd), p)
+
+    def test_paths_are_relative_to_the_repo_not_cwd(self):
+        r = self.run_in("build")
+        (r.repo / ".git").mkdir()
+        (r.repo / "tests").mkdir()
+        event = dict(r.event, cwd=str(r.repo / "tests"), tool_input={"file_path": str(r.repo / "tests" / "helpers.py")})
+        self.assertIsNotNone(stage_gate.decide(event, r.env))
+
     def test_without_scratchpad_uses_tmpdir_per_session(self):
         r = self.run_in("plan", scratchpad=False)
         self.assertEqual(r.docs, Path(r.env["TMPDIR"]) / "sdlc-s1")

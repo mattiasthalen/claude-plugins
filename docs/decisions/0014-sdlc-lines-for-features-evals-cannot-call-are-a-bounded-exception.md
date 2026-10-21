@@ -8,12 +8,13 @@ ADR-0006 let a line use a feature without a failing eval when a probe shows it a
 
 ## Decision
 
-The rule stands unchanged. Four `sdlc` lines use it:
+The rule stands unchanged. Three `sdlc` lines use it:
 
 - Artifact publishing of `evidence.md`, falling back to the file and a summary in the reply;
-- the host task-list tool holding the stages only, with per-criterion tasks on TaskCreate (or TodoWrite) and a `## Progress` checklist in `plan.md` where there is no task tool;
-- the inline widget for labelled options on forks a picture explains, falling back to labelled prose options;
+- the host task-list tool holding the stages, with per-criterion tasks on TaskCreate (or TodoWrite);
 - starting the next stage in a new session, falling back to naming the documents' absolute paths in the reply.
+
+Two lines the design called for are not in the skill yet, because no case fails without them: the inline widget for labelled interview options, and a `## Progress` checklist where there is no task tool. Each enters with a case that grades its fallback.
 
 A line lapses into the ordinary rule when a probe finds its feature present.
 

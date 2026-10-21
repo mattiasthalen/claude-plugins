@@ -8,7 +8,7 @@ The playbook commits `intent.md`, `spec.md` and `plan.md` to the repo as an audi
 
 ## Decision
 
-The intent is taken as it arrives and written to a file only at a seam that leaves the session. `spec.md`, `plan.md` and `evidence.md` live in the session scratchpad, or under `$TMPDIR` where there is none, and are consumed by later stages. Every seam asks whether to continue here, start the next stage in a new session (and where to write the documents), or stop; a new session gets the documents' absolute paths. Each pull request body is conventional — Summary, Testing (the evidence for its slice's criteria), Risk, How to revert — and carries no spec or design tree.
+The intent is taken as it arrives and written to a file only at a seam that leaves the session. `spec.md`, `plan.md` and `evidence.md` live in the session scratchpad, or under `$TMPDIR` where there is none, and are consumed by later stages. Every gate and every early stop asks whether to continue here, start the next stage in a new session (and where to write the documents), or stop; a new session gets the documents' absolute paths. Each pull request body is conventional — Summary, Testing (the evidence for its slice's criteria), Risk, How to revert — and carries no spec or design tree.
 
 Rejected:
 - Committing the artifacts: clutter in shared repos.

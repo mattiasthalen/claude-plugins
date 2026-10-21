@@ -2,7 +2,7 @@
 
 **Tier.** Read the root `REVIEW.md`: its frontmatter maps path globs to `low`, `medium` and `high`. A path takes the highest tier any glob matches, and the change the highest tier of its paths. Unmatched paths, and a repo without `REVIEW.md`, are Medium. `REVIEW.md`, CI configuration and hook or permission configuration are High whatever the file says. Its prose is the reviewers' brief; where it disagrees with `CLAUDE.md`, it wins, and the disagreement is a finding against `CLAUDE.md`.
 
-**Finders.** Launch fresh `general-purpose` reviewers in parallel, one per lens, each with the spec, the base, the diff and `REVIEW.md`'s prose. The lenses are `implementation:review-cycle`'s briefs in its `references/` (adversarial and design parity always; simplification when the change adds interface; platform reality when it touches the assumptions record), passed verbatim. Each reports findings with `file:line` and writes nothing: where a lens brief allows a throwaway test, this overrides it.
+**Finders.** Launch fresh `general-purpose` reviewers in parallel, one per lens, each with the spec, the base, the diff and `REVIEW.md`'s prose. The lenses are `implementation:review-cycle`'s briefs in its `references/` (adversarial and design parity always; simplification when the change adds interface; platform reality when it touches the assumptions record; every lens at High), passed verbatim. Each reports findings with `file:line` and writes nothing: where a lens brief allows a throwaway test, this overrides it.
 
 **Security.** At every tier, run `/security-review` on the diff, or a fresh reviewer briefed for security where it is absent. Bug and security findings block the evidence gate until fixed, or closed with a reason the evidence shows.
 

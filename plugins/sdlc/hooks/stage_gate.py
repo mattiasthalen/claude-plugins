@@ -19,41 +19,45 @@ import sys
 from pathlib import Path
 
 TEST_WRITER = "sdlc:test-writer"
-TEST_GLOBS = (
-    "test_*", "*_test.*", "*.test.*", "*.spec.*", "conftest.py",
-    "tests/*", "test/*", "__tests__/*", "spec/*", "evals/*",
-)
+# A file name (case-insensitive), a CamelCase test class file (FooTest.java, FooTests.cs), or any
+# directory on the path below the repository root (case-insensitive).
+TEST_NAMES = ("test_*", "*_test.*", "*.test.*", "*.spec.*", "*_spec.*", "conftest.py")
+CAMEL_TEST_NAMES = ("*Test.*", "*Tests.*")
+TEST_DIRS = {"tests", "test", "__tests__", "spec", "testdata", "evals"}
 PRE_APPROVAL = {"spec", "plan"}
 POST_TEST = {"build", "review", "prove", "ship"}
 
 
-def docs_dirs(event, env=os.environ):
-    """Where the run's folder can be. Without a scratchpad it is under the Bash tool's $TMPDIR, which a
-    sandboxed session nests as <TMPDIR>/claude-<uid> below the TMPDIR this hook sees."""
-    if event.get("scratchpad_dir"):
-        return [Path(event["scratchpad_dir"]) / "sdlc"]
-    tmp = Path(env.get("TMPDIR", "/tmp"))
-    name = f"sdlc-{event.get('session_id', '')}"
-    return [tmp / name, tmp / f"claude-{os.getuid()}" / name]
-
-
 def docs_dir(event, env=os.environ):
-    """The run's folder: the first candidate holding a phase file, else the first candidate."""
-    dirs = docs_dirs(event, env)
+    """The run's folder. Without a scratchpad it is under the Bash tool's $TMPDIR, which a sandboxed
+    session nests as <TMPDIR>/claude-<uid> below the TMPDIR this hook sees: the candidate holding a
+    phase file wins."""
+    if event.get("scratchpad_dir"):
+        return Path(event["scratchpad_dir"]) / "sdlc"
+    tmp = Path(env.get("TMPDIR") or "/tmp")
+    name = f"sdlc-{event.get('session_id', '')}"
+    dirs = [tmp / name, tmp / f"claude-{os.getuid()}" / name]
     return next((d for d in dirs if (d / "phase").is_file()), dirs[0])
 
 
+def repo_root(path, cwd):
+    """The nearest directory above path holding .git, else cwd: a `cd tests` must not hide a test."""
+    for d in Path(path).resolve().parents:
+        if (d / ".git").exists():
+            return d
+    return Path(cwd).resolve()
+
+
 def is_test_file(path, cwd):
-    p = Path(path)
+    p = Path(path).resolve()
     try:
-        rel = p.resolve().relative_to(Path(cwd).resolve())
+        parts = p.relative_to(repo_root(p, cwd)).parts
     except ValueError:
-        rel = p
-    parts = rel.parts
-    if any(fnmatch.fnmatch(parts[-1], g) for g in TEST_GLOBS if "/" not in g):
-        return True
-    dirs = {g.split("/")[0] for g in TEST_GLOBS if "/" in g}
-    return any(d in dirs for d in parts[:-1])
+        parts = p.parts
+    name = parts[-1]
+    return any(fnmatch.fnmatch(name.lower(), g) for g in TEST_NAMES) or any(
+        fnmatch.fnmatchcase(name, g) for g in CAMEL_TEST_NAMES) or any(
+        d.lower() in TEST_DIRS or d.lower().endswith((".tests", ".test")) for d in parts[:-1])
 
 
 def inside(path, root):
@@ -85,7 +89,7 @@ def decide(event, env=os.environ):
     test = is_test_file(path, cwd)
     if phase in PRE_APPROVAL:
         return (f"sdlc {phase} stage: nothing is written outside {docs} before the plan is approved. "
-                f"Write the {phase} document there.")
+                f"Write the {phase} document there. If no sdlc run is going on, write done to {docs}/phase.")
     if phase == "test":
         if test and writer:
             return None

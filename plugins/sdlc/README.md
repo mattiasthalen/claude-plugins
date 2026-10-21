@@ -16,11 +16,11 @@ Installing it also installs Tobias Karlsson's [claude-design-skills](https://git
 | plan | `plan.md`: slices, order, what each check verifies | **gate**: approve the plan |
 | test | the tests, written by the `test-writer` agent from the spec alone, run at the base | **gate**: approve the tests (change criteria red, preservation criteria green) |
 | build | the change | — unattended — |
-| review | fixes: parallel reviewers by lens, three verifiers vote on each finding, a blocking security pass, at most three rounds | — unattended — |
+| review | fixes: parallel reviewers by lens, at Medium and High three verifiers voting on each finding, a blocking security pass, at most three rounds | — unattended — |
 | prove | `evidence.md`: each check at the head, plus CI and the existing suite | **gate**: approve the evidence (Low-risk changes skip it) |
 | ship | ready pull requests with a conventional body: Summary, Testing, Risk, How to revert | |
 
-Every boundary between stages asks whether to continue here, continue in a new session (and where to keep the documents), or stop. `/sdlc continue from <stage> using <paths>` resumes a run. The documents live in the session scratchpad, or `$TMPDIR/sdlc-<session>/` without one; nothing is committed but the change itself.
+Every gate, and every early stop, asks whether to continue here, continue in a new session (and where to keep the documents), or stop. `/sdlc continue from <stage> using <paths>` resumes a run. The documents live in the session scratchpad, or `${TMPDIR:-/tmp}/sdlc-<session>/` without one; nothing is committed but the change itself.
 
 ## Risk
 

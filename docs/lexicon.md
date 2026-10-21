@@ -8,7 +8,7 @@ The words someone needs defined to talk about using or developing this marketpla
 
 **evidence** — Each criterion's *check* result at a *slice*'s head, with CI and the existing suite, review dispositions, assumptions and risk: what the evidence *gate* shows and each pull request's Testing section carries. It shows that what was asked for is done and nothing known broke, never that nothing broke. "Proof" is not used. See [ADR-0009](decisions/0009-tests-are-written-and-approved-before-the-build-and-only-by-the-test-writer.md).
 
-**gate** — A *seam* where the requester approves a document before the *delivery* goes on: the *spec*, the *plan*, the tests, the *evidence*. Distinct from a seam that only asks whether to proceed.
+**gate** — A *seam* where the requester approves a document before the *delivery* goes on: the *spec*, the *plan*, the tests, the *evidence*. Every gate is a *seam*.
 
 **intent** — The why of a *delivery*: the request as it arrives, whether a ticket, free text or a file. Distinct from the *spec*, which says what must be true. "Pitch" is not used.
 
@@ -16,7 +16,7 @@ The words someone needs defined to talk about using or developing this marketpla
 
 **preservation criterion** — An acceptance criterion that something must not change: its *check* passes at the base and must still pass at the head. Distinct from a change criterion, whose check fails at the base. "Guardrail" is not used.
 
-**seam** — A boundary between two stages of a *delivery*, where the requester chooses to continue in this session, continue in a new one, or stop. Every *gate* is a seam; not every seam is a gate.
+**seam** — A point where a *delivery* hands control back to the requester, at a *gate* or an early stop, and asks whether to continue in this session, continue in a new one, or stop.
 
 **slice** — An increment of a *delivery*, with its own part of the *spec*, *checks*, branch and pull request, that ships on its own and leaves the system consistent. Distinct from a step, which ships nothing by itself.
 

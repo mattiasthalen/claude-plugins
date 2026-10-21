@@ -11,9 +11,9 @@ evals/fetch-deps.sh
 claude plugin eval . --eval-dir evals/<suite> --model claude-opus-5-5 --judge-model claude-opus-5-5 --ablation none
 ```
 
-`fetch-deps.sh` sparse-checks-out `design` and `implementation` into `.eval-deps/` (gitignored), from upstream's default branch as the marketplace resolves it; only the plugin directories, so the runner never picks up the upstream repo's own cases. Re-run it to pick up a new upstream version.
+`fetch-deps.sh` sparse-checks-out `design` and `implementation` into `.eval-deps/` (gitignored), at the `sha` the marketplace pins; only the plugin directories, so the runner never picks up the upstream repo's own cases. Re-run it to pick up a new upstream version.
 
-`--ablation none`: the cases invoke a user-invoked skill by name, so a no-plugin arm scores 0 by construction. One case cheaply: `--case <name> --runs 1`. Results land in `evals/results/`, gitignored.
+`--ablation none`: every graded behaviour is the plugin's own staged flow, so a no-plugin arm says nothing about it. One case cheaply: `--case <name> --runs 1`. Results land in `evals/results/`, gitignored.
 
 ## Suites
 
