@@ -28,3 +28,10 @@ jobs:
             [ -f "$p.claude-plugin/plugin.json" ] || continue
             claude plugin validate --strict "$p"
           done
+      - name: Unit-test the sdlc stage hook
+        run: python3 -m unittest discover -s plugins/sdlc/hooks -p 'test_*.py'
+      - name: Test the eval suite's shape graders and tools offline
+        run: |
+          python3 evals/sdlc/tools/test_shape_graders.py
+          python3 evals/sdlc/tools/test_ablate.py
+          python3 evals/sdlc/tools/rebuild_histories.py --check

@@ -17,5 +17,5 @@ claude plugin eval . --eval-dir evals/<suite> --model claude-opus-5-5 --judge-mo
 
 ## Suites
 
-- [`delivery/`](delivery/README.md): `delivery`'s own stages, staged and resumed, with its fixtures and tools.
+- [`sdlc/`](sdlc/README.md): `sdlc`'s stages, staged and resumed, with its fixtures and tools.
 - [`probes/`](probes/README.md): what an eval run can observe and do, on this Claude Code version. The suites are designed around it.

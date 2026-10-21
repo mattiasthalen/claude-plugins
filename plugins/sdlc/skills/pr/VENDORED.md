@@ -1,6 +1,6 @@
 # Vendored
 
-`SKILL.md` and `CREDITS.md` are Matt Pocock's `pr` skill, copied unchanged from [mattpocock/skills](https://github.com/mattpocock/skills/tree/e484a80/skills/engineering/pr) at commit `e484a80` ([ADR-0003](../../../../docs/decisions/0003-pococks-pr-skill-is-vendored-pinned-with-delivery-taking-precedence.md)). Do not edit them here: `scripts/vendor-pr.sh` refreshes the copy, and `scripts/vendor-pr.sh --check` fails if it has drifted. Where they conflict with `delivering-pitches`, `delivering-pitches` wins.
+`SKILL.md` and `CREDITS.md` are Matt Pocock's `pr` skill, copied unchanged from [mattpocock/skills](https://github.com/mattpocock/skills/tree/e484a80/skills/engineering/pr) at commit `e484a80` ([ADR-0013](../../../../docs/decisions/0013-pococks-pr-skill-is-vendored-under-sdlc-with-the-ship-stage-taking-precedence.md)). Do not edit them here: `scripts/vendor-pr.sh` refreshes the copy, and `scripts/vendor-pr.sh --check` fails if it has drifted. Where they conflict with `sdlc`'s ship stage, the ship stage wins.
 
 They are distributed under the upstream licence:
 
