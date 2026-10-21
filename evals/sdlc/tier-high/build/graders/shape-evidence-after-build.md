@@ -1,5 +1,5 @@
 ---
-type: tool_order
-before: {tool: Edit, input_match: '"file_path":\s*"[^"]*/\.github/workflows/ci\.yml"'}
-after: {tool: Write, input_match: '"file_path":\s*"[^"]*/sdlc[-/][^"]*evidence\.md"'}
+type: regex
+target: trace
+pattern: '"name":"(?:Edit|Write)","input":\{(?:"replace_all":(?:true|false),)?"file_path":"[^"]*/\.github/workflows/ci\.yml"[\s\S]*?"name":"Write","input":\{"file_path":"[^"]*/sdlc[-/][^"]*evidence\.md"'
 ---

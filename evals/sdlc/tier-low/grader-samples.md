@@ -41,3 +41,43 @@ Must fail:
 ```
 gh pr create --title "Export every order as CSV" --body "## Summary"
 ```
+
+### build/graders/shape-readme-edited.md
+Must pass:
+```
+{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/README.md","content":"# ordersdesk"}}
+```
+Must pass:
+```
+{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/README.md","old_string":"a","new_string":"b"}}
+```
+Must fail:
+```
+{"type":"tool_use","id":"t1","name":"Read","input":{"file_path":"/w/README.md"}}
+```
+Must fail:
+```
+{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/docs/README.txt"}}
+```
+
+### build/graders/shape-build-before-pr.md
+Must pass:
+```
+{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/README.md","content":"# ordersdesk"}}
+{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"gh auth status 2>&1"}}
+```
+Must pass:
+```
+{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/README.md","old_string":"a","new_string":"b"}}
+{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"gh auth status 2>&1"}}
+```
+Must fail:
+```
+{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"gh auth status 2>&1"}}
+{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/README.md","old_string":"a","new_string":"b"}}
+```
+Must fail:
+```
+{"type":"tool_use","id":"t1","name":"Read","input":{"file_path":"/w/README.md"}}
+{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"gh auth status 2>&1"}}
+```

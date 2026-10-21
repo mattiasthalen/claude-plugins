@@ -1,5 +1,6 @@
 ---
-type: tool_order
-before: {tool: Bash, input_match: 'gh auth status'}
-after: {tool: Bash, input_match: 'git[^\n]*\spush\b'}
+type: regex
+target: trace
+match: not_contains
+pattern: '^(?:(?!"command":"(?:[^"\\]|\\.)*gh auth status)[\s\S])*?"name":"Bash","input":\{"command":"(?:[^"\\]|\\.)*\bgit\b(?:[^"\\]|\\.)*\spush\b'
 ---

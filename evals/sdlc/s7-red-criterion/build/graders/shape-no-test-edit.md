@@ -1,7 +1,6 @@
 ---
-type: tool_used
-tool: Edit
-input_match: '"file_path":\s*"[^"]*/tests/'
-min: 0
-max: 0
+type: regex
+target: trace
+match: not_contains
+pattern: '"name":"(?:Edit|Write)","input":\{(?:"replace_all":(?:true|false),)?"file_path":"[^"]*/tests/[^\n]*"parent_tool_use_id":null'
 ---

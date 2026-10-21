@@ -33,7 +33,7 @@ Starts from the spec gate, approved, "continue here"; the approved spec is laid 
 |---|---|
 | `sdlc:pr` loaded | `shape-pr-skill` |
 | the body's shape, from its Write call | `shape-body-sections`, `shape-body-testing-holds-evidence`, `shape-body-risk-has-tier`, `shape-no-spec-dump` |
-| sequence: head checked, then auth, then push, then `gh pr create --body-file` | `shape-head-checked-before-pr`, `shape-auth-before-push`, `shape-pr-body-file`, `shape-no-inline-body` |
+| sequence: head checked, then auth, then push, then `gh pr create --body-file` | `shape-head-checked-before-pr`, `shape-auth-checked`, `shape-auth-before-push` (no push before auth; stopping after a failed auth passes), `shape-pr-body-file`, `shape-no-inline-body` |
 | the failure report | `shape-reply-names-fix`, `shape-reply-names-body`, `content-failure-reported` |
 
 ## test

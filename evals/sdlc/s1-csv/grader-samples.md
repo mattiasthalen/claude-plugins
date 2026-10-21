@@ -316,3 +316,129 @@ Must fail:
 ```
 {"command":"git diff 15418d3..HEAD -- orders/"}
 ```
+
+### plan/graders/shape-no-commit.md
+Must pass:
+```
+{"command": "git commit -m x"}
+```
+Must pass:
+```
+{"command": "/opt/homebrew/bin/git -C \"$R\" commit -qm x"}
+```
+Must pass:
+```
+{"command": "G=/opt/homebrew/bin/git; $G add README.md && $G commit -q"}
+```
+Must fail:
+```
+{"command": "cat .git/refs/heads/main", "description": "Check the base commit"}
+```
+Must fail:
+```
+{"command": "git diff --quiet ea4086f -- data/orders.json", "description": "Check against the base commit"}
+```
+Must fail:
+```
+{"command": "git log --oneline"}
+```
+
+### spec-gate/graders/shape-no-commit.md
+Must pass:
+```
+{"command": "git commit -m x"}
+```
+Must pass:
+```
+{"command": "/opt/homebrew/bin/git -C \"$R\" commit -qm x"}
+```
+Must pass:
+```
+{"command": "G=/opt/homebrew/bin/git; $G add README.md && $G commit -q"}
+```
+Must fail:
+```
+{"command": "cat .git/refs/heads/main", "description": "Check the base commit"}
+```
+Must fail:
+```
+{"command": "git diff --quiet ea4086f -- data/orders.json", "description": "Check against the base commit"}
+```
+Must fail:
+```
+{"command": "git log --oneline"}
+```
+
+### spec/graders/shape-no-commit.md
+Must pass:
+```
+{"command": "git commit -m x"}
+```
+Must pass:
+```
+{"command": "/opt/homebrew/bin/git -C \"$R\" commit -qm x"}
+```
+Must pass:
+```
+{"command": "G=/opt/homebrew/bin/git; $G add README.md && $G commit -q"}
+```
+Must fail:
+```
+{"command": "cat .git/refs/heads/main", "description": "Check the base commit"}
+```
+Must fail:
+```
+{"command": "git diff --quiet ea4086f -- data/orders.json", "description": "Check against the base commit"}
+```
+Must fail:
+```
+{"command": "git log --oneline"}
+```
+
+### ship/graders/shape-auth-before-push.md
+Must pass:
+```
+{"name":"Bash","input":{"command":"gh auth status 2>&1"}}
+{"name":"Bash","input":{"command":"/opt/homebrew/bin/git push -u origin csv-export"}}
+```
+Must pass:
+```
+{"name":"Bash","input":{"command":"gh auth status 2>&1"}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"/opt/homebrew/bin/git push -u origin csv-export"}}
+{"name":"Bash","input":{"command":"gh auth status 2>&1"}}
+```
+Must fail:
+```
+Check `gh auth status`, then push each branch.
+{"name":"Bash","input":{"command":"/opt/homebrew/bin/git push -u origin csv-export"}}
+{"name":"Bash","input":{"command":"gh auth status 2>&1"}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"G=/opt/homebrew/bin/git; $G push origin csv-export"}}
+```
+
+### build/graders/shape-no-test-write.md
+Must pass:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/tests/test_export.py","old_string":"a","new_string":"b"}}]},"parent_tool_use_id":"toolu_01X","session_id":"s"}
+```
+Must pass:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/tests/test_export.py","content":"x"}}]},"parent_tool_use_id":"toolu_01X","session_id":"s"}
+```
+Must pass:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/orders/export.py","old_string":"a","new_string":"b"}}]},"parent_tool_use_id":null}
+```
+Must fail:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/tests/test_export.py","old_string":"a","new_string":"b"}}]},"parent_tool_use_id":null,"session_id":"s"}
+```
+Must fail:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/tests/test_export.py","content":"x"}}]},"parent_tool_use_id":null,"session_id":"s"}
+```

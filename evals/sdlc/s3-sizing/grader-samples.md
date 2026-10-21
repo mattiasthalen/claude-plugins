@@ -36,3 +36,54 @@ Must fail:
 cat "$TMPDIR/sdlc-3f2a/spec.md"
 ```
 
+### small/graders/shape-no-commit.md
+Must pass:
+```
+{"command": "git commit -m x"}
+```
+Must pass:
+```
+{"command": "/opt/homebrew/bin/git -C \"$R\" commit -qm x"}
+```
+Must pass:
+```
+{"command": "G=/opt/homebrew/bin/git; $G add README.md && $G commit -q"}
+```
+Must fail:
+```
+{"command": "cat .git/refs/heads/main", "description": "Check the base commit"}
+```
+Must fail:
+```
+{"command": "git diff --quiet ea4086f -- data/orders.json", "description": "Check against the base commit"}
+```
+Must fail:
+```
+{"command": "git log --oneline"}
+```
+
+### epic/graders/shape-no-commit.md
+Must pass:
+```
+{"command": "git commit -m x"}
+```
+Must pass:
+```
+{"command": "/opt/homebrew/bin/git -C \"$R\" commit -qm x"}
+```
+Must pass:
+```
+{"command": "G=/opt/homebrew/bin/git; $G add README.md && $G commit -q"}
+```
+Must fail:
+```
+{"command": "cat .git/refs/heads/main", "description": "Check the base commit"}
+```
+Must fail:
+```
+{"command": "git diff --quiet ea4086f -- data/orders.json", "description": "Check against the base commit"}
+```
+Must fail:
+```
+{"command": "git log --oneline"}
+```

@@ -19,3 +19,47 @@ Must fail:
 ```
 """Writing the order book out as CSV for other systems."""
 ```
+
+### review/graders/shape-no-test-edit.md
+Must pass:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/tests/test_export.py","old_string":"a","new_string":"b"}}]},"parent_tool_use_id":"toolu_01X","session_id":"s"}
+```
+Must pass:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/tests/test_export.py","content":"x"}}]},"parent_tool_use_id":"toolu_01X","session_id":"s"}
+```
+Must pass:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/orders/export.py","old_string":"a","new_string":"b"}}]},"parent_tool_use_id":null}
+```
+Must fail:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/tests/test_export.py","old_string":"a","new_string":"b"}}]},"parent_tool_use_id":null,"session_id":"s"}
+```
+Must fail:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/tests/test_export.py","content":"x"}}]},"parent_tool_use_id":null,"session_id":"s"}
+```
+
+### review/graders/shape-no-test-write.md
+Must pass:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/tests/test_export.py","old_string":"a","new_string":"b"}}]},"parent_tool_use_id":"toolu_01X","session_id":"s"}
+```
+Must pass:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/tests/test_export.py","content":"x"}}]},"parent_tool_use_id":"toolu_01X","session_id":"s"}
+```
+Must pass:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/orders/export.py","old_string":"a","new_string":"b"}}]},"parent_tool_use_id":null}
+```
+Must fail:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit","input":{"replace_all":false,"file_path":"/w/tests/test_export.py","old_string":"a","new_string":"b"}}]},"parent_tool_use_id":null,"session_id":"s"}
+```
+Must fail:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/tests/test_export.py","content":"x"}}]},"parent_tool_use_id":null,"session_id":"s"}
+```

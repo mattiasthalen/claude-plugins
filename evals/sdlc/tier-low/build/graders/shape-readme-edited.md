@@ -1,6 +1,5 @@
 ---
-type: tool_used
-tool: Edit
-input_match: '"file_path":\s*"[^"]*/README\.md"'
-min: 1
+type: regex
+target: trace
+pattern: '"name":"(?:Edit|Write)","input":\{(?:"replace_all":(?:true|false),)?"file_path":"[^"]*/README\.md"'
 ---
