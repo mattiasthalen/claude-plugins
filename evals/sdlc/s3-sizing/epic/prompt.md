@@ -1,6 +1,6 @@
 ---
-description: "S3 epic: refused as one delivery; parts named; asks which; no interview, no spec."
-tags: [s3, stage-spec]
+description: "S3 epic through the intent stage: one story per part in intent.md; stops at the intent gate asking dispositions; no design-interview, no spec, no repo writes."
+tags: [s3, stage-intent, gate-intent]
 runs: 3
 plugins: ["../../../../plugins/sdlc", "../../../../.eval-deps/claude-design-skills/plugins/design", "../../../../.eval-deps/claude-design-skills/plugins/implementation"]
 max_turns: 30

@@ -50,11 +50,13 @@ class StageGate(unittest.TestCase):
         self.assertIsNone(r.decide("tests/test_app.py"))
 
     def test_pre_approval_only_docs(self):
-        for phase in ("spec", "plan"):
-            r = self.run_in(phase)
-            self.assertIsNotNone(r.decide("src/app.py"))
-            self.assertIsNotNone(r.decide("tests/test_app.py", agent=stage_gate.TEST_WRITER))
-            self.assertIsNone(r.decide(str(r.docs / "spec.md")))
+        for phase in ("intent", "spec", "plan"):
+            with self.subTest(phase=phase):
+                r = self.run_in(phase)
+                self.assertIsNotNone(r.decide("src/app.py"))
+                self.assertIsNotNone(r.decide("tests/test_app.py", agent=stage_gate.TEST_WRITER))
+                self.assertIsNone(r.decide(str(r.docs / "intent.md")))
+                self.assertIsNone(r.decide(str(r.docs / "spec.md")))
 
     def test_test_stage_only_tests_by_writer(self):
         r = self.run_in("test")

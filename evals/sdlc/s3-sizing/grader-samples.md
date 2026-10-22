@@ -87,3 +87,29 @@ Must fail:
 ```
 {"command": "git log --oneline"}
 ```
+
+### epic/graders/shape-intent-written.md
+Must pass:
+```
+{"file_path": "/var/folders/xy/T/sdlc-3f2a9c1e-0b7d-4e8a-9c1f-2d4e6a8b0c12/intent.md", "content": "# Intent"}
+```
+Must pass:
+```
+cat > "$TMPDIR/sdlc-3f2a9c1e/intent.md" <<'EOF'
+```
+Must pass:
+```
+{"file_path": "/private/tmp/claude-501/x/scratchpad/sdlc/intent.md", "content": "# Intent"}
+```
+Must fail:
+```
+{"file_path": "/work/ordersdesk/sdlc-handoff/intent.md", "content": "# Intent"}
+```
+Must fail:
+```
+{"file_path": "/work/ordersdesk/docs/intent.md", "content": "# Intent"}
+```
+Must fail:
+```
+cat "$TMPDIR/sdlc-3f2a/intent.md"
+```
