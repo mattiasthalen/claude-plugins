@@ -8,7 +8,7 @@ The words someone needs defined to talk about using or developing this marketpla
 
 **evidence** — Each criterion's *check* result at a *slice*'s head, with CI and the existing suite, review dispositions, assumptions and risk: what the evidence *gate* shows and each pull request's Testing section carries. It shows that what was asked for is done and nothing known broke, never that nothing broke. "Proof" is not used. See [ADR-0009](decisions/0009-tests-are-written-and-approved-before-the-build-and-only-by-the-test-writer.md).
 
-**gate** — A *seam* where the requester approves a document before the *delivery* goes on: the *intent*, the *spec*, the *plan*, the tests, the *evidence*. Every gate is a *seam*.
+**gate** — A *seam* where the requester approves a document before the run goes on: the *intent*, the *spec*, the *plan*, the tests, the *evidence*. Every gate is a *seam*.
 
 **intent** — The why of a run, and of each *delivery* in it: the request as it arrives, whether a ticket, free text or a file, written by the intent stage as user stories in `intent.md` (id, As a / I want / So that, acceptance criteria, notes). Distinct from the *spec*, which says what must be true. See [ADR-0015](decisions/0015-every-fresh-sdlc-run-starts-with-an-intent-stage-that-writes-user-stories.md). "Pitch" is not used.
 

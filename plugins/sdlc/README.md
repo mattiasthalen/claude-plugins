@@ -1,6 +1,6 @@
 # sdlc
 
-An AI-native software development life cycle, after Anthropic's [AI-native SDLC playbook](https://claude.com/resources/articles/the-ai-native-sdlc-playbook) and [how they solved code review](https://claude.dev/blog/solving-code-review-at-anthropic/). `/sdlc <intent>` takes an intent (a ticket, free text, a file) through user stories to ready pull requests, one delivery at a time. You approve five documents on the way; between the last two it runs on its own.
+An AI-native software development life cycle, after Anthropic's [AI-native SDLC playbook](https://claude.com/resources/articles/the-ai-native-sdlc-playbook) and [how they solved code review](https://claude.dev/blog/solving-code-review-at-anthropic/). `/sdlc <intent>` takes an intent (a ticket, free text, a file) through user stories to ready pull requests, one delivery at a time. You approve the intent, then four documents per delivery (spec, plan, tests, evidence); between the last two it runs on its own.
 
 ```
 /plugin install sdlc@mattiasthalen
@@ -21,7 +21,7 @@ Installing it also installs Tobias Karlsson's [claude-design-skills](https://git
 | prove | `evidence.md`: each check at the head, plus CI and the existing suite | **gate**: approve the evidence (Low-risk changes skip it) |
 | ship | ready pull requests with a conventional body: Summary, Testing, Risk, How to revert | |
 
-Deliveries run one after another, each from spec. Dropping every story ends the run.
+Deliveries run one after another, each from spec. With no story now (every one dropped or filed), the run ends at the intent gate.
 
 Every gate, and every early stop, asks whether to continue here, continue in a new session (and where to keep the documents), or stop. `/sdlc continue from <stage> using <paths>` resumes a run. The documents live in the session scratchpad, or `${TMPDIR:-/tmp}/sdlc-<session>/` without one; nothing is committed but the change itself.
 
