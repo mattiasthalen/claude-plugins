@@ -19,4 +19,4 @@ Every fresh `/sdlc` run starts with the intent stage: a short prose interview th
 | `all-dropped` (C9) | `ordersdesk` | gate; "drop them all" | phase `done`; no `spec.md`, no interview (Low) |
 | `tracker-precedence` (E1) | `ordersdesk-gh-tracker` | gate; "file S2 in Linear" | no `gh issue create`: the requester's tracker wins over the docs' |
 
-A tracker call is a Bash `gh issue …` (or `gh api … issues`) or any `mcp__…` tool whose name holds Jira, Linear, GitHub or Atlassian (`shape-no-tracker-mcp`). Eval runs allow no MCP tools, so that grader is a backstop.
+A tracker call is a Bash `gh issue …` (or `gh api … issues`). Eval runs allow no MCP tools, so a tracker's MCP tool cannot be called.
