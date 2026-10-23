@@ -1,6 +1,6 @@
 # sdlc
 
-An AI-native software development life cycle, after Anthropic's [AI-native SDLC playbook](https://claude.com/resources/articles/the-ai-native-sdlc-playbook) and [how they solved code review](https://claude.dev/blog/solving-code-review-at-anthropic/). `/sdlc <intent>` takes one change from an intent (a ticket, free text, a file) to ready pull requests. You approve five documents on the way; between the last two it runs on its own.
+An AI-native software development life cycle, after Anthropic's [AI-native SDLC playbook](https://claude.com/resources/articles/the-ai-native-sdlc-playbook) and [how they solved code review](https://claude.dev/blog/solving-code-review-at-anthropic/). `/sdlc <intent>` takes an intent (a ticket, free text, a file) through user stories to ready pull requests, one delivery at a time. You approve five documents on the way; between the last two it runs on its own.
 
 ```
 /plugin install sdlc@mattiasthalen
@@ -27,7 +27,7 @@ Every gate, and every early stop, asks whether to continue here, continue in a n
 
 ## Trackers
 
-`sdlc` names no tracker. A story is filed only when you answer "file" for it at the intent gate, where and as what you say, else where its ticket lives, else where the project's docs (`CLAUDE.md`, memory, config) say; when none says, it asks. An intent that already is a ticket's story is refined in place, and updating the ticket is offered, never done without a yes. After the spec gate's yes, the spec is published only when you or the project's docs say so, with its content as the body; amending a published spec offers to update it.
+`sdlc` names no tracker. A story is filed only when you answer "file" for it at the intent gate, where and as what you say, else where its ticket lives, else where the project's docs (`CLAUDE.md`, memory, config) say; when none says, it asks. An intent that already is a ticket's story is refined in place, and updating the ticket is offered, never done without a yes. On the spec gate's yes, the spec is published only when you or the project's docs say so, with its content as the body; amending a published spec offers to update it.
 
 ## Risk
 

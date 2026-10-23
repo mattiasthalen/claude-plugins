@@ -16,7 +16,7 @@ The words someone needs defined to talk about using or developing this marketpla
 
 **preservation criterion** — An acceptance criterion that something must not change: its *check* passes at the base and must still pass at the head. Distinct from a change criterion, whose check fails at the base. "Guardrail" is not used.
 
-**seam** — A point where a *delivery* hands control back to the requester, at a *gate* or an early stop, and asks whether to continue in this session, continue in a new one, or stop.
+**seam** — A point where the run hands control back to the requester, at a *gate* or an early stop, and asks whether to continue in this session, continue in a new one, or stop.
 
 **slice** — An increment of a *delivery*, with its own part of the *spec*, *checks*, branch and pull request, that ships on its own and leaves the system consistent. Distinct from a step, which ships nothing by itself.
 
