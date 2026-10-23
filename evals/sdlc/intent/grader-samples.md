@@ -5,6 +5,9 @@ Offline samples for every regex shape grader in this scenario; `python3 evals/sd
 - `shape-no-write-outside-docs` / `shape-no-edit-outside-docs` `"file_path":\s*"(?![^"]*/sdlc(?:/|-(?!handoff/)))` matches (a violation) `"file_path": "/work/ordersdesk/orders/__main__.py"` and `"file_path": "/work/ordersdesk/sdlc-handoff/intent.md"`; it does not match `"file_path": "/var/folders/xy/T/sdlc-3f2a/intent.md"`.
 - `shape-no-gh-issue-create` `\bgh\s+(?:issue\s+create\b|api\b[^\n]*\bissues\b)` matches `{"command": "gh issue create --title \"Find a customer's orders\" --label story --body-file \"$TMPDIR/sdlc-3f2a/s2.md\""}` and `{"command": "gh api repos/example/ordersdesk/issues -f title=\"Find a customer's orders\" -f body=x"}`; it does not match `{"command": "gh auth status"}` or `{"command": "gh issue list --label story"}`.
 - `shape-no-gh-issue` `\bgh\s+(?:issue\b|api\b[^\n]*\bissues\b)` matches `{"command": "gh issue view 42"}`, `{"command": "gh issue edit 42 --body-file x.md"}` and `{"command": "gh api repos/example/ordersdesk/issues -f title=x"}`; it does not match `{"command": "gh auth status"}` or `{"command": "git log --oneline"}`.
+- `shape-gh-issue-create-attempted` (`all-filed`, `min: 1`) `\bgh\s+issue\s+create\b` matches `{"command": "gh issue create --label story --title \"S1 — Export the order book\" --body-file \"$TMPDIR/sdlc-3f2a/s1.md\""}`; it does not match `{"command": "gh issue list --label story"}`. A count, not `shape-one-gh-issue-create`'s paired regex: it asks only that filing was tried, and a refused call is still a try.
+- `shape-no-top-level-spec-write` (`next-delivery`) `"file_path":\s*"[^"]*/sdlc(?:-(?!handoff/)[^"/]*)?/spec\.md"` matches `"file_path": "/var/folders/xy/T/sdlc-3f2a/spec.md"` and `"file_path": "/private/tmp/claude-501/x/scratchpad/sdlc/spec.md"`; it does not match `"file_path": "/var/folders/xy/T/sdlc-3f2a/d2/spec.md"`. `shape-no-top-level-spec-bash` is the same for a Bash redirect, `tee`, `cp` or `mv`.
+- `shape-no-jira-call` (`ticket-says-file`) `\b(?:curl|wget|http)\b[^\n]*(?:atlassian|jira)|\b(?:jira|acli)\s+(?:issue|workitem|create)\b` matches `{"command": "curl -X POST https://example.atlassian.net/rest/api/3/issue -d @s2.json"}` and `{"command": "jira issue create -p OPS -t Story"}`; it does not match `{"command": "grep -ri jira CLAUDE.md README.md"}`.
 - `shape-interview-once` / `shape-interview-invoked` match a Skill call whose input holds `design-interview`, such as `{"skill": "design:design-interview"}`.
 
 `shape-filed-body-is-s2` is a regex grader over the whole trace, not a judged one: a judge of a long resumed run sees only the trace's head and tail (about 23 KB), and the filing call sits in between. It matches the compact tool call as `trace.jsonl` writes it (`"name":"Bash","input":{"command":"…"}`), its body inline in that command, or in a file a Write or Bash call wrote earlier and the `gh issue create` reads by `--body-file`/`-F` under the same file name. The body must hold S2 (`back-office clerk` or its story line, and `--customer`) and nothing of S1 or S3 (`accountant`, `export --csv`, `shop manager`, `orders daily`, `takings`).
@@ -155,6 +158,134 @@ cat "$TMPDIR/sdlc-3f2a/phase"
 Must fail:
 ```
 Every story is dropped, so the run is done.
+```
+
+### ticket-says-file/graders/shape-intent-written.md
+Must pass:
+```
+{"file_path": "/var/folders/xy/T/sdlc-3f2a9c1e/intent.md", "content": "# Intent"}
+```
+Must pass:
+```
+cat > "$TMPDIR/sdlc-3f2a9c1e/intent.md" <<'EOF'
+```
+Must fail:
+```
+{"file_path": "/work/ordersdesk/sdlc-handoff/intent.md", "content": "# Intent"}
+```
+Must fail:
+```
+cat "$TMPDIR/sdlc-3f2a/intent.md"
+```
+
+### all-filed/graders/shape-phase-done.md
+Must pass:
+```
+{"file_path": "/var/folders/xy/T/sdlc-3f2a9c1e/phase", "content": "done\n"}
+```
+Must pass:
+```
+{\"file_path\":\"/var/folders/xy/T/sdlc-3f2a/phase\",\"content\":\"done\"}
+```
+Must pass:
+```
+printf done > "$TMPDIR/sdlc-3f2a/phase"
+```
+Must pass:
+```
+D="$TMPDIR/sdlc-3f2a"; mkdir -p "$D" && echo done > "$D/phase"
+```
+Must fail:
+```
+{"file_path": "/var/folders/xy/T/sdlc-3f2a9c1e/phase", "content": "intent\n"}
+```
+Must fail:
+```
+echo done > "/work/ordersdesk/sdlc-handoff/phase"
+```
+Must fail:
+```
+cat "$TMPDIR/sdlc-3f2a/phase"
+```
+Must fail:
+```
+Every story is dropped, so the run is done.
+```
+
+### next-delivery/graders/shape-phase-not-done.md
+Must fail:
+```
+{"file_path": "/var/folders/xy/T/sdlc-3f2a9c1e/phase", "content": "done\n"}
+```
+Must fail:
+```
+{\"file_path\":\"/var/folders/xy/T/sdlc-3f2a/phase\",\"content\":\"done\"}
+```
+Must fail:
+```
+printf done > "$TMPDIR/sdlc-3f2a/phase"
+```
+Must fail:
+```
+D="$TMPDIR/sdlc-3f2a"; mkdir -p "$D" && echo done > "$D/phase"
+```
+Must pass:
+```
+{"file_path": "/var/folders/xy/T/sdlc-3f2a9c1e/phase", "content": "intent\n"}
+```
+Must pass:
+```
+echo done > "/work/ordersdesk/sdlc-handoff/phase"
+```
+Must pass:
+```
+cat "$TMPDIR/sdlc-3f2a/phase"
+```
+Must pass:
+```
+Every story is dropped, so the run is done.
+```
+
+### next-delivery/graders/shape-d2-folder.md
+Must pass:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/d2/spec.md","content":"# Spec — find a customer's orders"}
+```
+Must pass:
+```
+"name":"Write","input":{"file_path":"/private/tmp/claude-501/x/scratchpad/sdlc/d2/phase","content":"spec"}
+```
+Must pass:
+```
+"name":"Edit","input":{"replace_all":false,"file_path":"/var/folders/xy/T/sdlc-3f2a/d2/notes.md","old_string":"a","new_string":"b"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"mkdir -p \"$TMPDIR/sdlc-3f2a/d2\"","description":"Make delivery d2's folder"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"cat > \"$TMPDIR/sdlc-3f2a/d2/spec.md\" <<'EOF'\n# Spec\nEOF"}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/spec.md","content":"# Spec — find a customer's orders"}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/work/ordersdesk-csv-export-branch/sdlc-handoff/d2/spec.md","content":"# Spec"}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/d1/spec.md","content":"# Spec"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"ls \"$TMPDIR/sdlc-3f2a/d2\""}
+```
+Must fail:
+```
+d2's documents will go in `$TMPDIR/sdlc-3f2a/d2/`.
 ```
 
 ### dispositions/graders/shape-filed-body-is-s2.md

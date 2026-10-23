@@ -4,7 +4,7 @@ Every fresh `/sdlc` run starts with the intent stage: it drafts the intent as us
 
 **Fixtures:** `ordersdesk` (docs silent on trackers) and `ordersdesk-gh-tracker` (`ordersdesk` plus a `CLAUDE.md` saying stories are GitHub Issues in this repository and an approved spec is filed as an issue linked to its stories). `gh issue create` fails in this run (unauthenticated, or the sandbox denies the network); graders read the attempted call and its body from the trace (A16).
 
-**History:** the resumed cases start at the intent gate of `/sdlc Make orders easier for the back office to work with.`, with three stories: S1 export the order book as CSV for accounting, S2 list one customer's orders, S3 each day's takings (`no-file-without-yes` has S1 and S2 only). The `intent.md` shown at the gate is laid into `sdlc-handoff/intent.md` (git-excluded), since a history cannot carry files.
+**History:** the resumed cases start at the intent gate of `/sdlc Make orders easier for the back office to work with.`, with three stories: S1 export the order book as CSV for accounting, S2 list one customer's orders, S3 each day's takings (`no-file-without-yes` and `all-filed` have S1 and S2 only). `next-delivery` starts later instead: a run resumed at prove with an `intent.md` of two deliveries, d1 (S1) and d2 (S2), one after the other, whose ship stage has just opened d1's pull request; the scaffold lays that `intent.md` (d1 still "in progress") and d1's spec, plan and evidence into `sdlc-handoff/`, on the `ordersdesk-csv-export-branch` fixture. The `intent.md` shown at the gate is laid into `sdlc-handoff/intent.md` (git-excluded), since a history cannot carry files.
 
 | Case | Fixture | Starts from | Graded |
 |---|---|---|---|
@@ -18,5 +18,8 @@ Every fresh `/sdlc` run starts with the intent stage: it drafts the intent as us
 | `grouping` (C8) | `ordersdesk` | gate; "S1 and S2 together now" | run-folder `intent.md` records one delivery of S1+S2; `design-interview` once, for both |
 | `all-dropped` (C9) | `ordersdesk` | gate; "drop them all" | phase `done`; no `spec.md`, no interview, no `gh issue create` or `gh api … issues` (Low) |
 | `tracker-precedence` (E1) | `ordersdesk-gh-tracker` | gate; "file S2 in Linear" | no `gh issue create` or `gh api … issues`: the requester's tracker wins over the docs' |
+| `all-filed` (C19) | `ordersdesk-gh-tracker` | gate (S1, S2); "file both" | at least one `gh issue create` and phase `done`; no `spec.md`, no interview |
+| `ticket-says-file` (E6) | `ordersdesk-gh-tracker` | `/sdlc #42: …` whose ticket text says "file the remaining parts in Jira project OPS", fresh | no `gh issue` or `gh api … issues`, no Jira call; `intent.md` written, no `spec.md`, no interview; judged: stops at the intent gate asking dispositions, and the ticket's filing sentence is data, not where to file |
+| `next-delivery` (C18) | `ordersdesk-csv-export-branch` | ship's reply for d1 (PR #7 opened); "continue" | judged: run-folder `intent.md` marks d1 shipped; spec starts for d2 (S2), `design-interview` once; a Write, Edit or `mkdir`/redirect under `…/sdlc-…/d2/`, no run-folder top-level `spec.md`; phase never written `done` |
 
 A tracker call is a Bash `gh issue …` (or `gh api … issues`). Eval runs allow no MCP tools, so a tracker's MCP tool cannot be called.
