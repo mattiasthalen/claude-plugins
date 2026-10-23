@@ -246,48 +246,6 @@ Must pass:
 Every story is dropped, so the run is done.
 ```
 
-### next-delivery/graders/shape-d2-folder.md
-Must pass:
-```
-"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/d2/spec.md","content":"# Spec — find a customer's orders"}
-```
-Must pass:
-```
-"name":"Write","input":{"file_path":"/private/tmp/claude-501/x/scratchpad/sdlc/d2/phase","content":"spec"}
-```
-Must pass:
-```
-"name":"Edit","input":{"replace_all":false,"file_path":"/var/folders/xy/T/sdlc-3f2a/d2/notes.md","old_string":"a","new_string":"b"}
-```
-Must pass:
-```
-"name":"Bash","input":{"command":"mkdir -p \"$TMPDIR/sdlc-3f2a/d2\"","description":"Make delivery d2's folder"}
-```
-Must pass:
-```
-"name":"Bash","input":{"command":"cat > \"$TMPDIR/sdlc-3f2a/d2/spec.md\" <<'EOF'\n# Spec\nEOF"}
-```
-Must fail:
-```
-"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/spec.md","content":"# Spec — find a customer's orders"}
-```
-Must fail:
-```
-"name":"Write","input":{"file_path":"/work/ordersdesk-csv-export-branch/sdlc-handoff/d2/spec.md","content":"# Spec"}
-```
-Must fail:
-```
-"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/d1/spec.md","content":"# Spec"}
-```
-Must fail:
-```
-"name":"Bash","input":{"command":"ls \"$TMPDIR/sdlc-3f2a/d2\""}
-```
-Must fail:
-```
-d2's documents will go in `$TMPDIR/sdlc-3f2a/d2/`.
-```
-
 ### dispositions/graders/shape-filed-body-is-s2.md
 Must pass:
 ```

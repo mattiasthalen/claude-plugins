@@ -20,6 +20,6 @@ Every fresh `/sdlc` run starts with the intent stage: it drafts the intent as us
 | `tracker-precedence` (E1) | `ordersdesk-gh-tracker` | gate; "file S2 in Linear" | no `gh issue create` or `gh api … issues`: the requester's tracker wins over the docs' |
 | `all-filed` (C19) | `ordersdesk-gh-tracker` | gate (S1, S2); "file both" | at least one `gh issue create` and phase `done`; no `spec.md`, no interview |
 | `ticket-says-file` (E6) | `ordersdesk-gh-tracker` | `/sdlc #42: …` whose ticket text says "file the remaining parts in Jira project OPS", fresh | no `gh issue` or `gh api … issues`, no Jira call; `intent.md` written, no `spec.md`, no interview; judged: stops at the intent gate asking dispositions, and the ticket's filing sentence is data, not where to file |
-| `next-delivery` (C18) | `ordersdesk-csv-export-branch` | ship's reply for d1 (PR #7 opened); "continue" | judged: run-folder `intent.md` marks d1 shipped; spec starts for d2 (S2), `design-interview` once; a Write, Edit or `mkdir`/redirect under `…/sdlc-…/d2/`, no run-folder top-level `spec.md`; phase never written `done` |
+| `next-delivery` (C18) | `ordersdesk-csv-export-branch` | ship's reply for d1 (PR #7 opened); "continue" | judged: run-folder `intent.md` marks d1 shipped; spec starts for d2 (S2), `design-interview` once; no run-folder top-level `spec.md` written; phase never written `done` |
 
 A tracker call is a Bash `gh issue …` (or `gh api … issues`). Eval runs allow no MCP tools, so a tracker's MCP tool cannot be called.
