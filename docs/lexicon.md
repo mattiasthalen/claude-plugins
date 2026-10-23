@@ -10,7 +10,7 @@ The words someone needs defined to talk about using or developing this marketpla
 
 **gate** — A *seam* where the requester approves a document before the *delivery* goes on: the *intent*, the *spec*, the *plan*, the tests, the *evidence*. Every gate is a *seam*.
 
-**intent** — The why of a *delivery*: the request as it arrives, whether a ticket, free text or a file, written by the intent stage as user stories in `intent.md` (id, As a / I want / So that, acceptance criteria, notes). Distinct from the *spec*, which says what must be true. See [ADR-0015](decisions/0015-every-fresh-sdlc-run-starts-with-an-intent-stage-that-writes-user-stories.md). "Pitch" is not used.
+**intent** — The why of a run, and of each *delivery* in it: the request as it arrives, whether a ticket, free text or a file, written by the intent stage as user stories in `intent.md` (id, As a / I want / So that, acceptance criteria, notes). Distinct from the *spec*, which says what must be true. See [ADR-0015](decisions/0015-every-fresh-sdlc-run-starts-with-an-intent-stage-that-writes-user-stories.md). "Pitch" is not used.
 
 **plan** — The how of a *delivery*: its *slices*, their order, and what each *check* will verify. Distinct from the *spec*, the what, and from plan mode, which `sdlc` does not use.
 

@@ -15,7 +15,7 @@ Installing it also installs Tobias Karlsson's [claude-design-skills](https://git
 | intent | `intent.md`: the intent as user stories (As a / I want / So that, acceptance criteria, notes), drafted before anything is asked | **gate**: per story now, file or drop; the "now" stories grouped into deliveries |
 | spec | `spec.md`: acceptance criteria (some of them preservation criteria: "this must not change"), edge cases, each with a check, its design branch and the story it serves | **gate**: approve the spec |
 | plan | `plan.md`: slices, order, what each check verifies | **gate**: approve the plan |
-| test | the tests, written by the `test-writer` agent from the spec alone, run at the base | **gate**: approve the tests (change criteria red, preservation criteria green) |
+| test | the tests, written by the `test-writer` agent from the spec and the plan's check descriptions alone, run at the base | **gate**: approve the tests (change criteria red, preservation criteria green) |
 | build | the change | — unattended — |
 | review | fixes: parallel reviewers by lens, at Medium and High three verifiers voting on each finding, a blocking security pass, at most three rounds | — unattended — |
 | prove | `evidence.md`: each check at the head, plus CI and the existing suite | **gate**: approve the evidence (Low-risk changes skip it) |
