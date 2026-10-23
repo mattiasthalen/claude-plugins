@@ -25,7 +25,7 @@ An intent, from user stories to ready pull requests, in eight stages: intent onc
 
 **Publishing.** On the spec gate's yes, before the seam, publish the spec if the requester or the project's docs say to and it is not published yet: where and as what they say, linked to its stories, with the spec's content as the body, never a path into the run's folder. Make the call once, even when the tracker looks unreachable or unauthenticated; a failure is reported with its error, and the run goes on. A published spec amended and approved again gets an offer to update the published item, acted on only on a yes.
 
-**Deliveries.** `intent.md` in the run's folder (a handed-in one is copied there at the first mark, and each seam names the copy) marks a delivery shipped when its pull requests open. After ship, the first delivery not yet shipped starts at spec, its documents in a subfolder of the run's folder named for it (`d2/`, `d3/`, …), instead of ending the run.
+**Deliveries.** `intent.md` in the run's folder (a handed-in one is read where it is until the first delivery ships, then copied there unchanged, and each seam names the copy) marks a delivery shipped when its pull requests open. After ship, the first delivery not yet shipped starts at spec, its documents in a subfolder of the run's folder named for it (`d2/`, `d3/`, …), instead of ending the run.
 
 **Continuing.** "continue from <stage> using <paths>" starts at that stage with those documents, which must exist and be read first; a missing one is refused with its path and the run asks for it.
 
