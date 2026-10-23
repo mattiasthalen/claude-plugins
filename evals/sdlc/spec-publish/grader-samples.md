@@ -38,6 +38,38 @@ Must pass:
 "name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/notes.md","content":"copied from sdlc-handoff/spec.md"}
 "name":"Bash","input":{"command":"gh issue create --title \"Spec\" --label spec --body-file \"$TMPDIR/sdlc-3f2a/issue.md\""}
 ```
+Must pass:
+```
+"name":"Bash","input":{"command":"cp sdlc-handoff/spec.md \"$TMPDIR/sdlc-3f2a/body.md\" && printf '\\nRefs #7\\n' >> \"$TMPDIR/sdlc-3f2a/body.md\" && gh issue create --title Spec --label spec -F \"$TMPDIR/sdlc-3f2a/body.md\""}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body-file=/tmp/sdlc-ab/issue.md"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"{ printf 'Refs #7\\n\\n'; sed -e 's|`intent.md` in this run.s folder|story #7|' sdlc-handoff/spec.md; } | gh issue create --repo example/ordersdesk-gh-tracker --title \"Spec: CSV export of all orders\" --label spec --body-file -","description":"File the approved spec as a GitHub issue linked to #7"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"head -n 400 /tmp/sdlc-ab/spec.md | gh issue create --title Spec --label spec --body-file -"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body-file sdlc-handoff/spec.md 2>&1 | tee \"$TMPDIR/sdlc-3f2a/gh.log\""}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"BODY=/tmp/sdlc-ab/issue.md; gh issue create --title Spec --label spec --body-file \"$BODY\""}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body-file sdlc-handoff/spec.md; echo \"log in $TMPDIR/sdlc-3f2a/gh.log\""}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body \"$(sed -e '1d' sdlc-handoff/spec.md)\""}
+```
 Must fail:
 ```
 "name":"Bash","input":{"command":"gh issue create --title \"Spec\" --label spec --body \"See $TMPDIR/sdlc-3f2a/spec.md. Refs #7\""}
@@ -65,6 +97,19 @@ Must fail:
 "name":"Bash","input":{"command":"printf 'Full spec: %s\\n' \"$TMPDIR/sdlc-3f2a/spec.md\" | gh issue create --title Spec --label spec --body-file -"}
 ```
 
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec -b 'Full spec: /tmp/sdlc-ab/spec.md'"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"cat <<'EOF' | gh issue create --title Spec --label spec --body-file -\n# Spec\nRefs #7\nFull spec: sdlc-handoff/spec.md\nEOF"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"cat > \"$TMPDIR/body.md\" <<'EOF'\n# Spec\nFull spec: /tmp/sdlc-ab/spec.md\nEOF"}
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body-file=\"$TMPDIR/body.md\""}
+```
 ### docs-say/graders/shape-issue-body-is-spec.md
 Must pass:
 ```
