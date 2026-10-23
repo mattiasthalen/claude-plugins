@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "sdlc",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "An AI-native SDLC: one change from intent through spec, plan, tests, build, review and evidence to ready PRs, with gates where you approve and an unattended stretch in between. Orchestrates the exodus design skills.",
   "author": {
     "name": "Mattias Thalén",

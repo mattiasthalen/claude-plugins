@@ -5,7 +5,8 @@ The run's phase lives in `<docs>/phase`, where <docs> is `<scratchpad>/sdlc`, or
 `$TMPDIR/sdlc-<session_id>` (the Bash tool's $TMPDIR) in a session without a scratchpad. The skill writes the
 phase as each stage starts; with no phase file, or phase `done`, the gate is inert.
 
-    spec, plan   writes only into <docs>
+    intent, spec, plan
+                 writes only into <docs>
     test         <docs>, and test files from the test-writer agent
     build, review, prove, ship
                  anything, except test files outside the test-writer agent
@@ -24,7 +25,7 @@ TEST_WRITER = "sdlc:test-writer"
 TEST_NAMES = ("test_*", "*_test.*", "*.test.*", "*.spec.*", "*_spec.*", "conftest.py")
 CAMEL_TEST_NAMES = ("*Test.*", "*Tests.*")
 TEST_DIRS = {"tests", "test", "__tests__", "spec", "testdata", "evals"}
-PRE_APPROVAL = {"spec", "plan"}
+PRE_APPROVAL = {"intent", "spec", "plan"}
 POST_TEST = {"build", "review", "prove", "ship"}
 
 

@@ -10,7 +10,7 @@ A small, well-defined intent on one repo, carried through every stage. Each stag
 
 ## spec
 
-Starts from the bare intent. Graded: `design:design-interview` invoked through the Skill tool; the phase file written in the docs dir (`…/sdlc-…/phase`); no Write or Edit outside the docs dir, no commit; no `plan.md` or `evidence.md`; no test-writer; the reply asks interview questions in prose (A8, A5-adjacent).
+Starts from `/sdlc continue from spec using sdlc-handoff/intent.md`: the scaffold lays an `intent.md` with one story (the CSV export, who reads it still unknown) into `sdlc-handoff/`, git-excluded. Graded: the intent stage is skipped (no Write to `intent.md`: `shape-no-intent-write`); `design:design-interview` invoked through the Skill tool; the phase file written in the docs dir (`…/sdlc-…/phase`); no Write or Edit outside the docs dir, no commit; no `plan.md` or `evidence.md`; no test-writer; the reply asks interview questions in prose (A8, A5-adjacent).
 
 ## spec-gate
 
