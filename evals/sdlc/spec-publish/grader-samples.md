@@ -5,7 +5,7 @@ Offline samples for every regex shape grader in this scenario; `python3 evals/sd
 - `shape-no-gh-issue` `\bgh\s+(?:issue\b|api\b[^\n]*\bissues\b)` (max 0) matches `{"command": "gh issue create --title x"}` and `{"command": "gh issue view 7"}`; it does not match `{"command": "gh auth status"}`.
 - `shape-no-gh-issue-write` `\bgh\s+(?:issue\s+(?:create|edit|comment|close|reopen)\b|api\b[^\n]*\bissues\b)` (max 0) matches `{"command": "gh issue edit 8 --body-file x.md"}`, `{"command": "gh issue comment 8 --body \"Amended: C6\""}` and `{"command": "gh api -X PATCH repos/example/ordersdesk/issues/8 -f body=x"}`; it does not match `{"command": "gh issue view 8"}` or `{"command": "gh auth status"}`.
 
-`shape-issue-body-no-run-path` is a regex grader over the whole trace (`not_contains`): a run-folder path (`sdlc-<id>/`, `/sdlc/`, `sdlc-handoff/`) must not be text in the issue's body, whether the body is inline in the `gh issue create` command, fed on stdin (a pipe or heredoc into `--body-file -`), or in a file a Write or Bash call wrote earlier and the `gh issue create` reads by `--body-file`/`-F` under the same file name. A path used as a file is not text: the operand of `cat`, `--body-file`/`-F`, or a `<`/`>` redirect passes, so `cat sdlc-handoff/spec.md | gh issue create --body-file -` and `--body-file "$TMPDIR/sdlc-3f2a/issue.md"` are fine; only what such a file holds is checked.
+`shape-issue-body-no-run-path` is a regex grader over the whole trace (`not_contains`): a run-folder path (`sdlc-<id>/`, `/sdlc/`, `sdlc-handoff/`) must not be text in the issue's body, whether the body is inline in the `gh issue create` command, fed on stdin (a pipe or heredoc into `--body-file -`), or in a file a Write or Bash call wrote earlier and the `gh issue create` reads by `--body-file`/`-F` under the same file name. A path used as a file is not text: the operand of `cat`, `--body-file`/`-F`, or a `<`/`>` redirect passes, so `cat sdlc-handoff/spec.md | gh issue create --body-file -` and `--body-file "$TMPDIR/sdlc-3f2a/issue.md"` are fine; only what such a file holds is checked. Inside a `$(…)`, each command is judged on its own: one that starts with `cat`, `sed`, `head` or `tail` reads its operands as files, while a path in any other (`echo`, `printf`) is body text, so `--body "$(cat sdlc-handoff/spec.md; printf '\nRefs #7\n')"` passes and `--body "$(cat sdlc-handoff/spec.md; echo Full spec: /tmp/sdlc-ab/spec.md)"` fails. An `echo` or `printf` counts only at a command start (the command's start, or after `;`, `&`, `|`, `(`, `{`, a newline, `then`, `else` or `do`), so a long command is scanned once rather than again from every `echo` word in it.
 
 `shape-issue-body-is-spec` is a regex grader over the whole trace, not a judged one: a judge of a long resumed run sees only the trace's head and tail (about 23 KB), and the filing call sits in between. It matches the compact tool call as `trace.jsonl` writes it (`"name":"Bash","input":{"command":"…"}`), its body inline in that command, or in a file a Write or Bash call wrote earlier and the `gh issue create` reads by `--body-file`/`-F` under the same file name. For the spec, a body is also the spec when the command feeds a `spec.md` file to `gh` (`cat` into the `--body-file`, a pipe into `--body-file -`, `--body "$(cat …)"`, `--body-file …/spec.md`, `< …/spec.md`); such a body needs no `#7` in the command, because the fixture's spec names `issue #7` itself. An inline or written body must hold the C1 and C5 rows and `#7`.
 
@@ -109,6 +109,34 @@ Must fail:
 ```
 "name":"Bash","input":{"command":"cat > \"$TMPDIR/body.md\" <<'EOF'\n# Spec\nFull spec: /tmp/sdlc-ab/spec.md\nEOF"}
 "name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body-file=\"$TMPDIR/body.md\""}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body \"$( { cat sdlc-handoff/spec.md; printf '\\n\\nRefs #7\\n'; } )\""}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body \"$(cat sdlc-handoff/spec.md | sed -e 's|in this run.s folder|in #7|')\""}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body \"$(tail -n +2 /tmp/sdlc-ab/spec.md && echo && echo Refs \#7)\""}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body \"$(cat sdlc-handoff/spec.md; echo; echo Full spec: /tmp/sdlc-ab/spec.md)\""}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body \"$(printf \"Full spec: %s\" /tmp/sdlc-ab/spec.md)\""}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body \"$(cat sdlc-handoff/spec.md)\n\nFull spec: $(echo /tmp/sdlc-ab/spec.md)\""}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"echo \"$(cat sdlc-handoff/spec.md)\" $(printf 'see %s' /tmp/sdlc-ab/spec.md) | gh issue create --title Spec --label spec --body-file -"}
 ```
 ### docs-say/graders/shape-issue-body-is-spec.md
 Must pass:

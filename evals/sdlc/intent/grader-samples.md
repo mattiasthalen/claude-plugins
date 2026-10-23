@@ -4,15 +4,15 @@ Offline samples for every regex shape grader in this scenario; `python3 evals/sd
 
 - `shape-no-write-outside-docs` / `shape-no-edit-outside-docs` `"file_path":\s*"(?![^"]*/sdlc(?:/|-(?!handoff/)))` matches (a violation) `"file_path": "/work/ordersdesk/orders/__main__.py"` and `"file_path": "/work/ordersdesk/sdlc-handoff/intent.md"`; it does not match `"file_path": "/var/folders/xy/T/sdlc-3f2a/intent.md"`.
 - `shape-no-gh-issue-create` `\bgh\s+(?:issue\s+create\b|api\b[^\n]*\bissues\b)` matches `{"command": "gh issue create --title \"Find a customer's orders\" --label story --body-file \"$TMPDIR/sdlc-3f2a/s2.md\""}` and `{"command": "gh api repos/example/ordersdesk/issues -f title=\"Find a customer's orders\" -f body=x"}`; it does not match `{"command": "gh auth status"}` or `{"command": "gh issue list --label story"}`.
-- `shape-no-gh-issue` `\bgh\s+(?:issue\b|api\b[^\n]*\bissues\b)` matches `{"command": "gh issue view 42"}`, `{"command": "gh issue edit 42 --body-file x.md"}` and `{"command": "gh api repos/example/ordersdesk/issues -f title=x"}`; it does not match `{"command": "gh auth status"}` or `{"command": "git log --oneline"}`.
-- `shape-gh-issue-create-attempted` (`all-filed`, `min: 1`) `\bgh\s+issue\s+create\b` matches `{"command": "gh issue create --label story --title \"S1 — Export the order book\" --body-file \"$TMPDIR/sdlc-3f2a/s1.md\""}`; it does not match `{"command": "gh issue list --label story"}`. A count, not `shape-one-gh-issue-create`'s paired regex: it asks only that filing was tried, and a refused call is still a try.
+- `shape-no-gh-issue-write` (`ticket-says-file`) `\bgh\s+(?:issue\s+(?:create|edit|comment|close|reopen|delete|transfer)\b|api\b(?=[^\n]*\bissues\b)(?=[^\n]*\s(?:-X\s*(?!GET\b)[A-Za-z]|--method[\s=]+(?!GET\b)[A-Za-z]|-[fF]\s|--(?:field|raw-field|input)\b)))` matches a write to the tracker: `{"command": "gh issue edit 42 --body-file x.md"}`, `{"command": "gh issue comment 42 --body \"Filed in OPS\""}`, `{"command": "gh api repos/example/ordersdesk/issues -f title=x"}` and `{"command": "gh api -X PATCH repos/example/ordersdesk/issues/42 -F body=@x.md"}`; it does not match reading the ticket, `{"command": "gh issue view 42 --json title,body"}` or `{"command": "gh api repos/example/ordersdesk/issues/42"}`, nor `{"command": "gh auth status"}`. Reading ticket #42 is how a run gets its text, so only writes count.
+- `shape-gh-issue-create-attempted` (`all-filed`, `min: 1`) `\bgh\s+(?:issue\s+create\b|api\b[^\n]*\bissues\b)` matches `{"command": "gh issue create --label story --title \"S1 — Export the order book\" --body-file \"$TMPDIR/sdlc-3f2a/s1.md\""}` and `{"command": "gh api repos/example/ordersdesk/issues -f title=\"S1 — Export the order book\" -F body=@s1.md"}`, the scenario's other tracker call; it does not match `{"command": "gh issue list --label story"}`. A count, not `shape-one-gh-issue-create`'s paired regex: it asks only that filing was tried, and a refused call is still a try.
 - `shape-no-top-level-spec-write` (`next-delivery`) `"file_path":\s*"[^"]*/sdlc(?:-(?!handoff/)[^"/]*)?/spec\.md"` matches `"file_path": "/var/folders/xy/T/sdlc-3f2a/spec.md"` and `"file_path": "/private/tmp/claude-501/x/scratchpad/sdlc/spec.md"`; it does not match `"file_path": "/var/folders/xy/T/sdlc-3f2a/d2/spec.md"`. `shape-no-top-level-spec-bash` is the same for a Bash redirect, `tee`, `cp` or `mv`.
 - `shape-no-jira-call` (`ticket-says-file`) `\b(?:curl|wget|http)\b[^\n]*(?:atlassian|jira)|\b(?:jira|acli)\s+(?:issue|workitem|create)\b` matches `{"command": "curl -X POST https://example.atlassian.net/rest/api/3/issue -d @s2.json"}` and `{"command": "jira issue create -p OPS -t Story"}`; it does not match `{"command": "grep -ri jira CLAUDE.md README.md"}`.
-- `shape-interview-once` / `shape-interview-invoked` match a Skill call whose input holds `design-interview`, such as `{"skill": "design:design-interview"}`.
+- `shape-interview-once` / `shape-interview-invoked` match a Skill call whose input holds `design-interview`, such as `{"skill": "design:design-interview"}`; `shape-no-interview` is the same pattern at `max: 0` (`next-delivery`'s prompt says the change is small, which skips the interview).
 
 `shape-filed-body-is-s2` is a regex grader over the whole trace, not a judged one: a judge of a long resumed run sees only the trace's head and tail (about 23 KB), and the filing call sits in between. It matches the compact tool call as `trace.jsonl` writes it (`"name":"Bash","input":{"command":"…"}`), its body inline in that command, or in a file a Write or Bash call wrote earlier and the `gh issue create` reads by `--body-file`/`-F` under the same file name. The body must hold S2 (`back-office clerk` or its story line, and `--customer`) and nothing of S1 or S3 (`accountant`, `export --csv`, `shop manager`, `orders daily`, `takings`).
 
-`shape-one-gh-issue-create` is a regex grader over the whole trace, not a `tool_used` count: a count also took Bash calls the harness refused before running them (a `<tool_use_error>`, such as `allowed_domains cannot widen network access`) and calls where `gh` never ran (a `> "$TMPDIR/…" && gh issue create …` whose redirect failed with `Read-only file system`), so a run that filed once was failed for its retries. It pairs each `gh issue create` Bash call (`"id":"toolu_…","name":"Bash","input":{"command":"…"`) with its `tool_result` by `tool_use_id`, in either key order, and counts the call as a filing attempt when the result is not a `<tool_use_error>` or a `Permission to use` refusal, and either shows `gh` ran (`api.github.com`, an issue URL, `gh auth login`, `GH_TOKEN`, `GraphQL:`, `HTTP 4xx/5xx`, `could not add label`) or carries no shell error (`bash: line N: `, `zsh:N: `, `sh: `) other than the harness's own `…/cwd-…: ` file. Anchored at the trace's start, it passes when such an attempt exists and no second one with another id does. `shape-no-gh-issue-create` and `shape-no-gh-issue` stay `tool_used` counts: there a refused call is still an attempt to file.
+`shape-one-gh-issue-create` is a regex grader over the whole trace, not a `tool_used` count: a count also took Bash calls the harness refused before running them (a `<tool_use_error>`, such as `allowed_domains cannot widen network access`) and calls where `gh` never ran (a `> "$TMPDIR/…" && gh issue create …` whose redirect failed with `Read-only file system`), so a run that filed once was failed for its retries. It pairs each `gh issue create` Bash call (`"id":"toolu_…","name":"Bash","input":{"command":"…"`) with its `tool_result` by `tool_use_id`, in either key order, and counts the call as a filing attempt when the result is not a `<tool_use_error>` or a `Permission to use` refusal, and either shows `gh` ran (`api.github.com`, an issue URL, `gh auth login`, `GH_TOKEN`, `GraphQL:`, `HTTP 4xx/5xx`, `could not add label`) or carries no shell error (`bash: line N: `, `zsh:N: `, `sh: `) other than the harness's own `…/cwd-…: ` file. Anchored at the trace's start, it passes when such an attempt exists and no second one with another id does. `shape-no-gh-issue-create` and `shape-no-gh-issue-write` stay `tool_used` counts: there a refused call is still an attempt to file.
 
 ### idea/graders/shape-phase-intent.md
 Must pass:
@@ -244,6 +244,60 @@ cat "$TMPDIR/sdlc-3f2a/phase"
 Must pass:
 ```
 Every story is dropped, so the run is done.
+```
+
+### next-delivery/graders/shape-d2-folder.md
+Must pass:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/d2/spec.md","content":"# Spec — find a customer's orders"}
+```
+Must pass:
+```
+"name":"Write","input":{"file_path":"/private/tmp/claude-501/x/scratchpad/sdlc/d2/phase","content":"spec"}
+```
+Must pass:
+```
+"name":"Edit","input":{"replace_all":false,"file_path":"/var/folders/xy/T/sdlc-3f2a/d2/notes.md","old_string":"a","new_string":"b"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"mkdir -p \"$TMPDIR/sdlc-3f2a/d2\"","description":"Make delivery d2's folder"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"cat > \"$TMPDIR/sdlc-3f2a/d2/spec.md\" <<'EOF'\n# Spec\nEOF"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"mkdir -p /tmp/claude-0/x/scratchpad/sdlc/d2 && cp sdlc-handoff/intent.md /tmp/claude-0/x/scratchpad/sdlc/intent.md"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"mkdir -p sdlc-handoff/d2"}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/intent.md","content":"| d2 | S2 | in progress |"}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/spec.md","content":"# Spec — find a customer's orders"}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/work/ordersdesk-csv-export-branch/sdlc-handoff/d2/spec.md","content":"# Spec"}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/d1/spec.md","content":"# Spec"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"ls \"$TMPDIR/sdlc-3f2a/d2\""}
+```
+Must fail:
+```
+d2's documents will go in `$TMPDIR/sdlc-3f2a/d2/`.
 ```
 
 ### dispositions/graders/shape-filed-body-is-s2.md
