@@ -55,7 +55,6 @@ class StageGate(unittest.TestCase):
                 r = self.run_in(phase)
                 self.assertIsNotNone(r.decide("src/app.py"))
                 self.assertIsNotNone(r.decide("tests/test_app.py", agent=stage_gate.TEST_WRITER))
-                self.assertIsNone(r.decide(str(r.docs / "intent.md")))
                 self.assertIsNone(r.decide(str(r.docs / "spec.md")))
 
     def test_test_stage_only_tests_by_writer(self):

@@ -2,13 +2,68 @@
 
 Offline samples for every regex shape grader in this scenario; `python3 evals/sdlc/tools/test_shape_graders.py` checks them. The `tool_used` graders' `input_match` patterns are not checked by it; their samples are kept here as documentation:
 
-- `shape-issue-body-no-run-path` `^(?!.*--body-file)(?!.*\s-F\s).*\bgh\s+issue\s+create\b.*sdlc[-/]` (max 0) matches (a violation) `{"command": "gh issue create --title \"Spec\" --body \"See $TMPDIR/sdlc-3f2a/spec.md. Refs #7\""}` and `{"command": "gh issue create --title Spec --body \"Spec at sdlc-handoff/spec.md\""}`; it does not match `{"command": "gh issue create --title Spec --body \"## Acceptance criteria\\n| C1 | … |\\nRefs #7\""}` or `{"command": "gh issue create --title Spec --body-file \"$TMPDIR/sdlc-3f2a/issue.md\""}` (a body file's content is checked by `shape-issue-body-is-spec`).
 - `shape-no-gh-issue` `\bgh\s+(?:issue\b|api\b[^\n]*\bissues\b)` (max 0) matches `{"command": "gh issue create --title x"}` and `{"command": "gh issue view 7"}`; it does not match `{"command": "gh auth status"}`.
 - `shape-no-gh-issue-write` `\bgh\s+(?:issue\s+(?:create|edit|comment|close|reopen)\b|api\b[^\n]*\bissues\b)` (max 0) matches `{"command": "gh issue edit 8 --body-file x.md"}`, `{"command": "gh issue comment 8 --body \"Amended: C6\""}` and `{"command": "gh api -X PATCH repos/example/ordersdesk/issues/8 -f body=x"}`; it does not match `{"command": "gh issue view 8"}` or `{"command": "gh auth status"}`.
+
+`shape-issue-body-no-run-path` is a regex grader over the whole trace (`not_contains`): a run-folder path (`sdlc-<id>/`, `/sdlc/`, `sdlc-handoff/`) must not be text in the issue's body, whether the body is inline in the `gh issue create` command, fed on stdin (a pipe or heredoc into `--body-file -`), or in a file a Write or Bash call wrote earlier and the `gh issue create` reads by `--body-file`/`-F` under the same file name. A path used as a file is not text: the operand of `cat`, `--body-file`/`-F`, or a `<`/`>` redirect passes, so `cat sdlc-handoff/spec.md | gh issue create --body-file -` and `--body-file "$TMPDIR/sdlc-3f2a/issue.md"` are fine; only what such a file holds is checked.
 
 `shape-issue-body-is-spec` is a regex grader over the whole trace, not a judged one: a judge of a long resumed run sees only the trace's head and tail (about 23 KB), and the filing call sits in between. It matches the compact tool call as `trace.jsonl` writes it (`"name":"Bash","input":{"command":"…"}`), its body inline in that command, or in a file a Write or Bash call wrote earlier and the `gh issue create` reads by `--body-file`/`-F` under the same file name. For the spec, a body is also the spec when the command feeds a `spec.md` file to `gh` (`cat` into the `--body-file`, a pipe into `--body-file -`, `--body "$(cat …)"`, `--body-file …/spec.md`, `< …/spec.md`); such a body needs no `#7` in the command, because the fixture's spec names `issue #7` itself. An inline or written body must hold the C1 and C5 rows and `#7`.
 
 `shape-one-gh-issue-create` is a regex grader over the whole trace, not a `tool_used` count: a count also took Bash calls the harness refused before running them (a `<tool_use_error>`, such as `allowed_domains cannot widen network access`) and calls where `gh` never ran (a `> "$TMPDIR/…" && gh issue create …` whose redirect failed with `Read-only file system`), so a run that filed once was failed for its retries. It pairs each `gh issue create` Bash call (`"id":"toolu_…","name":"Bash","input":{"command":"…"`) with its `tool_result` by `tool_use_id`, in either key order, and counts the call as a filing attempt when the result is not a `<tool_use_error>` or a `Permission to use` refusal, and either shows `gh` ran (`api.github.com`, an issue URL, `gh auth login`, `GH_TOKEN`, `GraphQL:`, `HTTP 4xx/5xx`, `could not add label`) or carries no shell error (`bash: line N: `, `zsh:N: `, `sh: `) other than the harness's own `…/cwd-…: ` file. Anchored at the trace's start, it passes when such an attempt exists and no second one with another id does. `shape-no-gh-issue-create` and `shape-no-gh-issue` stay `tool_used` counts: there a refused call is still an attempt to file.
+
+### docs-say/graders/shape-issue-body-no-run-path.md
+Must pass:
+```
+"name":"Bash","input":{"command":"{ cat sdlc-handoff/spec.md; printf '\\nRefs #7\\n'; } | gh issue create --repo example/ordersdesk-gh-tracker --title \"Spec: CSV export of all orders\" --label spec --body-file -","description":"File the approved spec as a GitHub issue linked to #7"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --repo example/ordersdesk-gh-tracker --title \"Spec: CSV export of all orders\" --label spec --body \"$(cat sdlc-handoff/spec.md; printf '\\nRefs #7\\n')\""}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"cat sdlc-handoff/spec.md > \"$TMPDIR/sdlc-3f2a/issue.md\" && printf '\\nRefs #7\\n' >> \"$TMPDIR/sdlc-3f2a/issue.md\" && gh issue create --title Spec --label spec -F \"$TMPDIR/sdlc-3f2a/issue.md\" 2>&1"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --title \"Spec: CSV export\" --label spec --body-file - < \"$TMPDIR/sdlc-3f2a/spec.md\""}
+```
+Must pass:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/issue.md","content":"# Spec — CSV export of all orders\n\n| C1 | every order, one row each |\n| C5 | header row first |\n\nRefs #7\n"}
+"name":"Bash","input":{"command":"gh issue create --title \"Spec\" --label spec --body-file \"$TMPDIR/sdlc-3f2a/issue.md\""}
+```
+Must pass:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/notes.md","content":"copied from sdlc-handoff/spec.md"}
+"name":"Bash","input":{"command":"gh issue create --title \"Spec\" --label spec --body-file \"$TMPDIR/sdlc-3f2a/issue.md\""}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --title \"Spec\" --label spec --body \"See $TMPDIR/sdlc-3f2a/spec.md. Refs #7\""}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body \"Spec at sdlc-handoff/spec.md\""}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/issue.md","content":"# Spec — CSV export of all orders\n\n| C1 | every order, one row each |\n| C5 | header row first |\n\nRefs #7\n\nFull spec: /tmp/sdlc-ab/spec.md\n"}
+"name":"Bash","input":{"command":"gh issue create --title \"Spec\" --label spec --body-file \"$TMPDIR/sdlc-3f2a/issue.md\""}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"{ cat sdlc-handoff/spec.md; printf '\\nFull spec: /tmp/sdlc-ab/spec.md\\nRefs #7\\n'; } > \"$TMPDIR/body.md\""}
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec -F \"$TMPDIR/body.md\""}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --title Spec --label spec --body-file - <<'EOF'\n# Spec\n| C1 | every order |\nRefs #7\nFull spec: /tmp/sdlc-ab/spec.md\nEOF"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"printf 'Full spec: %s\\n' \"$TMPDIR/sdlc-3f2a/spec.md\" | gh issue create --title Spec --label spec --body-file -"}
+```
 
 ### docs-say/graders/shape-issue-body-is-spec.md
 Must pass:

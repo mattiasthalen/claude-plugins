@@ -3,7 +3,7 @@
 Offline samples for every regex shape grader in this scenario; `python3 evals/sdlc/tools/test_shape_graders.py` checks them. The `tool_used` graders' `input_match` patterns are not checked by it; their samples are kept here as documentation:
 
 - `shape-no-write-outside-docs` / `shape-no-edit-outside-docs` `"file_path":\s*"(?![^"]*/sdlc(?:/|-(?!handoff/)))` matches (a violation) `"file_path": "/work/ordersdesk/orders/__main__.py"` and `"file_path": "/work/ordersdesk/sdlc-handoff/intent.md"`; it does not match `"file_path": "/var/folders/xy/T/sdlc-3f2a/intent.md"`.
-- `shape-no-gh-issue-create` `\bgh\s+issue\s+create\b` matches `{"command": "gh issue create --title \"Find a customer's orders\" --label story --body-file \"$TMPDIR/sdlc-3f2a/s2.md\""}`; it does not match `{"command": "gh auth status"}` or `{"command": "gh issue list --label story"}`.
+- `shape-no-gh-issue-create` `\bgh\s+(?:issue\s+create\b|api\b[^\n]*\bissues\b)` matches `{"command": "gh issue create --title \"Find a customer's orders\" --label story --body-file \"$TMPDIR/sdlc-3f2a/s2.md\""}` and `{"command": "gh api repos/example/ordersdesk/issues -f title=\"Find a customer's orders\" -f body=x"}`; it does not match `{"command": "gh auth status"}` or `{"command": "gh issue list --label story"}`.
 - `shape-no-gh-issue` `\bgh\s+(?:issue\b|api\b[^\n]*\bissues\b)` matches `{"command": "gh issue view 42"}`, `{"command": "gh issue edit 42 --body-file x.md"}` and `{"command": "gh api repos/example/ordersdesk/issues -f title=x"}`; it does not match `{"command": "gh auth status"}` or `{"command": "git log --oneline"}`.
 - `shape-interview-once` / `shape-interview-invoked` match a Skill call whose input holds `design-interview`, such as `{"skill": "design:design-interview"}`.
 
