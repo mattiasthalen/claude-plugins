@@ -7,6 +7,8 @@ Offline samples for every regex shape grader in this scenario; `python3 evals/sd
 - `shape-no-gh-issue` `\bgh\s+(?:issue\b|api\b[^\n]*\bissues\b)` matches `{"command": "gh issue view 42"}`, `{"command": "gh issue edit 42 --body-file x.md"}` and `{"command": "gh api repos/example/ordersdesk/issues -f title=x"}`; it does not match `{"command": "gh auth status"}` or `{"command": "git log --oneline"}`.
 - `shape-interview-once` / `shape-interview-invoked` match a Skill call whose input holds `design-interview`, such as `{"skill": "design:design-interview"}`.
 
+`shape-filed-body-is-s2` is a regex grader over the whole trace, not a judged one: a judge of a long resumed run sees only the trace's head and tail (about 23 KB), and the filing call sits in between. It matches the compact tool call as `trace.jsonl` writes it (`"name":"Bash","input":{"command":"…"}`), its body inline in that command, or in a file a Write or Bash call wrote earlier and the `gh issue create` reads by `--body-file`/`-F` under the same file name. The body must hold S2 (`back-office clerk` or its story line, and `--customer`) and nothing of S1 or S3 (`accountant`, `export --csv`, `shop manager`, `orders daily`, `takings`).
+
 ### idea/graders/shape-phase-intent.md
 Must pass:
 ```
@@ -152,3 +154,62 @@ Must fail:
 ```
 Every story is dropped, so the run is done.
 ```
+
+### dispositions/graders/shape-filed-body-is-s2.md
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --label story --title \"S2 — Find a customer's orders\" --body 'As a back-office clerk, I want to list only the orders of the customer I name, so that I can answer a customer on the phone without scrolling the whole book.\n\nAcceptance criteria:\n- `python3 -m orders list --customer <text>` prints only orders whose customer contains `<text>`, ignoring case.\n- No match prints nothing and exits 0.\n- `python3 -m orders list` without `--customer` prints what it prints today.\n\nNotes: partial names are enough (\"berg\" finds \"Berg, Hanna\").' 2>&1","description":"File story S2 as a GitHub issue"}
+```
+Must pass:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/s2-issue.md","content":"## S2 — Find a customer's orders\n\nAs a back-office clerk, I want to list only the orders of the customer I name, so that I can answer a customer on the phone without scrolling the whole book.\n\nAcceptance criteria:\n- `python3 -m orders list --customer <text>` prints only orders whose customer contains `<text>`, ignoring case.\n- No match prints nothing and exits 0.\n"}
+"name":"Bash","input":{"command":"gh issue create --label story --title \"S2 — Find a customer's orders\" --body-file \"$TMPDIR/sdlc-3f2a/s2-issue.md\""}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"cat > \"$TMPDIR/sdlc-3f2a/s2.md\" <<'EOF'\nAs a back-office clerk, I want to list only the orders of the customer I name, so that I can answer a customer on the phone without scrolling the whole book.\n\nAcceptance criteria:\n- `python3 -m orders list --customer <text>` prints only orders whose customer contains `<text>`, ignoring case.\n- No match prints nothing and exits 0.\nEOF"}
+"name":"Bash","input":{"command":"gh issue create --label story --title \"Find a customer's orders\" -F \"$TMPDIR/sdlc-3f2a/s2.md\" 2>&1"}
+```
+Must pass:
+```
+"name":"Bash","input":{"command":"gh issue create --label story --title \"S2\" --body-file - <<'EOF'\nAs a back-office clerk, I want to list only the orders of the customer I name, so that I can answer a customer on the phone without scrolling the whole book.\n\nAcceptance criteria:\n- `python3 -m orders list --customer <text>` prints only orders whose customer contains `<text>`, ignoring case.\n- No match prints nothing and exits 0.\nEOF"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --label story --title \"S1 — Export the order book\" --body 'As an accountant, I want every order exported as a CSV file I can feed to our importer, so that I stop retyping orders at month end.\n\nAcceptance criteria:\n- `python3 -m orders export --csv <path>` writes every order in the book to `<path>` with a header row.'"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --label story --title \"S2 — Find a customer's orders\" --body 'As a back-office clerk, I want to list only the orders of the customer I name, so that I can answer a customer on the phone without scrolling the whole book.\n\nAcceptance criteria:\n- `python3 -m orders list --customer <text>` prints only orders whose customer contains `<text>`, ignoring case.\n- No match prints nothing and exits 0.\n\nAs the shop manager, I want the total of each day's orders, so that I can compare days without a spreadsheet.\n\nAcceptance criteria:\n- `python3 -m orders daily` prints one line per day that has orders.'"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --label story --title \"Back-office stories\" --body 'As an accountant, I want every order exported as a CSV file I can feed to our importer, so that I stop retyping orders at month end.\n\nAcceptance criteria:\n- `python3 -m orders export --csv <path>` writes every order in the book to `<path>` with a header row.\n\nAs a back-office clerk, I want to list only the orders of the customer I name, so that I can answer a customer on the phone without scrolling the whole book.\n\nAcceptance criteria:\n- `python3 -m orders list --customer <text>` prints only orders whose customer contains `<text>`, ignoring case.\n- No match prints nothing and exits 0.'"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --label story --title \"S2 — Find a customer's orders\" --body-file \"$TMPDIR/sdlc-3f2a/s2.md\""}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --label story --title \"S2 — Find a customer's orders\" --body \"See sdlc-handoff/intent.md, S2 (back-office clerk).\""}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/s2.md","content":"As a back-office clerk, I want to list only the orders of the customer I name, so that I can answer a customer on the phone without scrolling the whole book.\n\nAcceptance criteria:\n- `python3 -m orders list --customer <text>` prints only orders whose customer contains `<text>`, ignoring case.\n- No match prints nothing and exits 0.\n"}
+"name":"Bash","input":{"command":"gh issue create --label story --title \"S2\" --body-file \"$TMPDIR/sdlc-3f2a/s3.md\""}
+```
+Must fail:
+```
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/s2.md","content":"As a back-office clerk, I want to list only the orders of the customer I name, so that I can answer a customer on the phone without scrolling the whole book.\n\nAcceptance criteria:\n- `python3 -m orders list --customer <text>` prints only orders whose customer contains `<text>`, ignoring case.\n- No match prints nothing and exits 0.\n"}
+```
+Must fail:
+```
+"name":"Bash","input":{"command":"gh issue create --label story --title \"S2\" --body-file \"$TMPDIR/sdlc-3f2a/s2.md\""}
+"name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/s2.md","content":"As a back-office clerk, I want to list only the orders of the customer I name, so that I can answer a customer on the phone without scrolling the whole book.\n\nAcceptance criteria:\n- `python3 -m orders list --customer <text>` prints only orders whose customer contains `<text>`, ignoring case.\n- No match prints nothing and exits 0.\n"}
+```
+Must fail:
+```
+{"type":"text","text":"Filing S2: As a back-office clerk, I want to list only the orders of the customer I name. `python3 -m orders list --customer <text>`. Next: gh issue create."}
+```
+

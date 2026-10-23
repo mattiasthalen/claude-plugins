@@ -8,6 +8,6 @@ After the spec gate's yes, the spec is published to the tracker only when the re
 
 | Case | Fixture | Prompt | Graded |
 |---|---|---|---|
-| `docs-say` (C10) | `ordersdesk-gh-tracker` | "Approved. Continue here." | exactly one `gh issue create`; no inline body holding a run-folder path; body is the spec and links #7 (judged) |
+| `docs-say` (C10) | `ordersdesk-gh-tracker` | "Approved. Continue here." | exactly one `gh issue create`; no inline body holding a run-folder path; body is the spec (its C1 and C5 rows) and links #7, inline, from a written file, or fed from `spec.md` |
 | `silent` (C11) | `ordersdesk` | "Approved. Continue here." | no `gh issue` call, no tracker tool (High) |
 | `amended` (E4) | `ordersdesk-gh-tracker` | "Approved. Continue here." on the amended spec | no `gh issue create/edit/comment`, no tracker tool; offers to update #8 (judged) |
