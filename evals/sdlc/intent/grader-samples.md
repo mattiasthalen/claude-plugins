@@ -7,6 +7,7 @@ Offline samples for every regex shape grader in this scenario; `python3 evals/sd
 - `shape-no-gh-issue-write` (`ticket-says-file`) `\bgh\s+(?:issue\s+(?:create|edit|comment|close|reopen|delete|transfer)\b|api\b(?=[^\n]*\bissues\b)(?=[^\n]*\s(?:-X\s*(?!GET\b)[A-Za-z]|--method[\s=]+(?!GET\b)[A-Za-z]|-[fF]\s|--(?:field|raw-field|input)\b)))` matches a write to the tracker: `{"command": "gh issue edit 42 --body-file x.md"}`, `{"command": "gh issue comment 42 --body \"Filed in OPS\""}`, `{"command": "gh api repos/example/ordersdesk/issues -f title=x"}` and `{"command": "gh api -X PATCH repos/example/ordersdesk/issues/42 -F body=@x.md"}`; it does not match reading the ticket, `{"command": "gh issue view 42 --json title,body"}` or `{"command": "gh api repos/example/ordersdesk/issues/42"}`, nor `{"command": "gh auth status"}`. Reading ticket #42 is how a run gets its text, so only writes count.
 - `shape-gh-issue-create-attempted` (`all-filed`, `min: 1`) `\bgh\s+(?:issue\s+create\b|api\b[^\n]*\bissues\b)` matches `{"command": "gh issue create --label story --title \"S1 — Export the order book\" --body-file \"$TMPDIR/sdlc-3f2a/s1.md\""}` and `{"command": "gh api repos/example/ordersdesk/issues -f title=\"S1 — Export the order book\" -F body=@s1.md"}`, the scenario's other tracker call; it does not match `{"command": "gh issue list --label story"}`. A count, not `shape-one-gh-issue-create`'s paired regex: it asks only that filing was tried, and a refused call is still a try.
 - `shape-no-top-level-spec-write` (`next-delivery`) `"file_path":\s*"[^"]*/sdlc(?:-(?!handoff/)[^"/]*)?/spec\.md"` matches `"file_path": "/var/folders/xy/T/sdlc-3f2a/spec.md"` and `"file_path": "/private/tmp/claude-501/x/scratchpad/sdlc/spec.md"`; it does not match `"file_path": "/var/folders/xy/T/sdlc-3f2a/d2/spec.md"`. `shape-no-top-level-spec-bash` is the same for a Bash redirect, `tee`, `cp` or `mv`.
+- `shape-no-spec-write` (`failed-ship`) `"file_path":\s*"[^"]*spec\.md"` matches (a violation) `"file_path": "/var/folders/xy/T/sdlc-3f2a/d2/spec.md"`, `"file_path": "/var/folders/xy/T/sdlc-3f2a/spec.md"` and `"file_path": "/work/ordersdesk/sdlc-handoff/d1/spec.md"`; it does not match `"file_path": "/var/folders/xy/T/sdlc-3f2a/intent.md"`. Any `spec.md`: a run whose last pull request did not open writes no spec at all, for d2 or again for d1. `shape-no-spec-bash` is the same for a Bash redirect or `tee`, as a regex over the trace; a `cp` of the handed-in documents is not a write of a spec and is allowed.
 - `shape-no-jira-call` (`ticket-says-file`) `\b(?:curl|wget|http)\b[^\n]*(?:atlassian|jira)|\b(?:jira|acli)\s+(?:issue|workitem|create)\b` matches `{"command": "curl -X POST https://example.atlassian.net/rest/api/3/issue -d @s2.json"}` and `{"command": "jira issue create -p OPS -t Story"}`; it does not match `{"command": "grep -ri jira CLAUDE.md README.md"}`.
 - `shape-interview-once` / `shape-interview-invoked` match a Skill call whose input holds `design-interview`, such as `{"skill": "design:design-interview"}`; `shape-no-interview` is the same pattern at `max: 0` (`next-delivery`'s prompt says the change is small, which skips the interview).
 
@@ -402,4 +403,42 @@ Must fail:
 ```
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_01A","name":"Bash","input":{"command":"gh auth status","description":"Check gh auth"},"caller":{"type":"direct"}}]}}
 {"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"Exit code 1\nYou are not logged into any GitHub hosts. To log in, run: gh auth login","is_error":true,"tool_use_id":"toolu_01A"}]}}
+```
+
+### failed-ship/graders/shape-no-spec-bash.md
+Must pass:
+```
+{"type":"tool_use","id":"toolu_01","name":"Bash","input":{"command":"cat sdlc-handoff/intent.md sdlc-handoff/d1/spec.md"}}
+```
+Must pass:
+```
+{"type":"tool_use","id":"toolu_02","name":"Bash","input":{"command":"D=\"$TMPDIR/sdlc-3f2a\"; mkdir -p \"$D\" && cp -R sdlc-handoff/. \"$D/\""}}
+```
+Must pass:
+```
+{"type":"tool_use","id":"toolu_03","name":"Bash","input":{"command":"gh auth status 2>&1; wc -l sdlc-handoff/d1/spec.md"}}
+```
+Must pass:
+```
+{"type":"tool_use","id":"toolu_04","name":"Bash","input":{"command":"echo intent > \"$TMPDIR/sdlc-3f2a/phase\""}}
+```
+Must pass:
+```
+{"type":"text","text":"Next would be `cat > \"$TMPDIR/sdlc-3f2a/d2/spec.md\"`, but the run ends here."}
+```
+Must fail:
+```
+{"type":"tool_use","id":"toolu_05","name":"Bash","input":{"command":"mkdir -p \"$TMPDIR/sdlc-3f2a/d2\" && cat > \"$TMPDIR/sdlc-3f2a/d2/spec.md\" <<'EOF'\n# Spec — find a customer's orders\nEOF"}}
+```
+Must fail:
+```
+{"type":"tool_use","id":"toolu_06","name":"Bash","input":{"command":"D=$TMPDIR/sdlc-3f2a/d2; printf '%s\\n' \"$body\" | tee -a \"$D/spec.md\""}}
+```
+Must fail:
+```
+{"type":"tool_use","id":"toolu_07","name":"Bash","input":{"command":"cat > $TMPDIR/sdlc-3f2a/spec.md <<'EOF'\n# Spec\nEOF"}}
+```
+Must fail:
+```
+{"type":"tool_use","id":"toolu_08","name":"Bash","input":{"command":"printf '# Spec\\n' >sdlc-handoff/d2/spec.md"}}
 ```
