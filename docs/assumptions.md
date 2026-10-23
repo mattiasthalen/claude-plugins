@@ -14,6 +14,7 @@ What this marketplace's designs rest on without having verified, each with how y
 | A13 | A model-invocable skill fires from a session-sent first message in a chipped session. | sdlc / seams | A chip asked to continue from a stage sits idle until the requester types. |
 | A14 | The repository lets GitHub Actions create pull requests ("Allow GitHub Actions to create and approve pull requests"), which the weekly vendor refresh needs. Applied with branch protection at ship. | repo / CI | `gh api repos/mattiasthalen/claude-plugins/actions/permissions/workflow --jq .can_approve_pull_request_reviews` is false, or a refresh run fails at `gh pr create`. |
 | A15 | A `validate` run dispatched on a bot PR's branch satisfies `main`'s required `validate` check, even though the PR's own `pull_request` run waits for approval. | repo / CI | The first bot refresh PR shows `validate` pending or required after the dispatched run is green. |
+| A16 | A story's or a spec's tracker write (`gh issue create`, a tracker's MCP tool) shows in an eval trace as a Bash or MCP call, so graders can count filings. | evals | A filing case passes with no such call in its trace. |
 
 ## Documented
 

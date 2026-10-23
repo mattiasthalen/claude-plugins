@@ -1,6 +1,6 @@
 # ADR-0008 — sdlc keeps spec, plan and evidence in the session scratchpad
 
-**Status:** Accepted (2026-10-21)
+**Status:** Accepted (2026-10-21); partly superseded by [ADR-0015](0015-every-fresh-sdlc-run-starts-with-an-intent-stage-that-writes-user-stories.md) (intent taken as it arrives, 2026-10-23)
 
 ## Context
 
@@ -20,3 +20,9 @@ Rejected:
 - Nothing `sdlc`-shaped reaches other developers beyond a conventional pull request.
 - A spec outlives the session only where the requester puts it at a seam.
 - A later tracker adapter plugs into the publish step without touching the stages.
+
+## Addendum 2026-10-23
+
+[ADR-0015](0015-every-fresh-sdlc-run-starts-with-an-intent-stage-that-writes-user-stories.md) adds `intent.md` to the run's folder beside `spec.md`, `plan.md` and `evidence.md`: the intent as user stories, with each story's disposition and the deliveries. It is never committed.
+
+The tracker is no longer only behind a publish step. A story is filed when the requester answers "file" at the intent gate, where and as what the requester's words, the ticket's tracker or the project's docs say. After the spec gate's yes, the spec is published only when the requester or the project's docs say so, where and as what they say, linked to its stories; the published body is the spec's content, never a path into the run's folder. When a published spec is amended and approved again, the run offers to update the published item and does so only on a yes. No tracker adapter exists: the plugin names none and uses whatever the project says. Publishing the plan stays deferred.

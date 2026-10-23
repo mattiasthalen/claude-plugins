@@ -1,6 +1,6 @@
 # ADR-0007 — One model-invocable sdlc skill loads a reference file per stage
 
-**Status:** Accepted (2026-10-21) · **Supersedes:** [ADR-0001](0001-delivery-delegates-design-style-and-review-to-the-exodus-skills.md)
+**Status:** Accepted (2026-10-21); partly superseded by [ADR-0015](0015-every-fresh-sdlc-run-starts-with-an-intent-stage-that-writes-user-stories.md) (stage list, 2026-10-23) · **Supersedes:** [ADR-0001](0001-delivery-delegates-design-style-and-review-to-the-exodus-skills.md)
 
 ## Context
 

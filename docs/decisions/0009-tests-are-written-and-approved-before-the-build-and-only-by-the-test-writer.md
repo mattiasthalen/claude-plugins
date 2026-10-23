@@ -20,3 +20,7 @@ Rejected:
 - The builder can never shape its own oracle; a wrong check routes back to a re-plan.
 - The run is unattended between the test gate and the evidence gate, so permission prompts stall it unless auto mode or allowed tools cover the build.
 - The hook needs run state keyed per session so parallel runs do not share a phase.
+
+## Addendum 2026-10-23
+
+[ADR-0015](0015-every-fresh-sdlc-run-starts-with-an-intent-stage-that-writes-user-stories.md) adds the intent gate before the spec gate. It is a gate like the others: it shows `intent.md` whole, always stops, and is a seam (continue here, in a new session from `intent.md`'s path, or stop). The hook treats `intent` as a pre-approval phase, like `spec` and `plan`: writes go only into the run's folder.
