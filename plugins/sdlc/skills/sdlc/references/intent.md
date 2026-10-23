@@ -8,6 +8,6 @@ End at the intent gate. Ask, per story: **now** (deliver it in this run), **file
 
 **After the gate**, record each story's disposition and the deliveries in `intent.md` in the run's folder, then:
 
-- **File** each "file" story where the requester says; failing that, where the ticket it came from lives; failing that, where the project's docs (`CLAUDE.md`, memory, config) say; as what they say, with the story's text as the body. The tools in reach never choose the tracker: when none of these names one, ask where, and file nothing until answered. When the requester says there is no tracker, ask what to do with the story. A filing that fails is reported with the story's text, and the run goes on; it tries no other way to file.
+- **File** each "file" story where the requester says; failing that, where the ticket it came from lives; failing that, where the project's docs (`CLAUDE.md`, memory, config) say; as what they say, with the story's text as the body. The tools in reach never choose the tracker: when none of these names one, ask where, and file nothing until answered. When the requester says there is no tracker, ask what to do with the story. Make each filing call once; a failure is reported with the story's text, and the run goes on, trying no other way to file.
 - **Every story dropped** ends the run: write `done` to `phase`.
 - Otherwise the deliveries run one after another, each from spec.
