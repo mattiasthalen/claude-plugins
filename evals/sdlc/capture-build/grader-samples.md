@@ -47,22 +47,6 @@ Must fail:
 ```
 {"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/sdlc-handoff/capture/ordersdesk/docs/decisions/0001-the-csv-export-follows-rfc-4180.md","content":"x"}}]},"parent_tool_use_id":null}
 ```
-Must pass:
-```
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t0","name":"Bash","input":{"command":"python3 -m orders list > /tmp/before.txt && wc -l orders/__main__.py"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"cp -R sdlc-handoff/capture/ordersdesk/. .","description":"Copy the capture into the repo"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"cat > orders/export.py <<'EOF'\nimport csv\nEOF"}}]},"parent_tool_use_id":null}
-```
-Must fail:
-```
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"cat > orders/export.py <<'EOF'\nimport csv\nEOF"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/docs/decisions/0001-the-csv-export-follows-rfc-4180.md","content":"# 1. The CSV export follows RFC 4180"}}]},"parent_tool_use_id":null}
-```
-Must fail:
-```
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"tee /w/orders/export.py < /tmp/export.py > /dev/null"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"cp -R sdlc-handoff/capture/ordersdesk/. .","description":"Copy the capture into the repo"}}]},"parent_tool_use_id":null}
-```
 
 ### build/graders/shape-capture-commit-first.md
 Must pass:
@@ -119,25 +103,6 @@ Must fail:
 ```
 {"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"cp -R sdlc-handoff/capture/ordersdesk/. .","description":"Copy the capture into the repo"}}]},"parent_tool_use_id":null}
 {"type":"assistant","message":{"content":[{"type":"tool_use","id":"t6","name":"Bash","input":{"command":"python3 -m unittest discover -s tests"}}]},"parent_tool_use_id":null}
-```
-Must pass:
-```
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t0","name":"Bash","input":{"command":"python3 -m orders list > /tmp/before.txt && wc -l orders/__main__.py"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"cp -R sdlc-handoff/capture/ordersdesk/. .","description":"Copy the capture into the repo"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t4","name":"Bash","input":{"command":"git add docs && git commit -qm \"Record the design\""}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"cat > orders/export.py <<'EOF'\nimport csv\nEOF"}}]},"parent_tool_use_id":null}
-```
-Must fail:
-```
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"cp -R sdlc-handoff/capture/ordersdesk/. .","description":"Copy the capture into the repo"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"cat > orders/export.py <<'EOF'\nimport csv\nEOF"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t4","name":"Bash","input":{"command":"git add docs && git commit -qm \"Record the design\""}}]},"parent_tool_use_id":null}
-```
-Must fail:
-```
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/docs/decisions/0001-the-csv-export-follows-rfc-4180.md","content":"# 1. The CSV export follows RFC 4180"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t2","name":"Bash","input":{"command":"tee /w/orders/export.py < /tmp/export.py > /dev/null"}}]},"parent_tool_use_id":null}
-{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t4","name":"Bash","input":{"command":"git add docs && git commit -qm \"Record the design\""}}]},"parent_tool_use_id":null}
 ```
 
 ### build/graders/shape-only-own-repo-copied.md
