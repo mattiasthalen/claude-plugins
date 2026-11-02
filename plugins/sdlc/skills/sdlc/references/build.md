@@ -2,7 +2,7 @@
 
 Add one task per id in the spec (every criterion, preservation criterion and edge case, never a range such as C1–C5), and tick each when its check passes at HEAD.
 
-The first slice in a repo starts with one commit, before any code: that repo's `capture/<repo>/` beside `spec.md`, copied to the same paths in the repo. Nothing else under `capture/` is committed.
+The first slice in a repo starts with one commit, before any code: that repo's `capture/<repo>/` beside `spec.md`, each file written with Write to the same path in the repo. Nothing else under `capture/` is committed.
 
 Build each slice on its branch, in the plan's order, with atomic commits staged by path, until its checks pass. The tests are fixed: a check that looks wrong goes to the evidence gate as a stop, for a re-plan.
 

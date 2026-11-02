@@ -13,17 +13,17 @@ Installing it also installs Tobias Karlsson's [claude-design-skills](https://git
 | Stage | Writes | Ends at |
 |---|---|---|
 | intent | `intent.md`: the intent as user stories (As a / I want / So that, acceptance criteria, notes), drafted before anything is asked | **gate**: per story now, file or drop; the "now" stories grouped into deliveries |
-| spec | `spec.md`: acceptance criteria (some of them preservation criteria: "this must not change"), edge cases, each with a check, its design branch and the story it serves | **gate**: approve the spec |
+| spec | the design interview's capture (`capture/<repo>/`: ADRs, lexicon, assumptions record; `brief/`), then `spec.md`: acceptance criteria (some of them preservation criteria: "this must not change"), edge cases, each with a check, its design branch and the story it serves | **gate**: approve the spec |
 | plan | `plan.md`: slices, order, what each check verifies | **gate**: approve the plan |
 | test | the tests, written by the `test-writer` agent from the spec and the plan's check descriptions alone, run at the base | **gate**: approve the tests (change criteria red, preservation criteria green) |
-| build | the change | — unattended — |
+| build | the change, its first commit per repo carrying that repo's captured records | — unattended — |
 | review | fixes: parallel reviewers by lens, at Medium and High three verifiers voting on each finding, a blocking security pass, at most three rounds | — unattended — |
 | prove | `evidence.md`: each check at the head, plus CI and the existing suite | **gate**: approve the evidence (Low-risk changes skip it) |
 | ship | ready pull requests with a conventional body: Summary, Testing, Risk, How to revert | |
 
 Deliveries run one after another, each from spec. With no story now (every one dropped or filed), the run ends at the intent gate.
 
-Every gate, and every early stop, asks whether to continue here, continue in a new session (and where to keep the documents), or stop. `/sdlc continue from <stage> using <paths>` resumes a run. The documents live in the session scratchpad, or `${TMPDIR:-/tmp}/sdlc-<session>/` without one; nothing is committed but the change itself.
+Every gate, and every early stop, asks whether to continue here, continue in a new session (and where to keep the documents), or stop. `/sdlc continue from <stage> using <paths>` resumes a run. The documents live in the session scratchpad, or `${TMPDIR:-/tmp}/sdlc-<session>/` without one; nothing is committed but the change and its captured design records.
 
 ## Trackers
 
