@@ -129,6 +129,38 @@ Must fail:
 ```
 {"type":"tool_use","name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/capture/ledger/docs/x.md","content":"x"}}
 ```
+Must pass:
+```
+{"name":"Bash","input":{"command":"D=\"$TMPDIR/sdlc-3f2a\"; mkdir -p \"$D/capture/ordersdesk/docs\" && echo \"# Lexicon\" > \"$D/capture/ordersdesk/docs/lexicon.md\""}}
+```
+Must pass:
+```
+{"name":"Bash","input":{"command":"printf \"A1\" | tee -a \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs/assumptions.md\" >/dev/null"}}
+```
+Must pass:
+```
+{"name":"Bash","input":{"command":"cp -R /tmp/records/. \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs/\""}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"mkdir -p \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs/decisions\" && echo \"capture folder ready\" >&2"}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"mkdir -p \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs\" > /dev/null 2>&1"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Read","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/capture/ordersdesk/docs/lexicon.md"}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"cat \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs/lexicon.md\" > /tmp/lexicon.md"}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"cp -R \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs\" /tmp/"}}
+```
 
 ### spec-gap/graders/shape-no-spec-write.md
 Must pass:
