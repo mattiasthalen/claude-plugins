@@ -8,7 +8,7 @@
 
 ## Decision
 
-The spec stage's invocation of the interview is the request for capture, so capture always runs. Capture writes under `capture/<repo>/` in the run's folder, `<repo>` being the name of the repository's directory, at the repo-relative path the interview chose: from the design documentation its scan found, or by asking the requester once where there is none. Each record is written whole; one that amends a file the repo already has starts from the repo's current copy. The brief goes to `brief/` beside the spec and is never committed: the build reads the run's folder. On the first slice in a repo, build's first commit, before any code, copies that repo's `capture/<repo>/` to the same paths in the repo, and nothing else. A run without `capture/` makes no capture commit.
+The spec stage's invocation of the interview is the request for capture, so capture always runs. Capture writes under `capture/<repo>/` in the run's folder, `<repo>` being the repository's name as the plan's slices name it, at the repo-relative path the interview chose: from the design documentation its scan found, or by asking the requester once where there is none. Each record is written whole; one that amends a file the repo already has starts from the repo's current copy. The brief goes to `brief/` beside the spec and is never committed: the build reads the run's folder. On the first slice in a repo, build's first commit, before any code, copies that repo's `capture/<repo>/` to the same paths in the repo, and nothing else. A run without `capture/` makes no capture commit.
 
 Rejected:
 - Letting the spec stage write the project's `docs/`: a write into the repo before the plan is approved.
