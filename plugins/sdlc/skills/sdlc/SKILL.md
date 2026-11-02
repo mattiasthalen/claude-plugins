@@ -9,7 +9,7 @@ An intent, from user stories to ready pull requests, in eight stages: intent onc
 | Stage | Writes | Ends at |
 |---|---|---|
 | intent | `intent.md` | the intent gate |
-| spec | `spec.md` | the spec gate |
+| spec | `spec.md`, and the design interview's `capture/` and `brief/` | the spec gate |
 | plan | `plan.md` | the plan gate |
 | test | the tests | the test gate |
 | build | the change | review, unattended |

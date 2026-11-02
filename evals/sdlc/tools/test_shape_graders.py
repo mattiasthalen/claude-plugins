@@ -19,10 +19,18 @@ pass and samples that must fail, in its scenario's grader-samples.md:
 
 A sample is read as a file is: its text ends with a newline. Patterns are JavaScript regular expressions, run here with Python's `re`. The two agree on
 everything the suite uses (classes, groups, alternation, `[\\s\\S]`, lazy quantifiers); a grader
-that needs JavaScript-only syntax fails here, on purpose. Exits non-zero when any sample
-disagrees with its grader, or a regex shape grader has no samples.
+that needs JavaScript-only syntax fails here, on purpose. Python's `re` is the looser of the two
+on escapes: it reads `\\'` or `\\;` as the bare character, while the harness compiles with the `u`
+flag, which rejects an identity escape and then reports "pattern not found" (a `contains` grader
+fails, a `not_contains` grader passes vacuously). So every pattern is also compiled with
+`new RegExp(pattern, 'u')` under `node`, when `node` is on PATH; without it that check is skipped
+and says so. Exits non-zero when any sample disagrees with its grader, a regex shape grader has
+no samples, or a pattern does not compile under either engine.
 """
+import json
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -90,6 +98,28 @@ for scenario in sorted(p for p in root.iterdir() if p.is_dir()):
                 passed = bool(pattern.search(text)) != negate
                 if passed != (kind == "pass"):
                     failures.append(f"{scenario.name}/{key}: a must-{kind} sample {'failed' if kind == 'pass' else 'passed'}: {text[:80]!r}")
+
+# Mirrors the harness's compile, `u` plus the grader's own flags.
+JS_COMPILE = """
+const graders = JSON.parse(require("fs").readFileSync(0, "utf8"));
+for (const [name, pattern, flags] of graders) {
+  try { new RegExp(pattern, "u" + flags.replace(/[^ims]/g, "")); }
+  catch (e) { console.log(name + ": pattern does not compile under JavaScript's u flag: " + e.message.split(": ").pop()); }
+}
+"""
+regex_graders = [
+    (f"{g.parent.parent.parent.name}/{g.relative_to(g.parent.parent.parent)}", fm["pattern"], fm.get("flags", ""))
+    for g in sorted(root.glob("*/*/graders/shape-*.md"))
+    for fm in [frontmatter(g)]
+    if fm.get("type") == "regex" and "pattern" in fm
+]
+node = shutil.which("node")
+if node:
+    out = subprocess.run([node, "-e", JS_COMPILE], input=json.dumps(regex_graders), text=True, capture_output=True, check=True)
+    failures += out.stdout.splitlines()
+    print(f"{len(regex_graders)} patterns compiled under JavaScript's u flag")
+else:
+    print(f"skip: node is not on PATH, so {len(regex_graders)} patterns were not compiled under JavaScript's u flag")
 
 for f in failures:
     print("✘", f)

@@ -14,7 +14,18 @@ Starts from `/sdlc continue from spec using sdlc-handoff/intent.md`: the scaffol
 
 ## spec-gate
 
-Starts from the interview's Phase 8 tree (ported from `delivery`'s S1, "what must not change" as branch 7, Preservation); the requester says "Capture it." Graded: `spec.md` written in the docs dir; every criterion, preservation criterion and edge case carries a branch tag and a check; the three "must not change" items are preservation criteria with checks; stops at the spec gate asking approval with the seam choice (here / new session and where docs go / stop); no `plan.md`, no repo writes, no test-writer (A7, A8, A14).
+Starts from the interview's Phase 8 tree (ported from `delivery`'s S1, "what must not change" as branch 7, Preservation). The conversation settles where the records go first: `ordersdesk` has no `docs/`, so the interview asks, and the requester answers `docs/decisions/` and `docs/lexicon.md`. A second round settles every edge case capture would otherwise report as a gap: an existing file at `<path>` (overwritten), a failed write (temporary file renamed into place, never partial), an empty book (header only, exit 0), CRLF line endings, silence on success, a malformed `data/orders.json` (fails as `list` does), the columns as a contract with accounting, concurrent exports and over-precise totals (out of scope), and the assumptions record (`docs/assumptions.md`). So a correct run has no gap to report and writes capture and `spec.md`. The requester's next turn says nothing about capture: "That's everything." Graded: capture runs, a file written under the run folder's `capture/ordersdesk/` by Write, a redirect or `tee` into it, or a `cp` whose destination is there; a `mkdir` or a Read there does not count (`shape-capture-written`, C1); `spec.md` written in the docs dir; every criterion, preservation criterion and edge case carries a branch tag and a check; the three "must not change" items are preservation criteria with checks; stops at the spec gate asking approval with the seam choice (here / new session and where docs go / stop); no `plan.md`, no Write or Edit outside the docs dir and no commit, so the capture never reaches the repo's `docs/` (`shape-no-write-outside-docs`, `shape-no-edit-outside-docs`, `shape-no-commit`: P1, E2), no test-writer (A7, A8, A14).
+
+## spec-gap
+
+**Fixture:** `ordersdesk`. **Starts from:** the spec-gate tree with one branch closed too loosely for its edge cases: branch 6, Errors, says only "Bad input exits non-zero", so neither what `export` without `--csv` prints nor what an unwritable path does can be derived. The destination exchange is the same as spec-gate's, so the only open thing is the gap. The requester says "That's everything."
+
+**A good run:** capture finds the gap; the run writes no `spec.md` in that turn, names branch 6 as too loose, and asks the requester whether to reopen it or write the missing detail as marked inference, then waits on the answer (C2, E3). `runs: 3`.
+
+| Graded | Graders |
+|---|---|
+| no `spec.md`, by Write, redirect, `tee`, `cp` or `mv` | `shape-no-spec-write` (3 of 3) |
+| names the loose branch, asks to reopen or write marked inference | `content-asks-to-reopen` (2 of 3) |
 
 ## plan
 
@@ -65,3 +76,4 @@ Starts from the spec gate, approved, "continue here"; the approved spec is laid 
 | prove after the build | `shape-prove-after-build`, `shape-test-paths-diffed`, `shape-suite-run` |
 | evidence and progress | `shape-evidence-written`, `shape-tasks-per-criterion` |
 | stops at the evidence gate | `shape-no-pr`, `content-asks-evidence-approval` |
+| no `capture/` beside the spec, so nothing is written under the repo's `docs/` (E1) | `shape-no-docs-write` |

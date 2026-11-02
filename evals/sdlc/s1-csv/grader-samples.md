@@ -82,6 +82,126 @@ Must fail:
 cat "$TMPDIR/sdlc-3f2a/spec.md"
 ```
 
+### spec-gate/graders/shape-capture-written.md
+Must pass:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a9c1e/capture/ordersdesk/docs/decisions/0001-the-csv-export-follows-rfc-4180.md","content":"# 1. The CSV export follows RFC 4180"}}
+```
+Must pass:
+```
+{\"file_path\":\"/var/folders/xy/T/sdlc-3f2a/capture/ordersdesk/docs/lexicon.md\",\"content\":\"# Lexicon\"}
+```
+Must pass:
+```
+{"file_path": "/private/tmp/claude-501/x/scratchpad/sdlc/capture/ordersdesk/docs/decisions/0001-csv-dialect.md", "content": "# ADR"}
+```
+Must pass:
+```
+{"name":"Bash","input":{"command":"D=\"$TMPDIR/sdlc-3f2a\"; mkdir -p \"$D/capture/ordersdesk/docs/decisions\" && cat > \"$D/capture/ordersdesk/docs/decisions/0001-csv-dialect.md\" <<'EOF'
+# ADR
+EOF"}}
+```
+Must pass:
+```
+{"name":"Bash","input":{"command":"cp /tmp/adr.md \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs/decisions/0001-csv-dialect.md\""}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/work/ordersdesk/docs/decisions/0001-csv-dialect.md","content":"# ADR"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/work/ordersdesk/sdlc-handoff/capture/ordersdesk/docs/decisions/0001-csv-dialect.md","content":"# ADR"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/spec.md","content":"Capture: `capture/ordersdesk/docs/` (ADR-0001), gaps 0."}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"ls -R \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/\" 2>/dev/null"}}
+```
+Must fail:
+```
+The records will be captured under `$TMPDIR/sdlc-…/capture/ordersdesk/` once you confirm.
+```
+Must fail:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/capture/ledger/docs/x.md","content":"x"}}
+```
+Must pass:
+```
+{"name":"Bash","input":{"command":"D=\"$TMPDIR/sdlc-3f2a\"; mkdir -p \"$D/capture/ordersdesk/docs\" && echo \"# Lexicon\" > \"$D/capture/ordersdesk/docs/lexicon.md\""}}
+```
+Must pass:
+```
+{"name":"Bash","input":{"command":"printf \"A1\" | tee -a \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs/assumptions.md\" >/dev/null"}}
+```
+Must pass:
+```
+{"name":"Bash","input":{"command":"cp -R /tmp/records/. \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs/\""}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"mkdir -p \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs/decisions\" && echo \"capture folder ready\" >&2"}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"mkdir -p \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs\" > /dev/null 2>&1"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Read","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/capture/ordersdesk/docs/lexicon.md"}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"cat \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs/lexicon.md\" > /tmp/lexicon.md"}}
+```
+Must fail:
+```
+{"name":"Bash","input":{"command":"cp -R \"$TMPDIR/sdlc-3f2a/capture/ordersdesk/docs\" /tmp/"}}
+```
+
+### spec-gap/graders/shape-no-spec-write.md
+Must pass:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/phase","content":"spec\n"}}
+```
+Must pass:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/capture/ordersdesk/docs/decisions/0001-csv-dialect.md","content":"# ADR"}}
+```
+Must pass:
+```
+{"type":"tool_use","name":"Bash","input":{"command":"cat \"$TMPDIR/sdlc-3f2a/spec.md\" 2>/dev/null"}}
+```
+Must pass:
+```
+Branch 6 is too loose to write spec.md from: reopen it, or write it as marked inference?
+```
+Must fail:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-3f2a/spec.md","content":"# Spec"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Bash","input":{"command":"cat > \"$TMPDIR/sdlc-3f2a/spec.md\" <<'EOF'
+# Spec
+EOF"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Bash","input":{"command":"printf %s \"$S\" | tee \"$TMPDIR/sdlc-3f2a/spec.md\""}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Bash","input":{"command":"mv /tmp/draft.md \"$TMPDIR/sdlc-3f2a/spec.md\""}}
+```
+Must fail:
+```
+{"name": "Write", "input": {"file_path": "/private/tmp/claude-501/x/scratchpad/sdlc/spec.md", "content": "# Spec"}}
+```
+
 ## plan
 
 ### plan/graders/shape-plan-written.md
@@ -444,4 +564,48 @@ Must fail:
 Must fail:
 ```
 {"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Write","input":{"file_path":"/w/tests/test_export.py","content":"x"}}]},"parent_tool_use_id":null,"session_id":"s"}
+```
+
+### build/graders/shape-no-docs-write.md
+Must pass:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/w/orders/export.py","content":"import csv"}}
+```
+Must pass:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/var/folders/xy/T/sdlc-00000000-0000-4000-8000-0000000000aa/evidence.md","content":"# Evidence"}}
+```
+Must pass:
+```
+{"type":"tool_use","name":"Bash","input":{"command":"ls docs/ 2>/dev/null; python3 -m unittest discover -s tests > /dev/null"}}
+```
+Must pass:
+```
+{"type":"tool_use","name":"Bash","input":{"command":"mkdir -p \"$TMPDIR/sdlc-00000000-0000-4000-8000-0000000000aa/docs\""}}
+```
+Must pass:
+```
+No `capture/` beside the spec, so there is nothing to copy into `docs/`.
+```
+Must fail:
+```
+{"type":"tool_use","name":"Write","input":{"file_path":"/w/docs/decisions/0001-csv-dialect.md","content":"# ADR"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Edit","input":{"replace_all":false,"file_path":"/w/docs/lexicon.md","old_string":"a","new_string":"b"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Bash","input":{"command":"mkdir -p docs/decisions && cat > docs/decisions/0001-csv-dialect.md <<'EOF'
+# ADR
+EOF"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Bash","input":{"command":"cp /tmp/adr.md docs/"}}
+```
+Must fail:
+```
+{"type":"tool_use","name":"Bash","input":{"command":"echo x >> \"/w/docs/notes.md\""}}
 ```

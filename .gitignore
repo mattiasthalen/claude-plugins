@@ -6,3 +6,4 @@ evals/**/results/
 .delivering-pitches/
 evals/sdlc/**/00000000-0000-4000-8000-0000000000aa*
 evals/sdlc/**/history.jsonl
+__pycache__/

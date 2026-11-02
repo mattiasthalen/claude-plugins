@@ -2,6 +2,8 @@
 
 The words someone needs defined to talk about using or developing this marketplace's plugins. A term earns an entry only if it is language rather than code, needs defining beyond its ordinary meaning, and is the one word for its concept.
 
+**capture** — The design interview's write-up of its finished tree: the durable records (ADRs, the lexicon, the assumptions record) and the feature's brief. Distinct from the *spec*, which `sdlc` writes from it and which carries *checks*; the capture carries none. See [ADR-0016](decisions/0016-design-capture-is-staged-in-the-run-folder-and-committed-by-build.md).
+
 **check** — A pass/fail verdict on one criterion or edge case of a *spec*: executable (a command and its exit code) or judged (a fresh-context reviewer's verdict against a rubric fixed before the build, always flagged as judged).
 
 **delivery** — One change, one or several of the *intent*'s stories, taken from the *intent* through *spec*, *plan*, tests, build, review and *evidence* to pull requests. Distinct from a *slice*, an increment within it, and from an epic, an *intent* of several stories.
@@ -20,6 +22,6 @@ The words someone needs defined to talk about using or developing this marketpla
 
 **slice** — An increment of a *delivery*, with its own part of the *spec*, *checks*, branch and pull request, that ships on its own and leaves the system consistent. Distinct from a step, which ships nothing by itself.
 
-**spec** — What a *delivery* is held to: its acceptance criteria, *preservation criteria* among them, and edge cases, each with a *check* and the design branch it came from. Distinct from the *plan*, and from the design interview's capture, which has no checks. "Brief" is not used.
+**spec** — What a *delivery* is held to: its acceptance criteria, *preservation criteria* among them, and edge cases, each with a *check* and the design branch it came from. Distinct from the *plan*, and from the design interview's *capture*, which has no checks. "Brief" is not used for it: the brief is part of the *capture*.
 
 **tier** — Risk, Low, Medium or High, by what going wrong would cost. A change's tier is set by the paths it touches and decides how deep review goes and whether the evidence *gate* stops; an eval case's tier is set by the behaviour it guards and decides how many runs it gets. See [ADR-0011](decisions/0011-risk-tiers-are-set-by-changed-paths-in-review-md-frontmatter.md).
