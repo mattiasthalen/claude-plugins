@@ -202,6 +202,14 @@ Must pass:
 ```
 Must pass:
 ```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"cp -R sdlc-handoff/capture/ordersdesk/. .\ngit add docs\ngit commit -qm \"Record the design capture\""}}]},"parent_tool_use_id":null}
+```
+Must fail:
+```
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"cp -R sdlc-handoff/capture/ordersdesk/. .\ncp -R sdlc-handoff/capture/ledger/. ledger"}}]},"parent_tool_use_id":null}
+```
+Must pass:
+```
 {"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"cp sdlc-handoff/capture/ordersdesk/docs/decisions/*.md docs/decisions/  # only this repo's capture"}}]},"parent_tool_use_id":null}
 ```
 Must fail:
