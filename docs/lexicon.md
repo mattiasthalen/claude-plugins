@@ -2,6 +2,8 @@
 
 The words someone needs defined to talk about using or developing this marketplace's plugins. A term earns an entry only if it is language rather than code, needs defining beyond its ordinary meaning, and is the one word for its concept.
 
+**capture** — The design interview's write-up of its finished tree: the durable records (ADRs, the lexicon, the assumptions record) and the feature's brief. Distinct from the *spec*, which `sdlc` writes from it and which carries *checks*; the capture carries none. See [ADR-0016](decisions/0016-design-capture-is-staged-in-the-run-folder-and-committed-by-build.md).
+
 **check** — A pass/fail verdict on one criterion or edge case of a *spec*: executable (a command and its exit code) or judged (a fresh-context reviewer's verdict against a rubric fixed before the build, always flagged as judged).
 
 **delivery** — One change, one or several of the *intent*'s stories, taken from the *intent* through *spec*, *plan*, tests, build, review and *evidence* to pull requests. Distinct from a *slice*, an increment within it, and from an epic, an *intent* of several stories.

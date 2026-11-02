@@ -6,7 +6,7 @@ What this marketplace's designs rest on without having verified, each with how y
 
 | Id | Assumption | Area | Stops holding when |
 |----|------------|------|--------------------|
-| A2 | The exodus skills stay callable by qualified name with a stable hand-off from design-interview's Phase 8 wrap-up, at the `sha` the marketplace pins. | sdlc / upstream | A spec-stage eval fails after a pin bump. |
+| A2 | The exodus skills stay callable by qualified name at the `sha` the marketplace pins, and design-interview runs to its end, capture included, when the spec stage asks for it. | sdlc / upstream | A spec-stage eval shows no capture, or fails, after a pin bump. |
 | A3 | The Artifact tool is off in `claude plugin eval` runs. | evals | A probe finds the Artifact tool present. |
 | A7 | TaskCreate/TaskUpdate run in eval cases that list them in `allowed_tools`. | evals | A case listing them shows no Task calls in any run. |
 | A8 | A `gh` write from an eval run never reaches GitHub (on macOS `gh` is unauthenticated; in a Linux cloud container `GH_TOKEN` is inherited and authenticates through the proxy, and the sandbox's network deny refuses `api.github.com`), and a `gh pr create --body` stays visible to graders. | evals | A `gh` API call from an eval run gets a response from GitHub (`gh auth status` failing is no proof: the cloud token passes API calls while it reports invalid). |

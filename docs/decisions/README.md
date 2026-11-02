@@ -21,3 +21,4 @@ Architecture decision records for this marketplace, in Michael Nygard's format.
 | [0013](0013-pococks-pr-skill-is-vendored-under-sdlc-with-the-ship-stage-taking-precedence.md) | Pocock's pr skill is vendored under sdlc, with the ship stage taking precedence | Accepted |
 | [0014](0014-sdlc-lines-for-features-evals-cannot-call-are-a-bounded-exception.md) | sdlc lines for features evals cannot call are a bounded exception | Accepted |
 | [0015](0015-every-fresh-sdlc-run-starts-with-an-intent-stage-that-writes-user-stories.md) | Every fresh sdlc run starts with an intent stage that writes user stories | Accepted |
+| [0016](0016-design-capture-is-staged-in-the-run-folder-and-committed-by-build.md) | Design capture is staged in the run's folder and committed by build | Accepted |
