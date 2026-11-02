@@ -18,7 +18,7 @@ Starts from the interview's Phase 8 tree (ported from `delivery`'s S1, "what mus
 
 ## spec-gap
 
-**Fixture:** `ordersdesk`. **Starts from:** the spec-gate tree with one branch closed too loosely for its edge cases: branch 6, Errors, says only "Bad input exits non-zero", so neither what `export` without `--csv` prints nor what an unwritable path does can be derived. The destination exchange and the edge-case round are the same as spec-gate's, so the only open thing is the gap. The requester says "That's everything."
+**Fixture:** `ordersdesk`. **Starts from:** the spec-gate tree with one branch closed too loosely for its edge cases: branch 6, Errors, says only "Bad input exits non-zero", so neither what `export` without `--csv` prints nor what an unwritable path does can be derived. The destination exchange is the same as spec-gate's, so the only open thing is the gap. The requester says "That's everything."
 
 **A good run:** capture finds the gap; the run writes no `spec.md` in that turn, names branch 6 as too loose, and asks the requester whether to reopen it or write the missing detail as marked inference, then waits on the answer (C2, E3). `runs: 3`.
 
