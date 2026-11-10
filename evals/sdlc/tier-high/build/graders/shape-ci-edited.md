@@ -1,6 +1,0 @@
----
-type: tool_used
-tool: Edit
-input_match: '"file_path":\s*"[^"]*/\.github/workflows/ci\.yml"'
-min: 1
----

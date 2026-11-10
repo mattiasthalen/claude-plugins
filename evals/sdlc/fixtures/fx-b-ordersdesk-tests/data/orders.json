@@ -1,7 +1,0 @@
-[
-  {"id": 1001, "customer": "Lindqvist Bygg AB", "total": "1250.00", "placed_on": "2026-09-01"},
-  {"id": 1002, "customer": "Norrlands Café", "total": "89.50", "placed_on": "2026-09-03"},
-  {"id": 1003, "customer": "Åkesson & Dotter", "total": "432.10", "placed_on": "2026-09-03"},
-  {"id": 1004, "customer": "Berg, Hanna", "total": "15.00", "placed_on": "2026-09-08"},
-  {"id": 1005, "customer": "Sjöberg Trading", "total": "2999.99", "placed_on": "2026-09-12"}
-]
