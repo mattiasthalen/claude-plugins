@@ -179,6 +179,13 @@ class GenerateTest(unittest.TestCase):
                              capture_output=True, text=True)
         self.assertNotEqual(run.returncode, 0)
 
+    def test_a_missing_plugin_leaves_the_generated_cases_alone(self):
+        subprocess.run([sys.executable, str(REPO / "evals/sdlc/gen.py")], check=True, capture_output=True)
+        before = sorted(p.relative_to(gen.CASES) for p in gen.CASES.rglob("*"))
+        subprocess.run([sys.executable, str(REPO / "evals/sdlc/gen.py")], env={"SDLC_PLUGIN": "plugins/nope", "PATH": "/usr/bin:/bin"},
+                       capture_output=True, text=True)
+        self.assertEqual(sorted(p.relative_to(gen.CASES) for p in gen.CASES.rglob("*")), before)
+
 
 if __name__ == "__main__":
     unittest.main()
