@@ -158,6 +158,11 @@ class PatternCoverageTest(unittest.TestCase):
         self.assertTrue(result["u_error"])
         self.assertTrue(result["matched"])
 
+    def test_a_tool_used_grader_without_input_match_has_no_pattern_to_check(self):
+        specs = {"any-case": {"graders": {"shape-wrote": gen.grader("tool_used", tool="Write")}}}
+        with mock.patch.dict(gen.CASE_SPECS, specs, clear=True):
+            self.assertEqual(suite_patterns(), set())
+
     def test_without_node_the_check_fails_rather_than_skips(self):
         with mock.patch.dict(os.environ, {"PATH": ""}):
             with self.assertRaises(RuntimeError):
