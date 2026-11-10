@@ -16,6 +16,7 @@ What this marketplace's designs rest on without having verified, each with how y
 | A15 | A `validate` run dispatched on a bot PR's branch satisfies `main`'s required `validate` check, even though the PR's own `pull_request` run waits for approval. | repo / CI | The first bot refresh PR shows `validate` pending or required after the dispatched run is green. |
 | A16 | A story's or a spec's tracker write shows in an eval trace as a Bash `gh issue create` call, so graders can count filings. Only `gh` is exercised: the cases allow no MCP tools, so a tracker's MCP call is never graded. | evals | A filing case passes with no such call in its trace. |
 | A17 | Nothing outside this repository runs `scripts/vendor.sh -h` or `--help` and relies on it exiting 2. | repo / scripts | Someone reports a script, alias or workflow that broke when `vendor.sh --help` began exiting 0. |
+| A18 | `scripts/vendor.sh` runs on BSD/macOS as well as GNU tools, but CI runs only `ubuntu-latest`; `scripts/test_vendor.py` stands a strict sed in for BSD's rule that a command before `}` needs `;`. Other BSD differences are not modelled. | repo / scripts | `vendor.sh` errors on a Mac with a message from sed, awk or another tool the suite runs only in its GNU form. |
 
 ## Documented
 

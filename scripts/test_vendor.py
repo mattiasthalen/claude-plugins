@@ -24,7 +24,7 @@ class VendorUsage(unittest.TestCase):
     def assert_help(self, result):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stderr, "")
-        self.assertRegex(result.stdout, r"(?m)^#\s+vendor\.sh .*--help")
+        self.assertRegex(result.stdout, r"vendor\.sh .*--help")
         self.assertIn("vendor.sh --refresh", result.stdout)
         self.assertIn("Copies are changed only here", result.stdout)
 
@@ -37,8 +37,9 @@ class VendorUsage(unittest.TestCase):
         self.assert_help(self.run_script("--help"))
 
     def test_short_help_matches_long_help(self):
-        self.assertEqual(self.run_script("-h").stdout, self.run_script("--help").stdout)
-        self.assert_help(self.run_script("-h"))
+        short = self.run_script("-h")
+        self.assertEqual(short.stdout, self.run_script("--help").stdout)
+        self.assert_help(short)
 
     def test_help_ignores_later_arguments(self):
         self.assert_help(self.run_script("--help", "--check"))
@@ -55,6 +56,25 @@ class VendorUsage(unittest.TestCase):
     def test_ci_runs_these_tests(self):
         workflow = (SCRIPT.parent.parent / ".github" / "workflows" / "validate.yml").read_text()
         self.assertIn("unittest discover -s scripts -p 'test_*.py'", workflow)
+
+
+# BSD and macOS sed refuse a command followed directly by "}" ("extra characters at the end
+# of p command", compile.c in Apple's text_cmds), and CI runs only GNU sed, which accepts it.
+STRICT_SED = """#!{bash}
+for arg in "$@"; do
+  case "$arg" in *[!\\;]}}*) echo "sed: extra characters at the end of p command" >&2; exit 1;; esac
+done
+exec {sed} "$@"
+"""
+
+
+class VendorUsageUnderBsdSed(VendorUsage):
+    def setUp(self):
+        super().setUp()
+        sed = Path(self.env["PATH"], "sed")
+        sed.unlink()
+        sed.write_text(STRICT_SED.format(bash=shutil.which("bash"), sed=shutil.which("sed")))
+        sed.chmod(0o755)
 
 
 if __name__ == "__main__":

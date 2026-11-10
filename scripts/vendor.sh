@@ -16,7 +16,7 @@ manifest="$root/scripts/vendor.json"
 market="$root/.claude-plugin/marketplace.json"
 mode="${1:-}"
 # Ends at the first line of code, not a line number, so editing the header cannot cut the usage short.
-usage() { sed -n '2,/^[^#]/{/^#/p}' "$0"; }
+usage() { sed -n '2,/^[^#]/{/^#/p;}' "$0"; }
 case "$mode" in --check|--drift|--refresh) ;; -h|--help) usage; exit 0;; *) usage >&2; exit 2;; esac
 
 # The newest upstream commit that touched <path> on the default branch: a commit elsewhere is not drift.
