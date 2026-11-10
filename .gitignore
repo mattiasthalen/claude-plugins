@@ -1,0 +1,4 @@
+.eval-deps/
+evals/sdlc/cases/
+evals/**/results/
+__pycache__/
