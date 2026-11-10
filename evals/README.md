@@ -1,21 +1,33 @@
 # Evals
 
-Eval suites for this marketplace's own plugins, run with [`claude plugin eval`](https://code.claude.com/docs/en/plugin-evals). They live at the repo root, outside `plugins/`, so they never ship with a plugin. Layout follows [the-exodus/claude-design-skills](https://github.com/the-exodus/claude-design-skills/tree/main/evals): one directory per case, a `prompt.md` and `graders/*.md`, each case naming the plugins it loads in `plugins:`.
-
-Cases test our plugins only. A plugin pulled in from elsewhere (`design`, `implementation`) is loaded as a dependency and its own behaviour is left to its own suite.
+Suites for this marketplace's own plugins, run with [`claude plugin eval`](https://code.claude.com/docs/en/plugin-evals). Cases test our plugins only; upstream plugins load as dependencies and their behaviour is left to their own suites.
 
 ## Run
 
+In a Linux cloud container, first: `apt-get update && apt-get install -y bubblewrap socat`.
+
 ```sh
-evals/fetch-deps.sh
-claude plugin eval . --eval-dir evals/<suite> --model claude-opus-5-5 --judge-model claude-opus-5-5 --ablation none
+evals/fetch-deps.sh          # design, implementation, mattpocock-skills at their default branch; prints their versions
+python3 evals/sdlc/gen.py    # writes evals/sdlc/cases/ (git-ignored); re-run after any SKILL.md change
+claude plugin eval . --eval-dir evals/sdlc --ablation none --trust-plugin --scaffold \
+  --allow-tools Write Edit Bash --model claude-opus-5-5 --judge-model claude-opus-5-5 -j 8
 ```
 
-`fetch-deps.sh` sparse-checks-out `design` and `implementation` into `.eval-deps/` (gitignored), at the `sha` the marketplace pins; only the plugin directories, so the runner never picks up the upstream repo's own cases. Re-run it to pick up a new upstream version.
+Upstream's head can be ahead of the version an install runs (ADR-0002); compare the versions `fetch-deps.sh` prints with `claude plugin list`.
 
-`--ablation none`: every graded behaviour is the plugin's own staged flow, so a no-plugin arm says nothing about it. One case cheaply: `--case <name> --runs 1`. Results land in `evals/results/`, gitignored.
+One case: `--case <name>`. Several `--case` flags don't combine; run one per case. `--keep-temp` keeps each run's trace for reading.
 
-## Suites
+Bars: 3 runs per case; shape graders pass 3 of 3, judges 2 of 3. Read a run's `error` before trusting its score: a `not_contains` grader passes on a run that never acted.
 
-- [`sdlc/`](sdlc/README.md): `sdlc`'s stages, staged and resumed, with its fixtures and tools.
-- [`probes/`](probes/README.md): what an eval run can observe and do, on this Claude Code version. The suites are designed around it.
+## Earning a line
+
+A skill line is earned when its case is red without it and green with it. To show the red half, copy the plugin, take the line out, and point the suite at the copy:
+
+```sh
+cp -R plugins/sdlc .eval-deps/ablate && $EDITOR .eval-deps/ablate/skills/<skill>/SKILL.md
+SDLC_PLUGIN=.eval-deps/ablate python3 evals/sdlc/gen.py   # then run the line's case as above
+```
+
+## The sdlc suite
+
+`gen.py` holds every case: each starts at one step of the flow on the ordersdesk fixture (`lib/scaffold.sh` builds its states), with the conversation so far as a seeded history and the requester's next line as the prompt. The eval runner names no scratchpad, so each case names `.scratchpad/` in the workspace, which the fixture's git ignores.

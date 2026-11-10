@@ -1,16 +1,13 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "sdlc",
-  "version": "0.3.0",
-  "description": "An AI-native SDLC: one change from intent through spec, plan, tests, build, review and evidence to ready PRs, with gates where you approve and an unattended stretch in between. Orchestrates the exodus design skills.",
+  "version": "1.0.0",
+  "description": "How a change ships: user stories, the design interview, tests first, build, review, proof, then the pull request on your go.",
   "author": {
     "name": "Mattias Thalén",
     "url": "https://github.com/mattiasthalen"
   },
   "repository": "https://github.com/mattiasthalen/claude-plugins",
   "license": "MIT",
-  "dependencies": [
-    "design",
-    "implementation"
-  ]
+  "dependencies": ["design", "implementation", "mattpocock-skills"]
 }

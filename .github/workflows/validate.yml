@@ -4,8 +4,6 @@ on:
   pull_request:
   push:
     branches: [main]
-  # vendor-refresh dispatches this on its PR branch, which a GITHUB_TOKEN-opened PR would not trigger
-  workflow_dispatch:
 
 jobs:
   validate:
@@ -15,26 +13,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install -g @anthropic-ai/claude-code@2.1.287
-      - name: Validate marketplace
-        # --strict fails an empty catalog, so it applies once a plugin is listed
-        run: |
-          if jq -e '.plugins | length > 0' .claude-plugin/marketplace.json >/dev/null; then
-            claude plugin validate --strict .
-          else
-            claude plugin validate .
-          fi
-      - name: Validate each plugin
-        run: |
-          for p in plugins/*/; do
-            [ -f "$p.claude-plugin/plugin.json" ] || continue
-            claude plugin validate --strict "$p"
-          done
-      - name: Unit-test the repository's hooks
-        run: python3 -m unittest discover -s .claude/hooks -p 'test_*.py'
-      - name: Unit-test the sdlc stage hook
-        run: python3 -m unittest discover -s plugins/sdlc/hooks -p 'test_*.py'
-      - name: Test the eval suite's shape graders and tools offline
-        run: |
-          python3 evals/sdlc/tools/test_shape_graders.py
-          python3 evals/sdlc/tools/rebuild_histories.py
+      - run: npm install -g @anthropic-ai/claude-code@2.1.322
+      - name: Check the repository
+        run: tests/check_repo.sh
+      - name: Generate the eval cases
+        # The evals need a model and run in-session (ADR-0002); CI only proves the suite still generates.
+        run: evals/fetch-deps.sh && python3 evals/sdlc/gen.py

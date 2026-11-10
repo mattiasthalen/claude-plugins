@@ -6,40 +6,26 @@ What this marketplace's designs rest on without having verified, each with how y
 
 | Id | Assumption | Area | Stops holding when |
 |----|------------|------|--------------------|
-| A2 | The exodus skills stay callable by qualified name at the `sha` the marketplace pins, and design-interview runs to its end, capture included, when the spec stage asks for it. | sdlc / upstream | A spec-stage eval shows no capture, or fails, after a pin bump. |
-| A3 | The Artifact tool is off in `claude plugin eval` runs. | evals | A probe finds the Artifact tool present. |
-| A7 | TaskCreate/TaskUpdate run in eval cases that list them in `allowed_tools`. | evals | A case listing them shows no Task calls in any run. |
-| A8 | A `gh` write from an eval run never reaches GitHub (on macOS `gh` is unauthenticated; in a Linux cloud container `GH_TOKEN` is inherited and authenticates through the proxy, and the sandbox's network deny refuses `api.github.com`), and a `gh pr create --body` stays visible to graders. | evals | A `gh` API call from an eval run gets a response from GitHub (`gh auth status` failing is no proof: the cloud token passes API calls while it reports invalid). |
-| A12 | The session scratchpad survives for the life of its session, so a chip given its documents' absolute paths can still read them when it starts. Reading them was probed (Measured); their lifetime was not. | sdlc / seams | A resumed stage finds a named document gone. |
-| A13 | A model-invocable skill fires from a session-sent first message in a chipped session. | sdlc / seams | A chip asked to continue from a stage sits idle until the requester types. |
-| A14 | The repository lets GitHub Actions create pull requests ("Allow GitHub Actions to create and approve pull requests"), which the weekly vendor refresh needs. Applied with branch protection at ship. | repo / CI | `gh api repos/mattiasthalen/claude-plugins/actions/permissions/workflow --jq .can_approve_pull_request_reviews` is false, or a refresh run fails at `gh pr create`. |
-| A15 | A `validate` run dispatched on a bot PR's branch satisfies `main`'s required `validate` check, even though the PR's own `pull_request` run waits for approval. | repo / CI | The first bot refresh PR shows `validate` pending or required after the dispatched run is green. |
-| A16 | A story's or a spec's tracker write shows in an eval trace as a Bash `gh issue create` call, so graders can count filings. Only `gh` is exercised: the cases allow no MCP tools, so a tracker's MCP call is never graded. | evals | A filing case passes with no such call in its trace. |
-
-## Documented
-
-- Plugin `dependencies` given as bare names resolve against the plugin's own marketplace (plugin manifest reference). `implementation` needs `design >=0.7.0`. Tripwire after merge: `claude plugin install sdlc@mattiasthalen` must also install both.
-- TaskCreate and TaskUpdate are on by default only on Opus 4.7, Sonnet 4.6, Haiku 4.5 and earlier models. Elsewhere they are off unless opted in (`CLAUDE_CODE_ENABLE_TODO_TOOLS=1`, `--allowedTools TaskCreate`), and `CLAUDE_CODE_ENABLE_TASKS=0` swaps them for TodoWrite (tools reference). Listing them in an eval case's `allowed_tools` opts in, so the suite never sees a session without them.
-
-- The desktop app's task-list tool takes a plan of one to twelve steps (its own schema) and does not exist in eval runs, where only Claude Code's tools are offered.
-
-- PreToolUse hook input carries `session_id`, `cwd`, `scratchpad_dir` (absent without a scratchpad; Claude Code ≥ 2.1.257), `tool_name` and `tool_input`, and `agent_id` and `agent_type` when a subagent calls the tool (hooks reference). A plugin's agent `agents/test-writer.md` is dispatched as `sdlc:test-writer`; `claude plugin eval` loads a plugin's agents and a case reaches them through `Agent` in `allowed_tools` (sub-agents, plugin-evals references).
-- A `git-subdir` marketplace source takes `ref` and a full 40-character `sha`; with both, `sha` wins (marketplace reference).
-- Skill frontmatter `user-invocable: false` hides a skill from the `/` menu (skills reference).
-- Events from `GITHUB_TOKEN` create no workflow runs, except `workflow_dispatch` and `repository_dispatch`, which always do; `pull_request` runs on a PR it opened wait in an approval-required state (GitHub docs, `GITHUB_TOKEN`).
+| A1 | `intent`'s description ("Load only when the sdlc skill starts a change with it") keeps it from loading outside the flow. A skill with `disable-model-invocation: true` cannot be called by another skill, so intent keeps a description. | sdlc / intent | `flow-no-trigger` shows `intent` loaded, or a session outside a change request loads it. |
+| A2 | `design:design-interview` honours a pitch that says its [stated] criteria are requirements and its non-goals and later stories are out of scope. | sdlc / upstream | An eval case shows the interview opening a branch on a stated non-goal. |
+| A3 | Nobody but Mattias installs `sdlc`, so a breaking rebuild breaks no one else. | marketplace | Someone reports an install of `sdlc@mattiasthalen`. |
+| A4 | Upstream plugins release by bumping `version` in their `plugin.json`, and Mattias runs `claude plugin update` to pick a release up (auto-update is off for this marketplace). Evals run upstream's default-branch head. | marketplace / upstream | The versions `evals/fetch-deps.sh` prints differ from `claude plugin list`, or an upstream drops `version`. |
+| A5 | With `sdlc` loaded, `design:design-interview` is reached from `intent`'s hand-off and `implementation:review-cycle` by its own description, so `sdlc` names neither. | sdlc / upstream | `flow-review` or `intent-filing-no` goes red after an upstream release. |
+| A6 | `sdlc` turned on from claude.ai finds its bare-name `dependencies` met by design, implementation and mattpocock-skills synced the same way. The docs cover only dependencies that name a marketplace for a synced plugin. | sdlc / claude.ai | `claude plugin list` in a cloud session shows `sdlc@synced` disabled for an unmet dependency. |
 
 ## Measured
 
-Probes in `evals/probes/`, Claude Code 2.1.302, `claude-opus-5-5`, 2026-10-20. Rerun after a Claude Code upgrade.
+- 2026-11-10, CLI 2.1.322: `claude plugin install sdlc@mattiasthalen` in a fresh config installs sdlc plus its three dependencies, and `claude plugin validate` alone does not fetch upstream sources (a wrong upstream `path` passes validate and fails install).
 
-- Plan-mode tools are absent in eval runs: EnterPlanMode and ExitPlanMode are never called (`plan-mode`).
-- The Artifact tool is absent in eval runs (`artifact`).
-- `gh pr create` exits 4 with "please run: gh auth login"; the `--body` is visible in the trace (`gh-pr`).
-- `/usr/bin/git` fails: the xcrun shim cannot write its cache in the sandbox (exit 72). `/opt/homebrew/bin/git` commits and branches. `worktree add` runs its checkout as a child `git` found on PATH, the shim, so it fails; `--no-checkout` then `reset --hard` with Homebrew's git works, as does `git archive` (`git-in-sandbox`; s1-build traces). `python3` works.
-- TaskCreate and TaskUpdate work when listed in `allowed_tools` (`task-tools`).
-- Writes to `/tmp` are refused by the sandbox; `$TMPDIR` is writable. Writes into the workspace's `.git/` are refused by the permission layer (`write-scope`).
-- Fixture SHAs match across machines only with user git config off: a signing config changes every commit (`GIT_CONFIG_GLOBAL=/dev/null` in the scaffold).
-- In a sandboxed eval run the Bash tool's `$TMPDIR` is `<the hook's TMPDIR>/claude-<uid>`; the stage hook looks in both, and in a fresh `/sdlc` run it finds `phase` and refuses a repo write before plan approval (`stage-hook`, 3 of 3). In a resumed case it stays inert: the history's session id is not the run's.
-- A session started from another reads a document by its absolute path in the starting session's scratchpad (one probe session, 2026-10-22).
-- A run can read a loaded plugin's own files, such as `design:adr`'s `references/format.md` (`read-plugin-folder`).
-- Linux cloud container, Claude Code 2.1.309, 2026-10-23: the trace is compact JSON, a call as `"id":…,"name":"Bash","input":{"command":…}` and its `tool_result` with `tool_use_id`, `content` and `is_error` in any of three key orders; the regex count graders in `intent/dispositions` and `spec-publish/docs-say` rely on it. A Bash call with `allowed_domains` is refused before it runs (`tool_use_error`). Evals need `bubblewrap` and `socat` installed, or every case granting Bash refuses to start.
+From the ship-flow eval spike, Claude Code on Linux cloud, `claude-opus-5-5`, 2026-11-10:
+
+- `claude plugin eval` starts every run bare: no user settings, CLAUDE.md, memory, hooks or other plugins. Candidate preferences go in through `append_system_prompt`.
+- AskUserQuestion is never offered in eval runs, even when listed in `allowed_tools`.
+- The Artifact tool is off in eval runs, and `$TMPDIR` and home are read-only, so the proof can only be graded as shown inline.
+- The git directory is read-only in the eval sandbox wherever it lives, so a case ends at its first commit attempt.
+- Evals need `bubblewrap` and `socat` installed, or every case granting Bash refuses to start.
+- Built-in skills (`code-review`, `simplify`, `dataviz`, `deep-research`) still load in eval runs.
+- A `not_contains` grader passes vacuously on a run that errored; read `error` before trusting a score.
+- Flow wording that says "when the requester says the change is small" was read as permission to ask; first-person wording with "size is my call" fixed it (kickoff 6/6).
+- With all of `mattpocock-skills` loaded, no Pocock skill was called two branches into a design interview (`flow-mid-interview`, 4 of 4 runs across the red and head passes), so `sdlc` ships no hook denying them.
+- A preservation criterion (`list` unchanged) cannot start red; at tests first the agent flags it to the requester instead of committing (`flow-tests-first`).
