@@ -18,5 +18,4 @@ check "AC19 no test-writer agent" test ! -e plugins/sdlc/agents
 check "AC19 no stage references" test ! -e plugins/sdlc/skills/sdlc/references
 check "AC19 no vendor script or manifest" test -z "$(ls scripts/vendor* 2>/dev/null)"
 check "AC19 no vendor-refresh workflow" test ! -e .github/workflows/vendor-refresh.yml
-check "AC20 intent never loads on its own" grep -qx 'disable-model-invocation: true' plugins/sdlc/skills/intent/SKILL.md
 exit $failed

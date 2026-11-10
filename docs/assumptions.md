@@ -6,9 +6,8 @@ What this marketplace's designs rest on without having verified, each with how y
 
 | Id | Assumption | Area | Stops holding when |
 |----|------------|------|--------------------|
-| A1 | `disable-model-invocation: true` in a plugin skill's frontmatter keeps the model from loading it on its own, while the user and other skills can still call it. | sdlc / intent | An eval run shows `intent` loaded with no user or `sdlc` call before it. |
+| A1 | `intent`'s description ("Load only when the sdlc skill reaches its intent step") keeps it from loading outside the flow. A skill with `disable-model-invocation: true` cannot be called by another skill, so intent keeps a description. | sdlc / intent | `flow-no-trigger` shows `intent` loaded, or a session outside a change request loads it. |
 | A2 | `design:design-interview` treats a pitch's stated criteria as requirements and its non-goals and later stories as out of scope, without being told how. | sdlc / upstream | An eval case shows the interview opening a branch on a stated non-goal. |
-| A3 | A slash command the user types does not pass through the `Skill` tool, so a `PreToolUse` hook on `Skill` cannot block it. | sdlc / hooks | A probe shows a typed `/plugin:skill` arriving as a `Skill` tool call. |
 | A4 | Nobody but Mattias installs `sdlc`, so a breaking rebuild breaks no one else. | marketplace | Someone reports an install of `sdlc@mattiasthalen`. |
 
 ## Measured
@@ -23,3 +22,5 @@ From the ship-flow eval spike, Claude Code on Linux cloud, `claude-opus-5-5`, 20
 - Built-in skills (`code-review`, `simplify`, `dataviz`, `deep-research`) still load in eval runs.
 - A `not_contains` grader passes vacuously on a run that errored; read `error` before trusting a score.
 - Flow wording that says "when the requester says the change is small" was read as permission to ask; first-person wording with "size is my call" fixed it (kickoff 6/6).
+- With all of `mattpocock-skills` loaded, no Pocock skill was called two branches into a design interview (`flow-mid-interview`, 4 of 4 runs across the red and head passes), so `sdlc` ships no hook denying them.
+- A preservation criterion (`list` unchanged) cannot start red; at tests first the agent flags it to the requester instead of committing (`flow-tests-first`).

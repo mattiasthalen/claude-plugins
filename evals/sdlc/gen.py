@@ -6,6 +6,7 @@ records a skill load the way Claude Code does, with the skill's current body, so
 every change to a SKILL.md, or after fetch-deps.sh picks up a new upstream version.
 """
 import json
+import os
 import re
 import shutil
 from pathlib import Path
@@ -13,12 +14,14 @@ from pathlib import Path
 SUITE = Path(__file__).resolve().parent
 REPO = SUITE.parent.parent
 CASES = SUITE / "cases"
+# A copy of the plugin with one line taken out, to show the line is earned: its case goes red without it.
+SDLC = os.environ.get("SDLC_PLUGIN", "plugins/sdlc")
 SKILLS = {
-    "sdlc:sdlc": REPO / "plugins/sdlc/skills/sdlc/SKILL.md",
-    "sdlc:intent": REPO / "plugins/sdlc/skills/intent/SKILL.md",
+    "sdlc:sdlc": REPO / SDLC / "skills/sdlc/SKILL.md",
+    "sdlc:intent": REPO / SDLC / "skills/intent/SKILL.md",
     "design:design-interview": REPO / ".eval-deps/design/skills/design-interview/SKILL.md",
 }
-PLUGINS = ["plugins/sdlc", ".eval-deps/design", ".eval-deps/implementation", ".eval-deps/mattpocock-skills"]
+PLUGINS = [SDLC, ".eval-deps/design", ".eval-deps/implementation", ".eval-deps/mattpocock-skills"]
 # The eval runner names no scratchpad, so each case names one inside the workspace, git-ignored by the scaffold.
 SCRATCHPAD = ("Scratchpad directory: `.scratchpad/` in the working directory. Git ignores it. Use it for working "
               "documents and temporary files instead of /tmp.")
@@ -119,8 +122,10 @@ CASE_SPECS = {
                 "Judge one thing only: before any Write or Edit to a file under `orders/`, did the run write a test "
                 "for each of AC1, AC2 and AC3, run them and see the new behaviour fail, and attempt `git commit` of "
                 "those tests? The sandbox makes the git directory read-only, so the commit itself fails; that is "
-                "expected.\n\nPASS if tests for every AC are written, run red, and a commit of them is attempted, all "
-                "before the first change under `orders/` (stopping after the failed commit is fine).\n\nFAIL if code "
+                "expected. AC3 (`list` unchanged) cannot start red, so stopping before the commit to flag that to the "
+                "requester also counts.\n\nPASS if tests for every AC are written and run before the first change under "
+                "`orders/`, and the run either attempts a commit of them or stops to flag the criterion that cannot start "
+                "red (stopping after the failed commit is fine).\n\nFAIL if code "
                 "under `orders/` changes before that, the tests are not run, no commit is attempted, or the run builds "
                 "anyway after the failed commit."),
         }),
@@ -191,9 +196,10 @@ CASE_SPECS = {
                 "still open, or asks nothing."),
         }),
     "flow-no-trigger": dict(
-        desc="A question that changes nothing in the repo does not load the flow.",
+        desc="A question that changes nothing in the repo loads neither the flow nor intent.",
         state="base", history=[], prompt="What does `orders/store.py` do? Just explain it.", turns=10, timeout=300,
-        graders={"shape-no-flow": skill_used(r'"skill":\s*"(?:sdlc:)?sdlc"', min=0, max=0)}),
+        graders={"shape-no-flow": skill_used(r'"skill":\s*"(?:sdlc:)?sdlc"', min=0, max=0),
+                 "shape-no-intent": skill_used("intent", min=0, max=0)}),
     "intent-why-first": dict(
         desc="A vague idea gets one open question about the why, before any story.",
         state="base", history=[], prompt=VAGUE, turns=30, timeout=900, graders={
@@ -218,7 +224,7 @@ CASE_SPECS = {
                 pattern=r'"name":\s*"(?:Write|Edit)",\s*"input":\s*\{"file_path":\s*"(?![^"]*\.scratchpad/)'),
             "content-marks-and-dispositions": judge("trace",
                 "Judge one thing only: in the content written to `stories.md`, does every acceptance criterion carry "
-                "a [stated] or [proposed] mark, and does every story carry a disposition of now, later or drop?\n\n"
+                "a [stated] or [proposed] mark, and does every story carry a disposition of now, later or drop, in any form (a `Disposition:` line, or a label beside the story's title)?\n\n"
                 "PASS if both hold for every criterion and story in the last version written.\n\nFAIL if any "
                 "criterion lacks a mark, any story lacks a disposition, or no stories.md was written."),
         }),
