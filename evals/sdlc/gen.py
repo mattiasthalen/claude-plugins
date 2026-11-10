@@ -229,7 +229,7 @@ CASE_SPECS = {
         prompt=("They pick orders from `orders list` and lose track of which ones are already packed. They want to "
                 "mark an order packed and list only the unpacked ones. Don't touch totals or invoicing. That's all I "
                 "know; write it up."), turns=40, timeout=900, graders={
-            "shape-stories-in-scratchpad": grader("tool_used", tool="Write", input_match=r"\.scratchpad/sdlc/[^\"]+/stories\.md"),
+            "shape-stories-in-scratchpad": grader("tool_used", tool="Write", input_match=r'\.scratchpad/sdlc/[^"]+/stories\.md'),
             "shape-nothing-in-repo": no_write(r'(?![^"]*\.scratchpad/)'),
             "content-marks-and-dispositions": judge("trace",
                 "Judge one thing only: in the content written to `stories.md`, does every acceptance criterion carry "
