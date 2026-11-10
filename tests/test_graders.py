@@ -7,6 +7,7 @@ import importlib.util
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import unittest
@@ -19,8 +20,71 @@ gen = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(gen)
 
 
+JS_CHECK = """
+const checks = JSON.parse(require("fs").readFileSync(0, "utf8"));
+process.stdout.write(JSON.stringify(checks.map(([pattern, flags, line]) => {
+  let u_error = null;
+  try { new RegExp(pattern, "u"); } catch (e) { u_error = e.message; }
+  return {u_error, matched: new RegExp(pattern, flags).test(line)};
+})));
+"""
+
+
+def js_check(checks):
+    """For each (pattern, flags, line): the error compiling the pattern under `u`, or None, and whether the pattern,
+    compiled with the flags the eval runner gives it (a regex grader's own, none for an input_match), matches the line."""
+    node = shutil.which("node")
+    if node is None:
+        raise RuntimeError("node is not on PATH: grader patterns are checked in the JavaScript engine the eval runner uses")
+    run = subprocess.run([node, "-e", JS_CHECK], input=json.dumps(checks), capture_output=True, text=True, check=True)
+    return json.loads(run.stdout)
+
+
 def call(name, **tool_input):
     return json.dumps({"type": "tool_use", "id": "toolu_1", "name": name, "input": tool_input}, separators=(",", ":"))
+
+
+def tool_input(**fields):
+    """A tool_used grader's input_match is tested against the tool's input, compact as JSON.stringify writes it."""
+    return json.dumps(fields, separators=(",", ":"))
+
+
+def skill(name, **args):
+    return tool_input(skill=name, **args)
+
+
+def bash(command):
+    return tool_input(command=command)
+
+
+# Per grader pattern: a line it must match, then a line it must not.
+SAMPLES = {
+    r'"skill":\s*"(?:code-review|simplify)"': (skill("simplify"), skill("implementation:code-review")),
+    r'"skill":\s*"design:design-interview"': (skill("design:design-interview"), skill("design:adr", args="design:design-interview")),
+    r'"skill":\s*"design:design-philosophy"': (skill("design:design-philosophy"), skill("design:design-interview")),
+    r'"skill":\s*"implementation:code-style"': (skill("implementation:code-style"), skill("code-style")),
+    r'"skill":\s*"implementation:review-cycle"': (skill("implementation:review-cycle"), skill("code-review")),
+    gen.HIJACK: (skill("mattpocock-skills:tdd"), skill("mattpocock-skills:pr")),
+    r'"skill":\s*"mattpocock-skills:pr"': (skill("mattpocock-skills:pr"), skill("mattpocock-skills:prototype")),
+    r'"skill":\s*"sdlc:intent"': (skill("sdlc:intent"), skill("design:design-interview", args="the intent of S1")),
+    r'"skill":\s*"sdlc:sdlc"': (skill("sdlc:sdlc"), skill("sdlc:intent")),
+    r'\.scratchpad/sdlc/[^"]+/stories\.md': (tool_input(file_path="/w/cwd/.scratchpad/sdlc/packed/stories.md", content="x"),
+                                             tool_input(file_path="/w/cwd/docs/stories.md", content="x")),
+    r"\bgh ": (bash("gh issue create --title S2"), bash("echo high ")),
+    "gh issue create": (bash("gh issue create --title S2"), bash("gh issue list")),
+    "gh pr create": (bash("gh pr create --fill"), bash("gh pr view 7")),
+    "git push": (bash("git push -u origin main"), bash("git commit -m push")),
+    gen.no_write(r'(?![^"]*\.scratchpad/)')["pattern"]: (
+        call("Edit", replace_all=False, file_path="/w/cwd/README.md", old_string="a", new_string="b"),
+        call("Write", file_path="/w/cwd/.scratchpad/sdlc/packed/stories.md", content="x")),
+    gen.NO_SOURCE_WRITE["pattern"]: (
+        call("Edit", replace_all=False, file_path="/w/cwd/orders/__main__.py", old_string="a", new_string="b"),
+        call("Write", file_path="/w/cwd/.scratchpad/sdlc/orders-count/stories.md", content="x")),
+    gen.no_write(r'[^"]*/tests/')["pattern"]: (call("Write", file_path="/w/cwd/tests/test_count.py", content="x"),
+                                              call("Write", file_path="/w/cwd/orders/__main__.py", content="x")),
+    gen.no_write(r'[^"]*stories\.md"')["pattern"]: (call("Write", file_path="/w/cwd/.scratchpad/sdlc/x/stories.md", content="x"),
+                                                    call("Write", file_path="/w/cwd/.scratchpad/sdlc/x/intent.md", content="x")),
+}
 
 
 def grader(case, name):
