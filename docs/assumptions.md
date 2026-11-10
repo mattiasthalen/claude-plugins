@@ -1,0 +1,25 @@
+# Assumptions
+
+What this marketplace's designs rest on without having verified, each with how you would know it stopped holding, plus measured facts that would cost time to rediscover.
+
+## Standing
+
+| Id | Assumption | Area | Stops holding when |
+|----|------------|------|--------------------|
+| A1 | `disable-model-invocation: true` in a plugin skill's frontmatter keeps the model from loading it on its own, while the user and other skills can still call it. | sdlc / intent | An eval run shows `intent` loaded with no user or `sdlc` call before it. |
+| A2 | `design:design-interview` treats a pitch's stated criteria as requirements and its non-goals and later stories as out of scope, without being told how. | sdlc / upstream | An eval case shows the interview opening a branch on a stated non-goal. |
+| A3 | A slash command the user types does not pass through the `Skill` tool, so a `PreToolUse` hook on `Skill` cannot block it. | sdlc / hooks | A probe shows a typed `/plugin:skill` arriving as a `Skill` tool call. |
+| A4 | Nobody but Mattias installs `sdlc`, so a breaking rebuild breaks no one else. | marketplace | Someone reports an install of `sdlc@mattiasthalen`. |
+
+## Measured
+
+From the ship-flow eval spike, Claude Code on Linux cloud, `claude-opus-5-5`, 2026-11-10:
+
+- `claude plugin eval` starts every run bare: no user settings, CLAUDE.md, memory, hooks or other plugins. Candidate preferences go in through `append_system_prompt`.
+- AskUserQuestion is never offered in eval runs, even when listed in `allowed_tools`.
+- The Artifact tool is off in eval runs, and `$TMPDIR` and home are read-only, so the proof can only be graded as shown inline.
+- The git directory is read-only in the eval sandbox wherever it lives, so a case ends at its first commit attempt.
+- Evals need `bubblewrap` and `socat` installed, or every case granting Bash refuses to start.
+- Built-in skills (`code-review`, `simplify`, `dataviz`, `deep-research`) still load in eval runs.
+- A `not_contains` grader passes vacuously on a run that errored; read `error` before trusting a score.
+- Flow wording that says "when the requester says the change is small" was read as permission to ask; first-person wording with "size is my call" fixed it (kickoff 6/6).
