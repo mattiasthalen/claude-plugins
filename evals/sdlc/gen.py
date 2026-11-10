@@ -362,6 +362,9 @@ def write_case(name, spec):
 
 
 if __name__ == "__main__":
+    # A missing skill stops generation before the cases already there are removed.
+    for name in SKILLS:
+        skill_body(name)
     shutil.rmtree(CASES, ignore_errors=True)
     for name, spec in CASE_SPECS.items():
         write_case(name, spec)
