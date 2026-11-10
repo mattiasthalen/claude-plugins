@@ -12,9 +12,11 @@ What this marketplace's designs rest on without having verified, each with how y
 | A4 | Upstream plugins release by bumping `version` in their `plugin.json`, and Mattias runs `claude plugin update` to pick a release up (auto-update is off for this marketplace). Evals run upstream's default-branch head. | marketplace / upstream | The versions `evals/fetch-deps.sh` prints differ from `claude plugin list`, or an upstream drops `version`. |
 | A5 | With `sdlc` loaded, `design:design-interview` is reached from `intent`'s hand-off and `implementation:review-cycle` by its own description, so `sdlc` names neither. | sdlc / upstream | `flow-review` or `intent-filing-no` goes red after an upstream release. |
 | A6 | `sdlc` turned on from claude.ai finds its bare-name `dependencies` met by design, implementation and mattpocock-skills synced the same way. The docs cover only dependencies that name a marketplace for a synced plugin. | sdlc / claude.ai | `claude plugin list` in a cloud session shows `sdlc@synced` disabled for an unmet dependency. |
+| A7 | A `tool_used` grader's `input_match` is tested against the tool input as `JSON.stringify` writes it (no spaces), so `tests/test_graders.py` samples are compact JSON. Read from the 2.1.322 bundle, not documented. | evals / runner | A real eval run disagrees with a sample pair: a grader fails or passes where its samples say otherwise. |
 
 ## Measured
 
+- 2026-11-10, CLI 2.1.322, read from the bundle: a `regex` grader compiles as `new RegExp(pattern, flags)` with `flags` defaulting to empty, and a `tool_used` grader's `input_match` compiles with no flags. Neither uses `u`; patterns are still checked under `u`, which accepts a subset of what the runner accepts.
 - 2026-11-10, CLI 2.1.322: `claude plugin install sdlc@mattiasthalen` in a fresh config installs sdlc plus its three dependencies, and `claude plugin validate` alone does not fetch upstream sources (a wrong upstream `path` passes validate and fails install).
 
 From the ship-flow eval spike, Claude Code on Linux cloud, `claude-opus-5-5`, 2026-11-10:
