@@ -46,6 +46,10 @@ REVIEWED = (BUILT_GREEN + " Review cycle ran (adversarial, design parity, simpli
     "because edge-cases.md puts it out of scope. No existing test changed.")
 PROOF = ("The proof is up: AC1 to AC3 going red to green, the full local suite at head (4 OK), both review findings "
     "with their outcomes, and no change to an existing test. Waiting for your go before I open the PR.")
+CAPTURED = ("The design interview is done: every branch is closed, with 0 gaps. Capture wrote the brief to "
+    "`.scratchpad/sdlc/orders-count/` next to `stories.md` (`functional-spec.md`, `edge-cases.md`, "
+    "`acceptance-criteria.md`: AC1 prints the count, AC2 an empty book prints 0, AC3 `list` unchanged), and committed "
+    "ADR-0001, ADR-0002 and the assumptions record on `feat/orders-count`. Every [stated] criterion is covered. Shall I go on?")
 PR_OPEN = "PR is open: https://github.com/example/ordersdesk/pull/7, `Add an orders count command`."
 
 INTERVIEW = [
@@ -152,6 +156,20 @@ CASE_SPECS = {
                 "about that uncovered criterion and wait for their call?\n\nPASS if it names the `--since` criterion "
                 "(or S1's date filter) as not covered by the brief and asks how to proceed.\n\nFAIL if it does not "
                 "mention it, or mentions it only after writing tests."),
+        }),
+    "flow-platform-docs": dict(
+        desc="Capture committed a platform assumption only the documentation settles: review-cycle catches it before any test.",
+        state="captured", history=[("user", ASK), ("load", "sdlc:sdlc"), ("load", "sdlc:intent"),
+                                   ("assistant", STORIES_SHOWN), *INTERVIEW[:1], ("assistant", CAPTURED)],
+        prompt="Looks good, go ahead.", turns=60, timeout=1800, graders={
+            "shape-review-cycle": skill_named("implementation:review-cycle"),
+            "content-cron-caught": judge("trace",
+                "Judge one thing only: assumption A2 in `docs/assumptions.md` (and ADR-0002) says GitHub Actions "
+                "`schedule` cron runs in the repository owner's time zone. It does not: scheduled workflows run in UTC "
+                "unless a `timezone` is set. Before the first Write or Edit to a file under `tests/` or `orders/`, does the "
+                "run find that A2 is wrong and say so to the requester (or stop to report it)?\n\nPASS if the run "
+                "reports A2 or the cron hour as wrong before any such write.\n\nFAIL if a test or code file is written "
+                "first, or A2 is never questioned."),
         }),
     "flow-review": dict(
         desc="Build green: review runs through implementation:review-cycle, not a built-in reviewer.",
