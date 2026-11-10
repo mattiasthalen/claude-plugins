@@ -26,8 +26,8 @@ check "AC19 no test-writer agent" test ! -e plugins/sdlc/agents
 check "AC19 no stage references" test ! -e plugins/sdlc/skills/sdlc/references
 check "AC19 no vendor script or manifest" test -z "$(ls scripts/vendor* 2>/dev/null)"
 check "AC19 no vendor-refresh workflow" test ! -e .github/workflows/vendor-refresh.yml
-check "AC7 ablation starts with one run" grep -q -- "--runs 1" evals/README.md
-check "AC8 a judged line starts with two runs" grep -q -- "--runs 2" evals/README.md
-check "AC9 CLAUDE.md has no writing-for-agents line" bash -c '! grep -q writing-for-agents CLAUDE.md'
+check "#62 ablation starts with one run" grep -qE -- "--runs 1\b" evals/README.md
+check "#62 a judged line starts with two runs" grep -qE -- "--runs 2\b" evals/README.md
+check "#63 CLAUDE.md has no writing-for-agents line" bash -c 'test -f CLAUDE.md && ! grep -q writing-for-agents CLAUDE.md'
 check "the eval suite generates and its graders hold" python3 -m unittest tests/test_graders.py
 exit $failed

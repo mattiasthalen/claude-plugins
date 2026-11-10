@@ -1,4 +1,5 @@
-"""Shape graders checked offline against trace lines of the form the eval runner records.
+"""Shape graders checked offline: each pattern against trace lines, or a tool's input for an input_match, in the form
+the eval runner records them, matched in JavaScript as the runner matches them.
 
 A tool call reaches a grader as `"name":"Edit","input":{...}`, and Claude Code writes Edit's input with
 `replace_all` before `file_path`, so a pattern that expects `file_path` first never sees an Edit.
@@ -32,10 +33,12 @@ process.stdout.write(JSON.stringify(checks.map(([pattern, flags, line]) => {
 
 def js_check(checks):
     """For each (pattern, flags, line): the error compiling the pattern under `u`, or None, and whether the pattern,
-    compiled with the flags the eval runner gives it (a regex grader's own, none for an input_match), matches the line."""
+    compiled with the flags the eval runner gives it (a regex grader's own, none for an input_match), matches the line.
+
+    The runner is a Bun build, so its regexes run in JavaScriptCore; node's V8 stands in for it here (A7 in docs/assumptions.md)."""
     node = shutil.which("node")
     if node is None:
-        raise RuntimeError("node is not on PATH: grader patterns are checked in the JavaScript engine the eval runner uses")
+        raise RuntimeError("node is not on PATH: grader patterns are checked in JavaScript, as the eval runner matches them")
     run = subprocess.run([node, "-e", JS_CHECK], input=json.dumps(checks), capture_output=True, text=True, check=True)
     return json.loads(run.stdout)
 
@@ -124,8 +127,9 @@ def suite_patterns():
     found = set()
     for spec in gen.CASE_SPECS.values():
         for g in spec["graders"].values():
-            if g["type"] != "llm":
-                found.add((g.get("pattern") or g["input_match"], g.get("flags", "")))
+            pattern = g.get("pattern") or g.get("input_match")
+            if g["type"] != "llm" and pattern:
+                found.add((pattern, g.get("flags", "")))
     return found
 
 
