@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "sdlc",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "How a change ships: user stories, the design interview, tests first, build, review, proof, then the pull request on your go.",
   "author": {
     "name": "Mattias Thalén",
