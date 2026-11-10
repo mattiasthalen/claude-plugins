@@ -1,0 +1,52 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "mattiasthalen",
+  "description": "Mattias Thalén's personal Claude Code plugins.",
+  "owner": {
+    "name": "Mattias Thalén",
+    "url": "https://github.com/mattiasthalen"
+  },
+  "plugins": [
+    {
+      "name": "sdlc",
+      "source": "./plugins/sdlc",
+      "description": "How a change ships: user stories, the design interview, tests first, build, review, proof, then the pull request on your go.",
+      "category": "workflow"
+    },
+    {
+      "name": "design",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/the-exodus/claude-design-skills.git",
+        "path": "plugins/design"
+      },
+      "description": "Tobias Karlsson's design plugin: interview-driven software design, captured as briefs, ADRs, a lexicon and an assumptions record.",
+      "author": { "name": "Tobias Karlsson" },
+      "repository": "https://github.com/the-exodus/claude-design-skills",
+      "category": "development"
+    },
+    {
+      "name": "implementation",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/the-exodus/claude-design-skills.git",
+        "path": "plugins/implementation"
+      },
+      "description": "Tobias Karlsson's implementation plugin: how names and comments read, and the pre-PR review cycle.",
+      "author": { "name": "Tobias Karlsson" },
+      "repository": "https://github.com/the-exodus/claude-design-skills",
+      "category": "development"
+    },
+    {
+      "name": "mattpocock-skills",
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills"
+      },
+      "description": "Matt Pocock's engineering skills, of which sdlc uses pr and retro.",
+      "author": { "name": "Matt Pocock" },
+      "repository": "https://github.com/mattpocock/skills",
+      "category": "development"
+    }
+  ]
+}
