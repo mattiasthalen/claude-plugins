@@ -28,6 +28,8 @@ cp -R plugins/sdlc .eval-deps/ablate && $EDITOR .eval-deps/ablate/skills/<skill>
 SDLC_PLUGIN=.eval-deps/ablate python3 evals/sdlc/gen.py   # then run the line's case as above
 ```
 
+Stop at the first red. A shape grader's bar is 3 of 3, so one failed run misses it: run the line's case with `--runs 1`, and a failed shape grader earns the line; only a pass goes on to three runs. When the line's grader is a judge, its bar is 2 of 3 and one failure is not enough: start with `--runs 2`, where two failures earn the line, two passes mean it is not earned, and a split takes one more run. The green half, with the line in, always runs three.
+
 ## The sdlc suite
 
 `gen.py` holds every case: each starts at one step of the flow on the ordersdesk fixture (`lib/scaffold.sh` builds its states), with the conversation so far as a seeded history and the requester's next line as the prompt. The eval runner names no scratchpad, so each case names `.scratchpad/` in the workspace, which the fixture's git ignores.
