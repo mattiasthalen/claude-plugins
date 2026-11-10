@@ -20,3 +20,7 @@ Rejected:
 - An upstream change can break the flow without any change here. The eval suite catches it only when it is run, which is in-session, before a pull request, since CI has no model token.
 - The eval runs fetch upstream at its default branch, so two runs on different days can load different upstream skills. A result is only comparable to another taken the same day.
 - There is no vendor script, vendor manifest or refresh workflow.
+
+## Addendum 2026-11-10
+
+"Follows its default branch" holds for what the marketplace fetches, not for what an installed copy runs. Claude Code keys an installed plugin by the `version` in its `plugin.json`, and all three upstreams set one (design 0.10.1, implementation 0.2.0, mattpocock-skills 1.3.2 on this date). An upstream commit reaches an installed copy only when upstream bumps that version and `claude plugin update` runs; auto-update is off by default for this marketplace. The eval suite fetches upstream's default branch head, which can be ahead of the released version. `evals/fetch-deps.sh` prints the versions it fetched, to compare with `claude plugin list`. The Decision stands: no `sha`, no copies.

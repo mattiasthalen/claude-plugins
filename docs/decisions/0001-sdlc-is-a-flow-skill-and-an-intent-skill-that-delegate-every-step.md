@@ -30,3 +30,7 @@ Rejected:
 - The flow is as good as the skills it calls. An upstream change in design, implementation or Pocock's skills changes the flow without a change here; the eval suite is what notices.
 - There is no spec, plan, evidence document, test-writer agent, own review or stage hook any more. The tests-first rule rests on the flow's wording and its eval cases, not on a hook that refuses writes.
 - A skill starts nearly empty and grows only by failing cases, so its length is a measure of what the agent actually gets wrong.
+
+## Addendum 2026-11-10
+
+Built under the earned-line rule, the `sdlc` skill names fewer steps than the Decision lists. Each line was run with its case and then without it, and only the lines whose case went red stayed. The design interview, the build and the review cycle have no line: with the flow loaded, the agent reached `design:design-interview` from `intent`'s hand-off and `implementation:review-cycle` by its own description, and their cases stayed green without a line. `intent` also has no line in `sdlc` beyond the start: its own description carries it. The Decision stands; the steps it lists are the flow's order, and the skill holds only the lines that order needs to hold.

@@ -7,11 +7,13 @@ Suites for this marketplace's own plugins, run with [`claude plugin eval`](https
 In a Linux cloud container, first: `apt-get update && apt-get install -y bubblewrap socat`.
 
 ```sh
-evals/fetch-deps.sh          # design, implementation, mattpocock-skills at their default branch
+evals/fetch-deps.sh          # design, implementation, mattpocock-skills at their default branch; prints their versions
 python3 evals/sdlc/gen.py    # writes evals/sdlc/cases/ (git-ignored); re-run after any SKILL.md change
 claude plugin eval . --eval-dir evals/sdlc --ablation none --trust-plugin --scaffold \
   --allow-tools Write Edit Bash --model claude-opus-5-5 --judge-model claude-opus-5-5 -j 8
 ```
+
+Upstream's head can be ahead of the version an install runs (ADR-0002); compare the versions `fetch-deps.sh` prints with `claude plugin list`.
 
 One case: `--case <name>`. Several `--case` flags don't combine; run one per case. `--keep-temp` keeps each run's trace for reading.
 

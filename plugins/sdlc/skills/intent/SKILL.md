@@ -1,6 +1,6 @@
 ---
 name: intent
-description: Step 1 of the sdlc flow. Load only when the sdlc skill reaches its intent step, or when asked to run /sdlc:intent.
+description: Writes the user stories a change starts from. Load only when the sdlc skill starts a change with it, or when asked to run /sdlc:intent.
 ---
 
 1. **Why first.** Until you know why I want this, ask one open question at a time about the problem, with no options to pick from.

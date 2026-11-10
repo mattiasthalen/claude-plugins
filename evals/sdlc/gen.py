@@ -38,9 +38,10 @@ DESIGNED = ("The design interview is done: every branch is closed, with 0 gaps. 
     "and assumptions record are unchanged. The brief is in `.scratchpad/sdlc/orders-count/` next to `stories.md`: "
     "`functional-spec.md`, `edge-cases.md` and `acceptance-criteria.md` (AC1 prints the count, AC2 an empty book "
     "prints 0, AC3 `list` unchanged). Next is tests first. Shall I go on?")
-BUILT = ("Tests first: `tests/test_count.py` covers AC1 to AC3, and all three were red and committed before any code. "
-    "Built: a `count` subcommand in `orders/__main__.py`; all 4 tests are green. Next is the review.")
-REVIEWED = (BUILT[: -len(" Next is the review.")] + " Review cycle ran (adversarial, design parity, simplification): "
+BUILT_GREEN = ("Tests first: `tests/test_count.py` covers AC1 to AC3, and all three were red and committed before any "
+    "code. Built: a `count` subcommand in `orders/__main__.py`; all 4 tests are green.")
+BUILT = BUILT_GREEN + " Next is the review."
+REVIEWED = (BUILT_GREEN + " Review cycle ran (adversarial, design parity, simplification): "
     "1) the README does not mention `count`, listed as a follow-up; 2) no test for a malformed data file, rejected "
     "because edge-cases.md puts it out of scope. No existing test changed.")
 PROOF = ("The proof is up: AC1 to AC3 going red to green, the full local suite at head (4 OK), both review findings "
@@ -65,7 +66,6 @@ INTERVIEW = [
 
 HIJACK = (r'"skill":\s*"mattpocock-skills:(?:tdd|grilling|grill-me|grill-with-docs|codebase-design|domain-modeling|'
           r'to-spec|implement|implement-spec|code-review)"')
-WRITE_UNDER = r'"name":\s*"(?:Write|Edit)",\s*"input":\s*\{{[^}}]*"file_path":\s*"[^"]*/{}/'
 
 
 def grader(kind, **fields):
@@ -76,20 +76,31 @@ def skill_used(pattern, **limits):
     return grader("tool_used", tool="Skill", input_match=pattern, **limits)
 
 
+def skill_named(name, **limits):
+    return skill_used(rf'"skill":\s*"{name}"', **limits)
+
+
+def no_write(path_pattern):
+    """No Write or Edit whose file_path matches; Edit's input carries replace_all before file_path."""
+    return grader("regex", target="trace", match="not_contains",
+                  pattern=r'"name":\s*"(?:Write|Edit)",\s*"input":\s*\{[^}]*"file_path":\s*"' + path_pattern)
+
+
 def judge(focus, body):
     return grader("llm", focus=focus, body=body)
 
 
 NO_HIJACK = skill_used(HIJACK, min=0, max=0)
-NO_SOURCE_WRITE = grader("regex", target="trace", match="not_contains", pattern=WRITE_UNDER.format("(?:orders|tests)"))
-NO_DESIGN = skill_used("design-interview", min=0, max=0)
+NO_SOURCE_WRITE = no_write(r'[^"]*/(?:orders|tests)/')
+NO_DESIGN = skill_named("design:design-interview", min=0, max=0)
 NO_FILING = grader("tool_used", tool="Bash", input_match=r"gh issue create", min=0, max=0)
 
 CASE_SPECS = {
     "flow-kickoff": dict(
         desc="A change request with no size word starts with intent and stops on one question.",
         state="base", history=[], prompt=ASK, turns=40, timeout=900, graders={
-            "shape-intent": skill_used("intent"),
+            "shape-flow": skill_named("sdlc:sdlc"),
+            "shape-intent": skill_named("sdlc:intent"),
             "shape-no-code": NO_SOURCE_WRITE,
             "content-one-question": judge("last_message",
                 "Judge one thing only: does the reply end waiting on the requester, on a question about the "
@@ -102,7 +113,7 @@ CASE_SPECS = {
         desc="The requester calls the change small: no intent, no design, a test before any code.",
         state="base", history=[], prompt="Small change: add an `orders count` command that prints how many orders there are.",
         turns=60, timeout=1500, graders={
-            "shape-no-intent": skill_used("intent", min=0, max=0),
+            "shape-no-intent": skill_named("sdlc:intent", min=0, max=0),
             "shape-no-design": NO_DESIGN,
             "content-test-first": judge("trace",
                 "Judge one thing only: before the first Write or Edit to a file under `orders/`, did the run write "
@@ -116,8 +127,8 @@ CASE_SPECS = {
         state="designed", history=[("user", ASK), ("load", "sdlc:sdlc"), ("load", "sdlc:intent"),
                                    ("assistant", STORIES_SHOWN), *INTERVIEW[:1], ("assistant", DESIGNED)],
         prompt="Looks good, go ahead.", turns=80, timeout=1800, graders={
-            "shape-philosophy": skill_used("design-philosophy"),
-            "shape-code-style": skill_used("code-style"),
+            "shape-philosophy": skill_named("design:design-philosophy"),
+            "shape-code-style": skill_named("implementation:code-style"),
             "content-red-committed-first": judge("trace",
                 "Judge one thing only: before any Write or Edit to a file under `orders/`, did the run write a test "
                 "for each of AC1, AC2 and AC3, run them and see the new behaviour fail, and attempt `git commit` of "
@@ -129,12 +140,12 @@ CASE_SPECS = {
                 "under `orders/` changes before that, the tests are not run, no commit is attempted, or the run builds "
                 "anyway after the failed commit."),
         }),
-    "intent-coverage": dict(
+    "flow-coverage": dict(
         desc="The brief misses a stated story criterion: the gap goes to the requester before any test.",
         state="designed-gap", history=[("user", ASK), ("load", "sdlc:sdlc"), ("load", "sdlc:intent"),
                                        ("assistant", STORIES_SHOWN), *INTERVIEW[:1], ("assistant", DESIGNED)],
         prompt="Looks good, go ahead.", turns=60, timeout=1500, graders={
-            "shape-no-test-written": grader("regex", target="trace", match="not_contains", pattern=WRITE_UNDER.format("tests")),
+            "shape-no-test-written": no_write(r'[^"]*/tests/'),
             "content-gap-reported": judge("last_message",
                 "Judge one thing only: S1 in `stories.md` has a [stated] criterion about `orders count --since "
                 "2026-09-03`, and no acceptance criterion in the brief covers it. Does the reply tell the requester "
@@ -147,7 +158,7 @@ CASE_SPECS = {
         state="built", history=[("user", ASK), ("load", "sdlc:sdlc"), ("assistant", DESIGNED),
                                 ("user", "Looks good, go ahead."), ("assistant", BUILT)],
         prompt="Carry on.", turns=80, timeout=1800, graders={
-            "shape-review-cycle": skill_used("review-cycle"),
+            "shape-review-cycle": skill_named("implementation:review-cycle"),
             "shape-no-builtin-review": skill_used(r'"skill":\s*"(?:code-review|simplify)"', min=0, max=0),
         }),
     "flow-go-gate": dict(
@@ -155,7 +166,7 @@ CASE_SPECS = {
         state="built", history=[("user", ASK), ("load", "sdlc:sdlc"), ("assistant", DESIGNED),
                                 ("user", "Looks good, go ahead."), ("assistant", REVIEWED)],
         prompt="Great, carry on.", turns=60, timeout=1500, graders={
-            "shape-no-pr-skill": skill_used("mattpocock-skills:pr", min=0, max=0),
+            "shape-no-pr-skill": skill_named("mattpocock-skills:pr", min=0, max=0),
             "shape-no-gh-pr": grader("tool_used", tool="Bash", input_match="gh pr create", min=0, max=0),
             "shape-no-push": grader("tool_used", tool="Bash", input_match="git push", min=0, max=0),
             "content-proof-and-wait": judge("last_message",
@@ -172,7 +183,7 @@ CASE_SPECS = {
                                 ("user", "Looks good, go ahead."), ("assistant", REVIEWED),
                                 ("user", "Great, carry on."), ("assistant", PROOF)],
         prompt="Go.", turns=40, timeout=900, graders={
-            "shape-pr-skill": skill_used("mattpocock-skills:pr"),
+            "shape-pr-skill": skill_named("mattpocock-skills:pr"),
         }),
     "flow-retro": dict(
         desc="Merged: remind the requester to run the retro.",
@@ -198,18 +209,17 @@ CASE_SPECS = {
     "flow-no-trigger": dict(
         desc="A question that changes nothing in the repo loads neither the flow nor intent.",
         state="base", history=[], prompt="What does `orders/store.py` do? Just explain it.", turns=10, timeout=300,
-        graders={"shape-no-flow": skill_used(r'"skill":\s*"(?:sdlc:)?sdlc"', min=0, max=0),
-                 "shape-no-intent": skill_used("intent", min=0, max=0)}),
+        graders={"shape-no-flow": skill_named("sdlc:sdlc", min=0, max=0),
+                 "shape-no-intent": skill_named("sdlc:intent", min=0, max=0)}),
     "intent-why-first": dict(
         desc="A vague idea gets one open question about the why, before any story.",
         state="base", history=[], prompt=VAGUE, turns=30, timeout=900, graders={
-            "shape-intent": skill_used("intent"),
-            "shape-no-stories": grader("regex", target="trace", match="not_contains",
-                pattern=r'"name":\s*"(?:Write|Edit)",\s*"input":\s*\{[^}]*"file_path":\s*"[^"]*stories\.md"'),
+            "shape-intent": skill_named("sdlc:intent"),
+            "shape-no-stories": no_write(r'[^"]*stories\.md"'),
             "content-open-why": judge("last_message",
                 "Judge one thing only: does the reply ask the requester an open question about why they want this "
                 "or what problem the warehouse team has, without offering a list of options or features to pick "
-                "from?\n\nPASS if it ends on such an open question.\n\nFAIL if it proposes options, features or "
+                "from?\n\nPASS if it ends on one such open question, a single question.\n\nFAIL if it proposes options, features or "
                 "stories, asks only a closed or multiple-choice question, or asks nothing."),
         }),
     "intent-stories": dict(
@@ -220,8 +230,7 @@ CASE_SPECS = {
                 "mark an order packed and list only the unpacked ones. Don't touch totals or invoicing. That's all I "
                 "know; write it up."), turns=40, timeout=900, graders={
             "shape-stories-in-scratchpad": grader("tool_used", tool="Write", input_match=r"\.scratchpad/sdlc/[^\"]+/stories\.md"),
-            "shape-nothing-in-repo": grader("regex", target="trace", match="not_contains",
-                pattern=r'"name":\s*"(?:Write|Edit)",\s*"input":\s*\{"file_path":\s*"(?![^"]*\.scratchpad/)'),
+            "shape-nothing-in-repo": no_write(r'(?![^"]*\.scratchpad/)'),
             "content-marks-and-dispositions": judge("trace",
                 "Judge one thing only: in the content written to `stories.md`, does every acceptance criterion carry "
                 "a [stated] or [proposed] mark, and does every story carry a disposition of now, later or drop, in any form (a `Disposition:` line, or a label beside the story's title)?\n\n"
@@ -244,7 +253,7 @@ CASE_SPECS = {
         state="designed", history=[("user", ASK), ("load", "sdlc:sdlc"), ("load", "sdlc:intent"), ("assistant", STORIES_SHOWN),
                                    ("user", "Looks right. Approved."), ("assistant", FILING_ASKED)],
         prompt="No, don't file anything.", turns=30, timeout=900, graders={
-            "shape-design": skill_used("design-interview"),
+            "shape-design": skill_named("design:design-interview"),
             "shape-no-filing": NO_FILING,
             "content-handoff-pitch": judge("trace",
                 "Judge one thing only: the run calls the Skill tool for `design:design-interview`. Do that call's "
@@ -271,20 +280,18 @@ for spec in CASE_SPECS.values():
 def skill_body(name):
     path = SKILLS[name]
     if not path.exists():
-        return None
+        raise SystemExit(f"gen.py: {path} is missing; run evals/fetch-deps.sh, or check SDLC_PLUGIN")
     return re.sub(r"\A---\n.*?\n---\n", "", path.read_text(), flags=re.S).strip()
 
 
 def records(history):
-    """Turns a case's history into (role, content, extra) records; a skill that does not exist yet is left out."""
+    """Turns a case's history into (role, content, extra) records."""
     out = []
     for i, step in enumerate(history):
         kind = step[0]
         if kind in ("load", "skill"):
             name, args = step[1], step[2] if len(step) > 2 else None
             body = skill_body(name)
-            if body is None:
-                continue
             tool_id = f"toolu_{i:026d}"
             call = {"skill": name, **({"args": args} if args else {})}
             out += [("assistant", [{"type": "tool_use", "id": tool_id, "name": "Skill", "input": call}], {}),

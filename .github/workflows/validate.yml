@@ -18,4 +18,4 @@ jobs:
         run: tests/check_repo.sh
       - name: Generate the eval cases
         # The evals need a model and run in-session (ADR-0002); CI only proves the suite still generates.
-        run: python3 evals/sdlc/gen.py
+        run: evals/fetch-deps.sh && python3 evals/sdlc/gen.py
