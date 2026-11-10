@@ -32,7 +32,7 @@ case "$state" in
     [ "$state" = designed-gap ] && cp "$lib/run-docs-gap/stories.md" "$docs/"
     git checkout -q -b feat/orders-count
     if [ "$state" = captured ]; then
-      cp -R "$lib/run-records/." . && git add -A && git commit -q -m "Record the count design: ADR-0001, ADR-0002, A1 and A2"
+      cp -R "$lib/stages/records/." . && git add -A && git commit -q -m "Record the count design: ADR-0001, ADR-0002, A1 and A2"
     fi
     if [ "$state" = built ]; then
       cp -R "$lib/stages/tests/." . && git add -A && git commit -q -m "Add red tests for orders count (AC1-AC3)"
