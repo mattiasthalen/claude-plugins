@@ -24,7 +24,7 @@ class VendorUsage(unittest.TestCase):
     def assert_help(self, result):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stderr, "")
-        self.assertIn("vendor.sh --help", result.stdout)
+        self.assertRegex(result.stdout, r"(?m)^#\s+vendor\.sh .*--help")
         self.assertIn("vendor.sh --refresh", result.stdout)
         self.assertIn("Copies are changed only here", result.stdout)
 

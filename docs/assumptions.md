@@ -15,6 +15,7 @@ What this marketplace's designs rest on without having verified, each with how y
 | A14 | The repository lets GitHub Actions create pull requests ("Allow GitHub Actions to create and approve pull requests"), which the weekly vendor refresh needs. Applied with branch protection at ship. | repo / CI | `gh api repos/mattiasthalen/claude-plugins/actions/permissions/workflow --jq .can_approve_pull_request_reviews` is false, or a refresh run fails at `gh pr create`. |
 | A15 | A `validate` run dispatched on a bot PR's branch satisfies `main`'s required `validate` check, even though the PR's own `pull_request` run waits for approval. | repo / CI | The first bot refresh PR shows `validate` pending or required after the dispatched run is green. |
 | A16 | A story's or a spec's tracker write shows in an eval trace as a Bash `gh issue create` call, so graders can count filings. Only `gh` is exercised: the cases allow no MCP tools, so a tracker's MCP call is never graded. | evals | A filing case passes with no such call in its trace. |
+| A17 | Nothing outside this repository runs `scripts/vendor.sh -h` or `--help` and relies on it exiting 2. | repo / scripts | Someone reports a script, alias or workflow that broke when `vendor.sh --help` began exiting 0. |
 
 ## Documented
 

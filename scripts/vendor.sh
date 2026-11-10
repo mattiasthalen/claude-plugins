@@ -7,6 +7,7 @@
 #                         commit on its default branch; exits 1 if any has
 #   vendor.sh --refresh   moves every copy and pin to that commit, and bumps the patch
 #                         version of each plugin whose copy changed
+#   vendor.sh -h, --help  prints this usage
 #
 # Copies are changed only here; .claude/hooks/protect_vendored.py refuses Claude's Write and Edit to them.
 set -euo pipefail
@@ -14,7 +15,9 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 manifest="$root/scripts/vendor.json"
 market="$root/.claude-plugin/marketplace.json"
 mode="${1:-}"
-case "$mode" in --check|--drift|--refresh) ;; *) sed -n '2,10p' "$0" >&2; exit 2;; esac
+# Ends at the first line of code, not a line number, so editing the header cannot cut the usage short.
+usage() { sed -n '2,/^[^#]/{/^#/p}' "$0"; }
+case "$mode" in --check|--drift|--refresh) ;; -h|--help) usage; exit 0;; *) usage >&2; exit 2;; esac
 
 # The newest upstream commit that touched <path> on the default branch: a commit elsewhere is not drift.
 last_touch() { gh api "repos/$1/commits?sha=$(gh api "repos/$1" --jq .default_branch)&path=$2&per_page=1" --jq '.[0].sha'; }
