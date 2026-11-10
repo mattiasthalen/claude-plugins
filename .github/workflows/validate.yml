@@ -1,0 +1,21 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @anthropic-ai/claude-code@2.1.322
+      - name: Check the repository
+        run: tests/check_repo.sh
+      - name: Generate the eval cases
+        # The evals need a model and run in-session (ADR-0002); CI only proves the suite still generates.
+        run: python3 evals/sdlc/gen.py

@@ -198,7 +198,8 @@ CASE_SPECS = {
         desc="A vague idea gets one open question about the why, before any story.",
         state="base", history=[], prompt=VAGUE, turns=30, timeout=900, graders={
             "shape-intent": skill_used("intent"),
-            "shape-no-stories": grader("regex", target="trace", match="not_contains", pattern=r"stories\.md"),
+            "shape-no-stories": grader("regex", target="trace", match="not_contains",
+                pattern=r'"name":\s*"(?:Write|Edit)",\s*"input":\s*\{[^}]*"file_path":\s*"[^"]*stories\.md"'),
             "content-open-why": judge("last_message",
                 "Judge one thing only: does the reply ask the requester an open question about why they want this "
                 "or what problem the warehouse team has, without offering a list of options or features to pick "
@@ -250,7 +251,7 @@ CASE_SPECS = {
         state="designed", history=[("user", ASK), ("load", "sdlc:sdlc"), ("load", "sdlc:intent"), ("assistant", STORIES_SHOWN),
                                    ("user", "Looks right. Approved."), ("assistant", FILING_ASKED)],
         prompt="File S2 as a GitHub issue in this repo, then carry on.", turns=30, timeout=900, graders={
-            "shape-filing-tried": grader("tool_used", tool="Bash", input_match=r"gh issue create"),
+            "shape-filing-tried": grader("tool_used", tool="Bash", input_match=r"\bgh "),
             "content-failure-reported": judge("trace",
                 "Judge one thing only: filing S2 fails in this sandbox. Does the run tell the requester that filing S2 "
                 "failed, and why, in a message before any Skill call to design-interview (or with no such call)?\n\n"
