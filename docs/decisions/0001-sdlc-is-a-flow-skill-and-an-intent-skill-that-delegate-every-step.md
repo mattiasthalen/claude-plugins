@@ -34,3 +34,13 @@ Rejected:
 ## Addendum 2026-11-10
 
 Built under the earned-line rule, the `sdlc` skill names fewer steps than the Decision lists. Each line was run with its case and then without it, and only the lines whose case went red stayed. The design interview, the build and the review cycle have no line: with the flow loaded, the agent reached `design:design-interview` from `intent`'s hand-off and `implementation:review-cycle` by its own description, and their cases stayed green without a line. `intent` also has no line in `sdlc` beyond the start: its own description carries it. The Decision stands; the steps it lists are the flow's order, and the skill holds only the lines that order needs to hold.
+
+## Addendum 2026-11-10 (sdlc 1.1.0)
+
+`sdlc` gains a Platform check step between Coverage and Tests first: when the capture committed decisions or assumptions, it runs `/implementation:review-cycle platform-reality` on those records. In the rebuild, two platform facts already wrong in the capture's records surfaced only at build and review; replayed on that capture, the platform-reality reviewer caught both in 3 of 3 runs.
+
+This uses `review-cycle` off its intended timing. Its author runs it once, when a branch is ready for its pull request. For a records-only change its lens table picks design parity in records-only mode, and adds platform reality only when the records touch something the assumptions record covers. The step names one lens, `platform-reality`, as the only argument, where the skill documents the brief first and the lenses second; the agent reads a lone lens name as the lens argument, which overrides the table, so platform reality is the only lens (A8, probed by `flow-platform-docs`, not documented). The flow ignores the skill's closing hand-back to the PR step and goes on to Tests first (A8). Platform reality runs again at the pre-PR review whenever the change touches something the assumptions record covers; that second run is accepted. If `review-cycle` or `design-interview` comes to offer this check itself, the step is removed.
+
+Rejected: folding the check into Coverage or Tests first, which would give one step two done-conditions, and the earning case was run against a separate step.
+
+The Decision stands: the step names the skill it runs and the condition that ends it, and its line is earned by `flow-platform-docs`.

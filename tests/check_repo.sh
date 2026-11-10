@@ -21,7 +21,13 @@ check "AC17 sdlc installs with its three dependencies" installs_with_dependencie
 check "AC18 sdlc is listed from its directory" jq -e '.plugins[] | select(.name == "sdlc" and .source == "./plugins/sdlc")' "$market"
 for p in design implementation mattpocock-skills; do check "AC18 $p is listed unpinned" listed_unpinned "$p"; done
 check "AC18 sdlc depends on all three" jq -e '(.dependencies | sort) == ["design", "implementation", "mattpocock-skills"]' "$manifest"
-check "AC18 sdlc is 1.0.0" jq -e '.version == "1.0.0"' "$manifest"
+check "#65 sdlc is 1.1.0" jq -e '.version == "1.1.0"' "$manifest"
+platform_check_before_tests_first() {
+  local skill=plugins/sdlc/skills/sdlc/SKILL.md
+  grep -qxF '2. **Platform check.** When the capture committed decisions or assumptions, run `/implementation:review-cycle platform-reality` on those records. Done when each finding is fixed in them or I'"'"'ve decided on it.' "$skill" &&
+    grep -q '^1\. \*\*Coverage\.\*\*' "$skill" && grep -q '^3\. \*\*Tests first\.\*\*' "$skill"
+}
+check "#65 the platform check is step 2, between Coverage and Tests first" platform_check_before_tests_first
 check "AC19 no test-writer agent" test ! -e plugins/sdlc/agents
 check "AC19 no stage references" test ! -e plugins/sdlc/skills/sdlc/references
 check "AC19 no vendor script or manifest" test -z "$(ls scripts/vendor* 2>/dev/null)"

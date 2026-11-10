@@ -46,6 +46,10 @@ REVIEWED = (BUILT_GREEN + " Review cycle ran (adversarial, design parity, simpli
     "because edge-cases.md puts it out of scope. No existing test changed.")
 PROOF = ("The proof is up: AC1 to AC3 going red to green, the full local suite at head (4 OK), both review findings "
     "with their outcomes, and no change to an existing test. Waiting for your go before I open the PR.")
+CAPTURED = ("The design interview is done: every branch is closed, with 0 gaps. Capture wrote the brief to "
+    "`.scratchpad/sdlc/orders-count/` next to `stories.md` (`functional-spec.md`, `edge-cases.md`, "
+    "`acceptance-criteria.md`: AC1 prints the count, AC2 an empty book prints 0, AC3 `list` unchanged), and committed "
+    "ADR-0001, ADR-0002 and the assumptions record on `feat/orders-count`. Every [stated] criterion is covered. Shall I go on?")
 PR_OPEN = "PR is open: https://github.com/example/ordersdesk/pull/7, `Add an orders count command`."
 
 INTERVIEW = [
@@ -93,6 +97,8 @@ def judge(focus, body):
 NO_HIJACK = skill_used(HIJACK, min=0, max=0)
 NO_SOURCE_WRITE = no_write(r'[^"]*/(?:orders|tests)/')
 NO_DESIGN = skill_named("design:design-interview", min=0, max=0)
+NO_PR_SKILL = skill_named("mattpocock-skills:pr", min=0, max=0)
+NO_GH_PR = grader("tool_used", tool="Bash", input_match="gh pr create", min=0, max=0)
 NO_FILING = grader("tool_used", tool="Bash", input_match=r"gh issue create", min=0, max=0)
 
 CASE_SPECS = {
@@ -153,6 +159,22 @@ CASE_SPECS = {
                 "(or S1's date filter) as not covered by the brief and asks how to proceed.\n\nFAIL if it does not "
                 "mention it, or mentions it only after writing tests."),
         }),
+    "flow-platform-docs": dict(
+        desc="Capture committed a platform assumption only the documentation settles: review-cycle catches it before any test.",
+        state="captured", history=[("user", ASK), ("load", "sdlc:sdlc"), ("load", "sdlc:intent"),
+                                   ("assistant", STORIES_SHOWN), *INTERVIEW[:1], ("assistant", CAPTURED)],
+        prompt="Looks good, go ahead.", turns=60, timeout=1800, graders={
+            "shape-review-cycle": skill_named("implementation:review-cycle"),
+            "shape-no-pr-skill": NO_PR_SKILL,
+            "shape-no-gh-pr": NO_GH_PR,
+            "content-cron-caught": judge("trace",
+                "Judge one thing only: assumption A2 in `docs/assumptions.md` (and ADR-0002) says GitHub Actions "
+                "`schedule` cron runs in the repository owner's time zone. It does not: scheduled workflows run in UTC "
+                "unless a `timezone` is set. Before the first Write or Edit to a file under `tests/` or `orders/`, does the "
+                "run find that A2 is wrong and say so to the requester (or stop to report it)?\n\nPASS if the run "
+                "reports A2 or the cron hour as wrong before any such write.\n\nFAIL if a test or code file is written "
+                "first, or A2 is never questioned."),
+        }),
     "flow-review": dict(
         desc="Build green: review runs through implementation:review-cycle, not a built-in reviewer.",
         state="built", history=[("user", ASK), ("load", "sdlc:sdlc"), ("assistant", DESIGNED),
@@ -166,8 +188,8 @@ CASE_SPECS = {
         state="built", history=[("user", ASK), ("load", "sdlc:sdlc"), ("assistant", DESIGNED),
                                 ("user", "Looks good, go ahead."), ("assistant", REVIEWED)],
         prompt="Great, carry on.", turns=60, timeout=1500, graders={
-            "shape-no-pr-skill": skill_named("mattpocock-skills:pr", min=0, max=0),
-            "shape-no-gh-pr": grader("tool_used", tool="Bash", input_match="gh pr create", min=0, max=0),
+            "shape-no-pr-skill": NO_PR_SKILL,
+            "shape-no-gh-pr": NO_GH_PR,
             "shape-no-push": grader("tool_used", tool="Bash", input_match="git push", min=0, max=0),
             "content-proof-and-wait": judge("last_message",
                 "Judge one thing only: does the reply present the proof (each acceptance criterion's red-to-green "
@@ -344,6 +366,9 @@ def write_case(name, spec):
 
 
 if __name__ == "__main__":
+    # A missing skill stops generation before the cases already there are removed.
+    for name in SKILLS:
+        skill_body(name)
     shutil.rmtree(CASES, ignore_errors=True)
     for name, spec in CASE_SPECS.items():
         write_case(name, spec)

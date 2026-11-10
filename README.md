@@ -9,8 +9,8 @@ claude plugin install sdlc@mattiasthalen
 
 ## Plugins
 
-- **sdlc**: how a change ships. A change request runs `intent` (user stories, why first), Tobias Karlsson's design interview, tests first, the build, his review cycle, a proof you approve, then Matt Pocock's `pr` on your go and a reminder to run his `retro` after merge. Say "small change" to start at tests first.
-- **design**, **implementation** ([the-exodus/claude-design-skills](https://github.com/the-exodus/claude-design-skills)) and **mattpocock-skills** ([mattpocock/skills](https://github.com/mattpocock/skills)): listed from their own repositories, following their default branch, and installed with `sdlc` as its dependencies.
+- **sdlc**: how a change ships. A change request runs `intent` (user stories, why first), Tobias Karlsson's design interview, a platform check of the design's records with his review cycle, tests first, the build, his review cycle, a proof you approve, then Matt Pocock's `pr` on your go and a reminder to run his `retro` after merge. Say "small change" to start at tests first.
+- **design**, **implementation** ([the-exodus/claude-design-skills](https://github.com/the-exodus/claude-design-skills)) and **mattpocock-skills** ([mattpocock/skills](https://github.com/mattpocock/skills)): listed unpinned from their own repositories and installed with `sdlc` as its dependencies; an install follows each one's released version, and `design` its release tags (ADR-0002).
 
 ## Layout
 

@@ -118,6 +118,11 @@ class SkillGraderTest(unittest.TestCase):
         self.assertTrue(matches(g, json.dumps({"skill": "sdlc:intent"})))
         self.assertFalse(matches(g, json.dumps({"skill": "design:design-interview", "args": "the intent of S1"})))
 
+    def test_platform_check_grades_that_the_flow_does_not_head_for_the_pr(self):
+        graders = gen.CASE_SPECS["flow-platform-docs"]["graders"]
+        self.assertEqual(graders.get("shape-no-pr-skill"), gen.CASE_SPECS["flow-go-gate"]["graders"]["shape-no-pr-skill"])
+        self.assertEqual(graders.get("shape-no-gh-pr"), gen.CASE_SPECS["flow-go-gate"]["graders"]["shape-no-gh-pr"])
+
     def test_kickoff_grades_that_the_flow_loads(self):
         self.assertIn("shape-flow", gen.CASE_SPECS["flow-kickoff"]["graders"])
 
@@ -174,11 +179,17 @@ class PatternCoverageTest(unittest.TestCase):
 
 
 class GenerateTest(unittest.TestCase):
-    def test_a_missing_plugin_stops_generation(self):
-        run = subprocess.run([sys.executable, str(REPO / "evals/sdlc/gen.py")], env={"SDLC_PLUGIN": "plugins/nope", "PATH": "/usr/bin:/bin"},
-                             capture_output=True, text=True)
-        self.assertNotEqual(run.returncode, 0)
-
+    def test_a_missing_plugin_stops_generation_and_leaves_the_cases_alone(self):
+        sentinel = gen.CASES / "generated-before"
+        sentinel.parent.mkdir(exist_ok=True)
+        sentinel.write_text("")
+        try:
+            run = subprocess.run([sys.executable, str(REPO / "evals/sdlc/gen.py")], env={"SDLC_PLUGIN": "plugins/nope", "PATH": "/usr/bin:/bin"},
+                                 capture_output=True, text=True)
+            self.assertNotEqual(run.returncode, 0)
+            self.assertTrue(sentinel.exists())
+        finally:
+            sentinel.unlink(missing_ok=True)
 
 if __name__ == "__main__":
     unittest.main()
